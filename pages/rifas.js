@@ -3,6 +3,7 @@ import HeaderApp from "../components/header";
 import FooterApp from "../components/footer";
 import {
   Container,
+  Center,
   Grid,
   LinkBox,
   LinkOverlay,
@@ -11,8 +12,6 @@ import {
   Heading,
   Flex,
   Divider,
-  HStack,
-  Center,
   FormControl,
   FormLabel,
   Icon,
@@ -27,7 +26,14 @@ import {
   PopoverArrow,
   PopoverCloseButton,
   useColorMode,
-  Tag,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  IconButton,
 } from "@chakra-ui/react";
 import {
   Breadcrumb,
@@ -47,6 +53,7 @@ export default function Sorteios({ raffles }) {
   const [url, setUrl] = useState("");
   const [search, setSearch] = useState("all");
   const [text, setText] = useState("");
+  const [modal, setModal] = useState(false);
 
   useEffect(() => {
     if (raffles !== null) {
@@ -82,6 +89,43 @@ export default function Sorteios({ raffles }) {
     }
   }
 
+  const SearchCustom = () => (
+    <>
+      <FormControl>
+        <FormLabel>Selecione uma opção:</FormLabel>
+        <Select
+          placeholder="Selecione uma opção"
+          focusBorderColor="green.500"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        >
+          <option value="all">Todos os Sorteios</option>
+          <option value="user">Nome do usuário</option>
+          <option value="title">Título do Sorteio</option>
+        </Select>
+      </FormControl>
+      <FormControl mt={5}>
+        <FormLabel>Digite para buscar</FormLabel>
+        <Input
+          focusBorderColor="green.500"
+          placeholder="Digite para buscar"
+          value={text}
+          onChange={(e) => setText(e.target.value.toUpperCase())}
+          isDisabled={search === "all" ? true : false}
+        />
+      </FormControl>
+      <Button
+        mt={8}
+        isFullWidth
+        leftIcon={<FaSearch />}
+        colorScheme="green"
+        onClick={() => finderBySource()}
+      >
+        Buscar
+      </Button>
+    </>
+  );
+
   return (
     <>
       <HeaderApp />
@@ -105,40 +149,39 @@ export default function Sorteios({ raffles }) {
           </BreadcrumbItem>
         </Breadcrumb>
 
-        <Grid templateColumns="270px 1fr" gap={7}>
-          <Box rounded="xl" borderWidth="1px" p={3} shadow="lg" h="min-content">
-            <FormControl>
-              <FormLabel>Selecione uma opção:</FormLabel>
-              <Select
-                placeholder="Selecione uma opção"
-                focusBorderColor="green.500"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              >
-                <option value="all">Todos os Sorteios</option>
-                <option value="user">Nome do usuário</option>
-                <option value="title">Título do Sorteio</option>
-              </Select>
-            </FormControl>
-            <FormControl mt={5}>
-              <FormLabel>Digite para buscar</FormLabel>
-              <Input
-                focusBorderColor="green.500"
-                placeholder="Digite para buscar"
-                value={text}
-                onChange={(e) => setText(e.target.value.toUpperCase())}
-                isDisabled={search === "all" ? true : false}
-              />
-            </FormControl>
-            <Button
-              mt={8}
-              isFullWidth
-              leftIcon={<FaSearch />}
-              colorScheme="green"
-              onClick={() => finderBySource()}
-            >
-              Buscar
-            </Button>
+        <IconButton
+          icon={<FaSearch />}
+          size="lg"
+          pos="fixed"
+          bottom={5}
+          zIndex={900}
+          right={5}
+          fontSize="2xl"
+          shadow="lg"
+          colorScheme="orange"
+          d={["flex", "flex", "none", "none", "none"]}
+          onClick={() => setModal(true)}
+        />
+
+        <Grid
+          templateColumns={[
+            "1fr",
+            "1fr",
+            "270px 1fr",
+            "270px 1fr",
+            "270px 1fr",
+          ]}
+          gap={7}
+        >
+          <Box
+            rounded="xl"
+            borderWidth="1px"
+            p={3}
+            shadow="lg"
+            h="min-content"
+            d={["none", "none", "block", "block", "block"]}
+          >
+            <SearchCustom />
           </Box>
 
           <Box w="100%">
@@ -157,7 +200,6 @@ export default function Sorteios({ raffles }) {
                     rounded="lg"
                     overflow="hidden"
                     w="250px"
-                    bg="white"
                     shadow="lg"
                     borderWidth="1px"
                     key={raf.id}
@@ -340,6 +382,17 @@ export default function Sorteios({ raffles }) {
       </Container>
 
       <FooterApp />
+
+      <Modal isOpen={modal} onClose={() => setModal(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Buscar</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={5}>
+            <SearchCustom />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 }

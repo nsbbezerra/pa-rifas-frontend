@@ -137,8 +137,10 @@ export default function FooterApp() {
       </Box>
       <Box
         textAlign="center"
-        p={3}
+        p={4}
         bg={colorMode === "light" ? "orange.500" : "orange.800"}
+        color="gray.100"
+        fontSize={"sm"}
       >
         Desenvolvido por: NK Informática, Responsável: Natanael Bezerra (63)
         99971-1716
