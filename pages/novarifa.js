@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import HeaderApp from "../components/header";
-import FooterApp from "../components/footerTotal";
+import FooterApp from "../components/footer";
 import { File, InputFile, InputFileFixed } from "../styles/uploader";
 import {
   Container,

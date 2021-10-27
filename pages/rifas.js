@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import HeaderApp from "../components/header";
-import FooterApp from "../components/footerTotal";
+import FooterApp from "../components/footer";
 import {
   Container,
   Grid,
@@ -26,6 +26,8 @@ import {
   PopoverBody,
   PopoverArrow,
   PopoverCloseButton,
+  useColorMode,
+  Tag,
 } from "@chakra-ui/react";
 import {
   Breadcrumb,
@@ -40,6 +42,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 export default function Sorteios({ raffles }) {
+  const { colorMode } = useColorMode();
   const [raffle, setRaffle] = useState([]);
   const [url, setUrl] = useState("");
   const [search, setSearch] = useState("all");
@@ -102,298 +105,238 @@ export default function Sorteios({ raffles }) {
           </BreadcrumbItem>
         </Breadcrumb>
 
-        <Grid
-          templateColumns={[
-            "1fr",
-            "1fr 1fr 200px",
-            "1fr 2fr 200px",
-            "1fr 2fr 200px",
-            "1fr 3fr 1fr",
-          ]}
-          gap="15px"
-        >
-          <FormControl>
-            <FormLabel>Selecione uma opção:</FormLabel>
-            <Select
-              placeholder="Selecione uma opção"
-              focusBorderColor="purple.400"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            >
-              <option value="all">Todos os Sorteios</option>
-              <option value="user">Nome do usuário</option>
-              <option value="title">Título do Sorteio</option>
-            </Select>
-          </FormControl>
-          <FormControl>
-            <FormLabel>Digite para buscar</FormLabel>
-            <Input
-              focusBorderColor="purple.400"
-              placeholder="Digite para buscar"
-              value={text}
-              onChange={(e) => setText(e.target.value.toUpperCase())}
-              isDisabled={search === "all" ? true : false}
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel
-              color="transparent"
-              userSelect="none"
-              display={["none", "block", "block", "block", "block"]}
-            >
-              .
-            </FormLabel>
+        <Grid templateColumns="270px 1fr" gap={7}>
+          <Box rounded="xl" borderWidth="1px" p={3} shadow="lg" h="min-content">
+            <FormControl>
+              <FormLabel>Selecione uma opção:</FormLabel>
+              <Select
+                placeholder="Selecione uma opção"
+                focusBorderColor="green.500"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              >
+                <option value="all">Todos os Sorteios</option>
+                <option value="user">Nome do usuário</option>
+                <option value="title">Título do Sorteio</option>
+              </Select>
+            </FormControl>
+            <FormControl mt={5}>
+              <FormLabel>Digite para buscar</FormLabel>
+              <Input
+                focusBorderColor="green.500"
+                placeholder="Digite para buscar"
+                value={text}
+                onChange={(e) => setText(e.target.value.toUpperCase())}
+                isDisabled={search === "all" ? true : false}
+              />
+            </FormControl>
             <Button
+              mt={8}
               isFullWidth
               leftIcon={<FaSearch />}
-              colorScheme="purple"
-              variant="outline"
+              colorScheme="green"
               onClick={() => finderBySource()}
             >
               Buscar
             </Button>
-          </FormControl>
-        </Grid>
+          </Box>
 
-        {raffle.length === 0 ? (
-          <Center mt={10}>
-            <Heading fontSize="2xl">Nenhum sorteio para mostrar</Heading>
-          </Center>
-        ) : (
-          <Grid
-            templateColumns="repeat(auto-fit, minmax(220px, 220px))"
-            gap="30px"
-            mt={10}
-            justifyContent="center"
-          >
-            {raffle.map((raf) => (
-              <LinkBox
-                rounded="lg"
-                overflow="hidden"
-                w="220px"
-                bg="white"
-                shadow="lg"
-                borderWidth="1px"
-                key={raf.id}
+          <Box w="100%">
+            {raffle.length === 0 ? (
+              <Center>
+                <Heading fontSize="2xl">Nenhum sorteio para mostrar</Heading>
+              </Center>
+            ) : (
+              <Grid
+                templateColumns="repeat(auto-fit, minmax(250px, 250px))"
+                gap={5}
+                justifyContent="center"
               >
-                {raf.status === "drawn" && (
-                  <Flex
-                    bg="blackAlpha.700"
-                    position="absolute"
-                    w="220px"
-                    h="100%"
-                    zIndex={1000}
-                    justify="center"
-                    align="center"
+                {raffle.map((raf) => (
+                  <LinkBox
+                    rounded="lg"
+                    overflow="hidden"
+                    w="250px"
+                    bg="white"
+                    shadow="lg"
+                    borderWidth="1px"
+                    key={raf.id}
                   >
-                    <Box
-                      w="100%"
-                      bg="green.600"
-                      p={3}
-                      textAlign="center"
-                      fontWeight="700"
-                      color="white"
-                    >
-                      <Text>FINALIZADA</Text>
-                      <HStack justify="center" mt={2}>
-                        <Text>Nº Sorteado:</Text>
-                        <Text
-                          p={2}
-                          bg="white"
-                          borderWidth="1px"
-                          borderColor="purple.400"
-                          rounded="md"
-                          color="purple.400"
-                          shadow="md"
-                        >
-                          {raf.number_drawn ? raf.number_drawn : 0}
-                        </Text>
-                      </HStack>
-                    </Box>
-                  </Flex>
-                )}
-                {raf.status === "cancel" && (
-                  <Flex
-                    bg="blackAlpha.700"
-                    position="absolute"
-                    w="220px"
-                    h="100%"
-                    zIndex={1000}
-                    justify="center"
-                    align="center"
-                  >
-                    <Box
-                      w="100%"
-                      bg="red.600"
-                      p={3}
-                      textAlign="center"
-                      fontWeight="700"
-                    >
-                      <Text mb={2} color="white">
+                    {raf.status === "drawn" && (
+                      <Box
+                        pos="absolute"
+                        zIndex={900}
+                        fontWeight="bold"
+                        ml={3}
+                        mt={3}
+                        shadow="md"
+                        bg="green.500"
+                        color="white"
+                        rounded="lg"
+                        p={2}
+                      >
+                        FINALIZADA
+                      </Box>
+                    )}
+                    {raf.status === "cancel" && (
+                      <Box
+                        pos="absolute"
+                        zIndex={900}
+                        fontWeight="bold"
+                        ml={3}
+                        mt={3}
+                        shadow="md"
+                        bg="red.500"
+                        color="white"
+                        rounded="lg"
+                        p={2}
+                      >
                         CANCELADA
-                      </Text>
+                      </Box>
+                    )}
 
-                      <Text fontSize="sm" color="white">
-                        Administrador:
-                      </Text>
-                      <Link
-                        href={`https://wa.me/+55${raf.phone_client.replace(
-                          /([\u0300-\u036f]|[^0-9a-zA-Z])/g,
-                          ""
-                        )}`}
-                        passHref
+                    {raf.status === "refused" && (
+                      <Flex
+                        bg="blackAlpha.700"
+                        position="absolute"
+                        w="250px"
+                        h="100%"
+                        zIndex={1000}
+                        justify="center"
+                        align="center"
                       >
-                        <a target="_blank">
-                          <Button
-                            colorScheme="whatsapp"
-                            leftIcon={<FaWhatsapp />}
-                            size="sm"
-                            w="160px"
+                        <Box
+                          w="100%"
+                          bg="gray.800"
+                          p={3}
+                          textAlign="center"
+                          fontWeight="700"
+                        >
+                          <Text mb={2} color="white">
+                            BLOQUEADA
+                          </Text>
+
+                          <Text fontSize="sm" color="white">
+                            Administrador:
+                          </Text>
+                          <Link
+                            href={`https://wa.me/+55${raf.phone_client.replace(
+                              /([\u0300-\u036f]|[^0-9a-zA-Z])/g,
+                              ""
+                            )}`}
+                            passHref
                           >
-                            {raf.phone_client}
-                          </Button>
-                        </a>
-                      </Link>
-                      <Popover>
-                        <PopoverTrigger>
-                          <Button colorScheme="gray" size="sm" w="160px" mt={2}>
-                            Justificativa
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent _focus={{ outline: "none" }}>
-                          <PopoverArrow />
-                          <PopoverCloseButton />
-                          <PopoverHeader fontSize="xs">
-                            Justificativa
-                          </PopoverHeader>
-                          <PopoverBody fontSize="xs" fontWeight="normal">
-                            {raf.justify}
-                          </PopoverBody>
-                        </PopoverContent>
-                      </Popover>
+                            <a target="_blank">
+                              <Button
+                                colorScheme="whatsapp"
+                                leftIcon={<FaWhatsapp />}
+                                size="sm"
+                                w="160px"
+                              >
+                                {raf.phone_client}
+                              </Button>
+                            </a>
+                          </Link>
+                          <Popover>
+                            <PopoverTrigger>
+                              <Button
+                                colorScheme="gray"
+                                size="sm"
+                                w="160px"
+                                mt={2}
+                              >
+                                Justificativa
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent _focus={{ outline: "none" }}>
+                              <PopoverArrow />
+                              <PopoverCloseButton />
+                              <PopoverHeader fontSize="xs">
+                                Justificativa
+                              </PopoverHeader>
+                              <PopoverBody fontSize="xs" fontWeight="normal">
+                                {raf.justify}
+                              </PopoverBody>
+                            </PopoverContent>
+                          </Popover>
+                        </Box>
+                      </Flex>
+                    )}
+
+                    <Box w="250px" h="250px">
+                      <Image
+                        src={`${url}/${raf.thumbnail}`}
+                        width={260}
+                        height={260}
+                        layout="responsive"
+                        objectFit="cover"
+                        alt="PA Rifas, rifas online"
+                      />
                     </Box>
-                  </Flex>
-                )}
-
-                {raf.status === "refused" && (
-                  <Flex
-                    bg="blackAlpha.700"
-                    position="absolute"
-                    w="220px"
-                    h="100%"
-                    zIndex={1000}
-                    justify="center"
-                    align="center"
-                  >
-                    <Box
-                      w="100%"
-                      bg="gray.800"
-                      p={3}
-                      textAlign="center"
-                      fontWeight="700"
-                    >
-                      <Text mb={2} color="white">
-                        BLOQUEADA
-                      </Text>
-
-                      <Text fontSize="sm" color="white">
-                        Administrador:
-                      </Text>
-                      <Link
-                        href={`https://wa.me/+55${raf.phone_client.replace(
-                          /([\u0300-\u036f]|[^0-9a-zA-Z])/g,
-                          ""
-                        )}`}
-                        passHref
+                    <Box p={4}>
+                      <Link href={`/rifa/${raf.identify}`} passHref>
+                        <LinkOverlay>
+                          <Heading
+                            color={
+                              colorMode === "light" ? "green.500" : "green.200"
+                            }
+                            fontSize="md"
+                            noOfLines={2}
+                            textAlign="center"
+                          >
+                            {raf.name}
+                          </Heading>
+                        </LinkOverlay>
+                      </Link>
+                      <Flex
+                        align="center"
+                        mt={1}
+                        justify="center"
+                        fontSize="xl"
+                        mt={3}
+                        mb={3}
                       >
-                        <a target="_blank">
-                          <Button
-                            colorScheme="whatsapp"
-                            leftIcon={<FaWhatsapp />}
-                            size="sm"
-                            w="160px"
-                          >
-                            {raf.phone_client}
-                          </Button>
-                        </a>
-                      </Link>
-                      <Popover>
-                        <PopoverTrigger>
-                          <Button colorScheme="gray" size="sm" w="160px" mt={2}>
-                            Justificativa
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent _focus={{ outline: "none" }}>
-                          <PopoverArrow />
-                          <PopoverCloseButton />
-                          <PopoverHeader fontSize="xs">
-                            Justificativa
-                          </PopoverHeader>
-                          <PopoverBody fontSize="xs" fontWeight="normal">
-                            {raf.justify}
-                          </PopoverBody>
-                        </PopoverContent>
-                      </Popover>
-                    </Box>
-                  </Flex>
-                )}
-
-                <Box w="220px" h="220px">
-                  <Image
-                    src={`${url}/${raf.thumbnail}`}
-                    width={260}
-                    height={260}
-                    layout="responsive"
-                    objectFit="cover"
-                    alt="PMW Rifas, rifas online"
-                  />
-                </Box>
-                <Box p={2} w="260px">
-                  <Link href={`/sorteio/${raf.identify}`} passHref>
-                    <LinkOverlay>
-                      <Heading
-                        color="purple.400"
-                        fontSize="md"
-                        isTruncated
+                        <Text fontWeight="300" mr={2}>
+                          R$
+                        </Text>
+                        <Text fontWeight="800">
+                          {parseFloat(raf.raffle_value).toLocaleString(
+                            "pt-br",
+                            {
+                              minimumFractionDigits: 2,
+                            }
+                          )}
+                        </Text>
+                      </Flex>
+                      <Text
+                        fontSize="xs"
+                        mt={2}
                         noOfLines={1}
-                        w="200px"
+                        textAlign="center"
                       >
-                        {raf.name}
-                      </Heading>
-                    </LinkOverlay>
-                  </Link>
-                  <Text fontSize="xs" mt={2}>
-                    Sorteio:{" "}
-                    <strong>
-                      {format(
-                        new Date(raf.draw_date),
-                        "dd 'de' MMMM', às ' HH:mm'h'",
-                        { locale: ptBR }
-                      )}
-                    </strong>
-                  </Text>
-                  <Flex align="center" mt={1}>
-                    <Text fontWeight="300" mr={2}>
-                      R$
-                    </Text>
-                    <Text fontWeight="800">
-                      {parseFloat(raf.raffle_value).toLocaleString("pt-br", {
-                        minimumFractionDigits: 2,
-                      })}
-                    </Text>
-                  </Flex>
-                  <Divider mt={1} mb={1} />
-                  <Flex align="center" fontSize="xs">
-                    <Icon as={FaUserAlt} mr={2} />
-                    <Text w="180px" isTruncated noOfLines={1}>
-                      {raf.name_client}
-                    </Text>
-                  </Flex>
-                </Box>
-              </LinkBox>
-            ))}
-          </Grid>
-        )}
+                        Sorteio:{" "}
+                        <strong>
+                          {format(
+                            new Date(raf.draw_date),
+                            "dd 'de' MMMM', às ' HH:mm'h'",
+                            { locale: ptBR }
+                          )}
+                        </strong>
+                      </Text>
+                      <Divider mt={3} mb={3} />
+                      <Flex align="center" fontSize="xs" justify="center">
+                        <Icon as={FaUserAlt} mr={2} />
+                        <Text isTruncated noOfLines={1}>
+                          {raf.name_client}
+                        </Text>
+                      </Flex>
+                    </Box>
+                  </LinkBox>
+                ))}
+              </Grid>
+            )}
+          </Box>
+        </Grid>
       </Container>
 
       <FooterApp />

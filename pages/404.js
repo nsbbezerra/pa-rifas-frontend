@@ -1,5 +1,5 @@
 import HeaderApp from "../components/header";
-import FooterApp from "../components/footerTotal";
+import FooterApp from "../components/footer";
 import { Container, Flex, Heading } from "@chakra-ui/react";
 import Lottie from "../components/lottie";
 import animation from "../assets/404.json";

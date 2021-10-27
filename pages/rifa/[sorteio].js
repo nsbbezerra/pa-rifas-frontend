@@ -52,7 +52,7 @@ import { useRegisterModal } from "../../context/ModalRegister";
 import api from "../../configs/axios";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import useFetch from "../../hooks/useFetch";
-import FooterApp from "../../components/footerTotal";
+import FooterApp from "../../components/footer";
 
 export default function Sorteio({ raffles, url }) {
   const { query, isFallback } = useRouter();

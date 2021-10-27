@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import HeaderApp from "../../components/header";
-import FooterApp from "../../components/footerTotal";
+import FooterApp from "../../components/footer";
 import {
   Box,
   Container,

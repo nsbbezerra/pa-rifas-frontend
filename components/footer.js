@@ -25,7 +25,16 @@ export default function FooterApp() {
         pb={10}
       >
         <Container maxW="4xl">
-          <Grid templateColumns="1fr 1fr" gap={20}>
+          <Grid
+            templateColumns={[
+              "1fr",
+              "1fr 1fr",
+              "1fr 1fr",
+              "1fr 1fr",
+              "1fr 1fr",
+            ]}
+            gap={20}
+          >
             <Box w="100%">
               <Box bg="whiteAlpha.300" p={8} rounded="xl">
                 <Text

@@ -110,13 +110,7 @@ export default function Home({ config, raffles, url }) {
                   </Text>
                 </Flex>
 
-                <Text
-                  fontSize="xs"
-                  mt={2}
-                  isTruncated
-                  noOfLines={1}
-                  textAlign="center"
-                >
+                <Text fontSize="xs" mt={2} noOfLines={1} textAlign="center">
                   Sorteio:{" "}
                   <strong>
                     {format(

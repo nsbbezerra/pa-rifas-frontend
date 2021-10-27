@@ -11,7 +11,7 @@ import {
 import HeaderApp from "../components/header";
 import Image from "next/image";
 import Link from "next/link";
-import FooterApp from "../components/footerTotal";
+import FooterApp from "../components/footer";
 import {
   Breadcrumb,
   BreadcrumbItem,

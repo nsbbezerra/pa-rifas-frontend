@@ -1,6 +1,6 @@
 import { Container, Box, Text, Heading } from "@chakra-ui/layout";
 import HeaderApp from "../components/header";
-import FooterApp from "../components/footerTotal";
+import FooterApp from "../components/footer";
 import {
   Breadcrumb,
   BreadcrumbItem,
