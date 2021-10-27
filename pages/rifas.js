@@ -18,19 +18,12 @@ import {
   Input,
   Select,
   Button,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverArrow,
-  PopoverCloseButton,
+  Tooltip,
   useColorMode,
   Modal,
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
   IconButton,
@@ -41,7 +34,13 @@ import {
   BreadcrumbLink,
 } from "../components/sliders";
 import Link from "next/link";
-import { FaSearch, FaUserAlt, FaWhatsapp } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaArrowRight,
+  FaSearch,
+  FaUserAlt,
+  FaWhatsapp,
+} from "react-icons/fa";
 import Image from "next/image";
 import configsGlobal from "../configs/index";
 import { format } from "date-fns";
@@ -141,7 +140,7 @@ export default function Sorteios({ raffles }) {
           </BreadcrumbItem>
 
           <BreadcrumbItem isCurrentPage>
-            <Link passHref href="/sorteios">
+            <Link passHref href="/rifas">
               <a>
                 <BreadcrumbLink>Sorteios</BreadcrumbLink>
               </a>
@@ -238,71 +237,20 @@ export default function Sorteios({ raffles }) {
                     )}
 
                     {raf.status === "refused" && (
-                      <Flex
-                        bg="blackAlpha.700"
-                        position="absolute"
-                        w="250px"
-                        h="100%"
-                        zIndex={1000}
-                        justify="center"
-                        align="center"
+                      <Box
+                        pos="absolute"
+                        zIndex={900}
+                        fontWeight="bold"
+                        ml={3}
+                        mt={3}
+                        shadow="md"
+                        bg="gray.900"
+                        color="white"
+                        rounded="lg"
+                        p={2}
                       >
-                        <Box
-                          w="100%"
-                          bg="gray.800"
-                          p={3}
-                          textAlign="center"
-                          fontWeight="700"
-                        >
-                          <Text mb={2} color="white">
-                            BLOQUEADA
-                          </Text>
-
-                          <Text fontSize="sm" color="white">
-                            Administrador:
-                          </Text>
-                          <Link
-                            href={`https://wa.me/+55${raf.phone_client.replace(
-                              /([\u0300-\u036f]|[^0-9a-zA-Z])/g,
-                              ""
-                            )}`}
-                            passHref
-                          >
-                            <a target="_blank">
-                              <Button
-                                colorScheme="whatsapp"
-                                leftIcon={<FaWhatsapp />}
-                                size="sm"
-                                w="160px"
-                              >
-                                {raf.phone_client}
-                              </Button>
-                            </a>
-                          </Link>
-                          <Popover>
-                            <PopoverTrigger>
-                              <Button
-                                colorScheme="gray"
-                                size="sm"
-                                w="160px"
-                                mt={2}
-                              >
-                                Justificativa
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent _focus={{ outline: "none" }}>
-                              <PopoverArrow />
-                              <PopoverCloseButton />
-                              <PopoverHeader fontSize="xs">
-                                Justificativa
-                              </PopoverHeader>
-                              <PopoverBody fontSize="xs" fontWeight="normal">
-                                {raf.justify}
-                              </PopoverBody>
-                            </PopoverContent>
-                          </Popover>
-                        </Box>
-                      </Flex>
+                        RECUSADA
+                      </Box>
                     )}
 
                     <Box w="250px" h="250px">
@@ -377,6 +325,31 @@ export default function Sorteios({ raffles }) {
                 ))}
               </Grid>
             )}
+
+            <Center mt={10}>
+              <Flex
+                rounded="full"
+                borderWidth="1px"
+                overflow="hidden"
+                shadow="md"
+              >
+                <Tooltip label="Página Anterior" hasArrow>
+                  <IconButton icon={<FaArrowLeft />} rounded="none" />
+                </Tooltip>
+                <Flex
+                  fontSize="lg"
+                  fontWeight="bold"
+                  w="100px"
+                  justify="center"
+                  align="center"
+                >
+                  1 / 2
+                </Flex>
+                <Tooltip label="Próxima Página" hasArrow>
+                  <IconButton icon={<FaArrowRight />} rounded="none" />
+                </Tooltip>
+              </Flex>
+            </Center>
           </Box>
         </Grid>
       </Container>

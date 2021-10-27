@@ -31,6 +31,8 @@ import {
   Center,
   IconButton,
   Skeleton,
+  useColorMode,
+  Stack,
 } from "@chakra-ui/react";
 import {
   Breadcrumb,
@@ -55,6 +57,7 @@ import useFetch from "../../hooks/useFetch";
 import FooterApp from "../../components/footer";
 
 export default function Sorteio({ raffles, url }) {
+  const { colorMode } = useColorMode();
   const { query, isFallback } = useRouter();
 
   if (isFallback) {
@@ -136,8 +139,10 @@ export default function Sorteio({ raffles, url }) {
 
   if (error) {
     if (error.message === "Network Error") {
-      alert(
-        "Sem conexão com o servidor, verifique sua conexão com a internet."
+      showToast(
+        "Erro de conexão, verifique sua conexão com a internet",
+        "error",
+        "Erro"
       );
     } else {
       showToast("Ocorreu um erro inesperado", "error", "Erro");
@@ -282,7 +287,7 @@ export default function Sorteio({ raffles, url }) {
                 </Link>
               </BreadcrumbItem>
               <BreadcrumbItem>
-                <Link passHref href={`/sorteio/${raffle.identify}`}>
+                <Link passHref href={`/rifa/${raffle.identify}`}>
                   <a>
                     <BreadcrumbLink>
                       {capitalizeAllFirstLetter(raffle.name)}
@@ -291,258 +296,197 @@ export default function Sorteio({ raffles, url }) {
                 </Link>
               </BreadcrumbItem>
             </Breadcrumb>
+
+            <Heading fontSize="4xl" mt={10} mb={10}>
+              {raffle.name}
+            </Heading>
+
             <Grid
               templateColumns={[
                 "1fr",
-                "1fr",
-                "220px 1fr",
-                "220px 1fr",
-                "220px 1fr",
+                "1fr 1fr",
+                "1fr 1fr",
+                "1fr 400px",
+                "1fr 400px",
               ]}
-              gap="40px"
+              gap={20}
               justifyItems="center"
-              alignItems="center"
             >
-              <Box w="220px" h="220px" overflow="hidden" rounded="lg">
+              <Box
+                w="100%"
+                overflow="hidden"
+                rounded="lg"
+                borderWidth="1px"
+                h="min-content"
+              >
                 <Image
                   src={`${url}/${raffle.thumbnail}`}
                   width={260}
-                  height={260}
+                  height={240}
                   layout="responsive"
                   objectFit="cover"
-                  alt="PMW Rifas, rifas online"
+                  alt="PA Rifas, rifas online"
                 />
               </Box>
-              <Box minW="100%">
-                <Heading fontSize="3xl">{raffle.name}</Heading>
-                <Divider mt={5} mb={5} />
-                <Flex
-                  direction={["column", "column", "column", "row", "row"]}
-                  justifyContent="space-between"
-                >
-                  <HStack
-                    fontSize={["lg", "xl", "2xl", "2xl", "2xl"]}
-                    spacing="15px"
+              <Box w="100%" rounded="xl" h="min-content">
+                <Text fontSize="xl">{raffle.description}</Text>
+                <Text fontSize="xl" mt={5}>
+                  SORTEIO:{" "}
+                  <strong>
+                    {format(
+                      new Date(raffle.draw_date),
+                      "dd 'de' MMMM', às ' HH:mm'h'",
+                      { locale: pt_br }
+                    )}
+                  </strong>
+                </Text>
+                <HStack fontSize={"4xl"} spacing="15px" mt={2} mb={5}>
+                  <Text>R$</Text>
+                  <Text fontWeight="700">
+                    {parseFloat(raffle.raffle_value).toLocaleString("pt-br", {
+                      minimumFractionDigits: 2,
+                    })}
+                  </Text>
+                </HStack>
+                <Stack spacing={5}>
+                  <Flex
+                    w="100%"
+                    rounded="xl"
+                    p={3}
+                    borderWidth="1px"
+                    direction="column"
+                    align="center"
                   >
-                    <Text>R$</Text>
-                    <Text fontWeight="700">
-                      {parseFloat(raffle.raffle_value).toLocaleString("pt-br", {
-                        minimumFractionDigits: 2,
-                      })}
+                    <Text fontSize="2xl" fontWeight="bold">
+                      PRÊMIOS
                     </Text>
-                  </HStack>
-                  <HStack
-                    fontSize={["lg", "xl", "2xl", "2xl", "2xl"]}
-                    spacing="15px"
-                  >
-                    <Text>Data do Sorteio</Text>
-                    <Text fontWeight="700">
-                      {format(
-                        new Date(raffle.draw_date),
-                        "dd 'de' MMMM', às ' HH:mm'h'",
-                        { locale: pt_br }
-                      )}
-                    </Text>
-                  </HStack>
-                </Flex>
-                <Box borderWidth="1px" mt={3} rounded="lg" p={4}>
-                  {raffle.description}
-                </Box>
+                    <Divider mt={3} mb={3} />
+                    <Stack spacing={4}>
+                      <Text textAlign="justify">
+                        1º Prêmio: <strong>Um Prêmio</strong>
+                      </Text>
+                      <Text textAlign="justify">
+                        2º Prêmio: <strong>Um Prêmio</strong>
+                      </Text>
+                      <Text textAlign="justify">
+                        3º Prêmio: <strong>Um Prêmio</strong>
+                      </Text>
+                      <Text textAlign="justify">
+                        4º Prêmio: <strong>Um Prêmio</strong>
+                      </Text>
+                      <Text textAlign="justify">
+                        5º Prêmio: <strong>Um Prêmio</strong>
+                      </Text>
+                    </Stack>
+                  </Flex>
+                </Stack>
               </Box>
             </Grid>
           </>
         )}
-      </Container>
 
-      <Box pt={10} pb={10} bg="purple.400" mt={20}>
-        <Container maxW="7xl">
-          <Grid
-            templateColumns={[
-              "1fr",
-              "1fr 1fr",
-              "1fr 1fr",
-              "1fr 1fr",
-              "repeat(auto-fit, minmax(280px, 280px))",
-            ]}
-            gap="30px"
-            justifyContent="center"
-            justifyItems="center"
-            alignItems="start"
-          >
-            <Flex w="280px" justify="center" align="center" direction="column">
-              <Box w="100px" h="100px">
-                <Image
-                  src="/img/icon_01-01.svg"
-                  width={100}
-                  height={100}
-                  layout="responsive"
-                  alt="PMW Rifas, rifas online"
-                />
-              </Box>
-              <Text
-                color="white"
-                textAlign="center"
-                fontSize="sm"
-                fontWeight="700"
-                mt={5}
-              >
-                Escolha o prêmio que gostaria de concorrer, verifique a
-                descrição, regulamento do sorteio e fotos, em caso de dúvidas
-                contate o administrador
-              </Text>
-            </Flex>
-            <Flex w="280px" justify="center" align="center" direction="column">
-              <Box w="100px" h="100px">
-                <Image
-                  src="/img/icon_02-01.svg"
-                  width={100}
-                  height={100}
-                  layout="responsive"
-                  alt="PMW Rifas, rifas online"
-                />
-              </Box>
-              <Text
-                color="white"
-                textAlign="center"
-                fontSize="sm"
-                fontWeight="700"
-                mt={5}
-              >
-                Você pode escolher quantos números desejar! Mais números,mais
-                chances de ganhar
-              </Text>
-            </Flex>
-            <Flex w="280px" justify="center" align="center" direction="column">
-              <Box w="100px" h="100px">
-                <Image
-                  src="/img/icon_03-01.svg"
-                  width={100}
-                  height={100}
-                  layout="responsive"
-                  alt="PMW Rifas, rifas online"
-                />
-              </Box>
-              <Text
-                color="white"
-                textAlign="center"
-                fontSize="sm"
-                fontWeight="700"
-                mt={5}
-              >
-                Faça o pagamento em uma das contas exibidas. Envie o comprovante
-                ao administrador via whatsApp.
-              </Text>
-            </Flex>
-            <Flex w="280px" justify="center" align="center" direction="column">
-              <Box w="100px" h="100px">
-                <Image
-                  src="/img/icon_04-01.svg"
-                  width={100}
-                  height={100}
-                  layout="responsive"
-                  alt="PMW Rifas, rifas online"
-                />
-              </Box>
-              <Text
-                color="white"
-                textAlign="center"
-                fontSize="sm"
-                fontWeight="700"
-                mt={5}
-              >
-                Aguarde o sorteio, Cruze os dedos, Você pode ser o próximo
-                sorteado.
-              </Text>
-            </Flex>
-          </Grid>
-          <Grid
-            mt={10}
-            templateColumns={[
-              "repeat(1, 210px)",
-              "repeat(2, 210px)",
-              "repeat(2, 210px)",
-              "repeat(4, 210px)",
-              "repeat(4, 210px)",
-            ]}
-            gap="15px"
-          >
-            <Box
-              rounded="3xl"
-              pt={1}
-              pb={1}
-              pr={3}
-              pl={3}
-              bg="black"
-              color="white"
-              textAlign="center"
-            >
-              Livres (
-              {nums.length > 0 && JSON.stringify(raffle) !== "{}"
-                ? raffle.qtd_numbers -
-                  nums.filter((obj) => obj.status === "reserved").length -
-                  nums.filter((obj) => obj.status === "paid_out").length
-                : raffle.qtd_numbers}
-              )
-            </Box>
-            <Box
-              rounded="3xl"
-              pt={1}
-              pb={1}
-              pr={3}
-              pl={3}
-              bg="orange.400"
-              color="white"
-              textAlign="center"
-            >
-              Reservado (
-              {nums.length > 0
-                ? nums.filter((obj) => obj.status === "reserved").length
-                : 0}
-              )
-            </Box>
-            <Box
-              rounded="3xl"
-              pt={1}
-              pb={1}
-              pr={3}
-              pl={3}
-              bg="green.400"
-              color="white"
-              textAlign="center"
-            >
-              Pago (
-              {nums.length > 0
-                ? nums.filter((obj) => obj.status === "paid_out").length
-                : 0}
-              )
-            </Box>
-            <Box
-              rounded="3xl"
-              pt={1}
-              pb={1}
-              pr={3}
-              pl={3}
-              bg="red.600"
-              color="white"
-              textAlign="center"
-            >
-              Meus Números (
-              {JSON.stringify(client) !== "{}"
-                ? nums.filter((obj) => obj.id_client === client.id).length
-                : 0}
-              )
-            </Box>
-          </Grid>
+        <Grid
+          templateColumns={[
+            "1fr",
+            "1fr 300px",
+            "1fr 300px",
+            "1fr 300px",
+            "1fr 300px",
+          ]}
+          gap={10}
+          mt={20}
+        >
           <Box
-            rounded="lg"
-            bg="gray.700"
+            rounded="xl"
             p={4}
-            mt={5}
-            shadow="dark-lg"
-            h="350px"
-            maxH="350px"
-            overflow="auto"
+            shadow="lg"
+            bg={colorMode === "light" ? "whiteAlpha.500" : "whiteAlpha.300"}
+            borderWidth="1px"
           >
+            <Grid
+              templateColumns={[
+                "repeat(2, 130px)",
+                "repeat(2, 180px)",
+                "repeat(2, 180px)",
+                "repeat(3, 180px)",
+                "repeat(4, 180px)",
+              ]}
+              gap="15px"
+            >
+              <Box
+                rounded="3xl"
+                pt={1}
+                pb={1}
+                pr={3}
+                pl={3}
+                bg="black"
+                color="white"
+                textAlign="center"
+                fontSize={["xs", "md", "md", "md", "md"]}
+              >
+                Livres (
+                {nums.length > 0 && JSON.stringify(raffle) !== "{}"
+                  ? raffle.qtd_numbers -
+                    nums.filter((obj) => obj.status === "reserved").length -
+                    nums.filter((obj) => obj.status === "paid_out").length
+                  : raffle.qtd_numbers}
+                )
+              </Box>
+              <Box
+                rounded="3xl"
+                pt={1}
+                pb={1}
+                pr={3}
+                pl={3}
+                bg="orange.400"
+                color="white"
+                textAlign="center"
+                fontSize={["xs", "md", "md", "md", "md"]}
+              >
+                Reservado (
+                {nums.length > 0
+                  ? nums.filter((obj) => obj.status === "reserved").length
+                  : 0}
+                )
+              </Box>
+              <Box
+                rounded="3xl"
+                pt={1}
+                pb={1}
+                pr={3}
+                pl={3}
+                bg="green.400"
+                color="white"
+                textAlign="center"
+                fontSize={["xs", "md", "md", "md", "md"]}
+              >
+                Pago (
+                {nums.length > 0
+                  ? nums.filter((obj) => obj.status === "paid_out").length
+                  : 0}
+                )
+              </Box>
+              <Box
+                rounded="3xl"
+                pt={1}
+                pb={1}
+                pr={3}
+                pl={3}
+                bg="red.600"
+                color="white"
+                textAlign="center"
+                fontSize={["xs", "md", "md", "md", "md"]}
+              >
+                Meus Números (
+                {JSON.stringify(client) !== "{}"
+                  ? nums.filter((obj) => obj.id_client === client.id).length
+                  : 0}
+                )
+              </Box>
+            </Grid>
+
+            <Divider mt={5} mb={5} />
+
             <Grid
               templateColumns="repeat(auto-fit, minmax(75px, 75px))"
               gap="15px"
@@ -559,27 +503,28 @@ export default function Sorteio({ raffles, url }) {
                   }
                   bg={
                     mynumbers.find((obj) => obj === num.num)
-                      ? "purple.200"
+                      ? "blue.500"
                       : "black"
                   }
                   _focus={{
                     outline: "none",
                     bg: mynumbers.find((obj) => obj === num.num)
-                      ? "purple.200"
+                      ? "blue.500"
                       : "gray.800",
                   }}
                   _active={{
                     bg: mynumbers.find((obj) => obj === num.num)
-                      ? "purple.200"
+                      ? "blue.500"
                       : "gray.800",
                   }}
                   _hover={{
                     bg: mynumbers.find((obj) => obj === num.num)
-                      ? "purple.200"
+                      ? "blue.500"
                       : "gray.800",
                   }}
                   key={num.num}
                   onClick={() => handleNumbers(num.num)}
+                  color="gray.100"
                   _disabled={{
                     bg: handleBG(
                       nums.find((obj) => obj.number === parseInt(num.num))
@@ -606,19 +551,9 @@ export default function Sorteio({ raffles, url }) {
               ))}
             </Grid>
           </Box>
-          <Grid
-            templateColumns={[
-              "1fr",
-              "1fr 1fr",
-              "1fr 1fr",
-              "1fr 1fr",
-              "1fr 1fr",
-            ]}
-            gap="15px"
-            alignItems="center"
-            mt={5}
-          >
-            <Stat color="white">
+
+          <Box rounded="xl" shadow="lg" borderWidth="1px" p={5} h="min-content">
+            <Stat>
               <StatLabel>Total a Pagar</StatLabel>
               <StatNumber>
                 {parseFloat(amount).toLocaleString("pt-br", {
@@ -627,86 +562,140 @@ export default function Sorteio({ raffles, url }) {
                 })}
               </StatNumber>
             </Stat>
-            <Flex
-              justify="flex-end"
-              direction={["column", "row", "row", "row", "row"]}
-            >
+
+            <Divider mt={5} mb={5} />
+
+            <Stack spacing={3} w="100%">
               <Button
                 leftIcon={<FaTrash />}
                 colorScheme="red"
-                w={[
-                  "100%",
-                  "max-content",
-                  "max-content",
-                  "max-content",
-                  "max-content",
-                ]}
-                size="lg"
                 onClick={() => clearNumbers()}
-                mr={[0, 5, 5, 5, 5]}
-                mb={[5, 0, 0, 0, 0]}
+                isFullWidth
+                variant="outline"
               >
                 Limpar Números
               </Button>
               <Button
                 leftIcon={<FaCheck />}
                 colorScheme="green"
-                w={[
-                  "100%",
-                  "max-content",
-                  "max-content",
-                  "max-content",
-                  "max-content",
-                ]}
                 size="lg"
                 onClick={() => setModalSent(true)}
+                isFullWidth
               >
                 Finalizar Compra
               </Button>
-            </Flex>
-          </Grid>
-        </Container>
-      </Box>
-      <Box
-        bg="green.400"
-        p={5}
-        textAlign="center"
-        color="white"
-        fontSize={["sm", "sm", "md", "md", "md"]}
-      >
-        © 2021 - RIFA PMW, Todos os Direitos Reservados!
-      </Box>
+            </Stack>
+          </Box>
+        </Grid>
+      </Container>
 
-      <Modal isOpen={modalSend} onClose={() => setModalSent(false)} size="lg">
+      <FooterApp />
+
+      <Modal isOpen={modalSend} onClose={() => setModalSent(false)} size="3xl">
         <ModalOverlay />
-        <ModalContent borderWidth="3px" borderColor="green.400">
+        <ModalContent>
           <ModalHeader>Reserva de Número</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             {JSON.stringify(client) === "{}" || !client ? (
-              <Flex justify="center" align="center" direction="column">
-                <Button
-                  size="lg"
-                  isFullWidth
-                  colorScheme="purple"
-                  leftIcon={<FaSave />}
-                  variant="outline"
-                  onClick={() => setOpenRegister(true)}
+              <>
+                <Flex justify="center" align="center" direction="column">
+                  <Heading textAlign="center">Não encontramos você!</Heading>
+                  <Box
+                    bgGradient={
+                      colorMode === "light"
+                        ? "linear(to-r, green.500, orange.500)"
+                        : "linear(to-r, green.200, orange.200)"
+                    }
+                    w="200px"
+                    h="5px"
+                    mt={3}
+                    mb={3}
+                  />
+                </Flex>
+                <Grid
+                  templateColumns={[
+                    "280px",
+                    "350px",
+                    "350px 350px",
+                    "350px 350px",
+                    "350px 350px",
+                  ]}
+                  gap={10}
+                  mt={10}
+                  justifyContent="center"
                 >
-                  CADASTRE-SE
-                </Button>
-                <Button
-                  size="lg"
-                  isFullWidth
-                  colorScheme="purple"
-                  leftIcon={<AiOutlineLogin />}
-                  mt={5}
-                  variant="outline"
-                  onClick={() => setOpenLogin(true)}
-                >
-                  FAÇA LOGIN
-                </Button>
-              </Flex>
+                  <Flex
+                    w="100%"
+                    rounded="xl"
+                    borderWidth="1px"
+                    direction="column"
+                    justify="center"
+                    align="center"
+                    p={5}
+                  >
+                    <Box w="40%">
+                      <Image
+                        src="/img/register.svg"
+                        width={200}
+                        height={200}
+                        layout="responsive"
+                        objectFit="contain"
+                        alt="PA Rifas, rifas online"
+                      />
+                    </Box>
+
+                    <Heading textAlign="center" fontSize="2xl" mt={5}>
+                      Não possui conta?
+                    </Heading>
+
+                    <Button
+                      size="lg"
+                      isFullWidth
+                      mt={5}
+                      colorScheme="orange"
+                      onClick={() => setOpenRegister(true)}
+                    >
+                      CADASTRE-SE
+                    </Button>
+                  </Flex>
+
+                  <Flex
+                    w="100%"
+                    rounded="xl"
+                    borderWidth="1px"
+                    direction="column"
+                    justify="center"
+                    align="center"
+                    p={5}
+                  >
+                    <Box w="40%">
+                      <Image
+                        src="/img/login.svg"
+                        width={200}
+                        height={200}
+                        layout="responsive"
+                        objectFit="contain"
+                        alt="PA Rifas, rifas online"
+                      />
+                    </Box>
+
+                    <Heading textAlign="center" fontSize="2xl" mt={5}>
+                      Já possui conta?
+                    </Heading>
+
+                    <Button
+                      size="lg"
+                      isFullWidth
+                      mt={5}
+                      colorScheme="green"
+                      onClick={() => setOpenLogin(true)}
+                    >
+                      FAÇA LOGIN
+                    </Button>
+                  </Flex>
+                </Grid>
+              </>
             ) : (
               <>
                 <Text>Por favor verifique se seus dados estão corretos!</Text>
@@ -798,7 +787,7 @@ export default function Sorteio({ raffles, url }) {
                 </FormControl>
                 <Checkbox
                   defaultIsChecked
-                  colorScheme="purple"
+                  colorScheme="green"
                   mt={3}
                   isChecked={concordo}
                   onChange={(e) => setConcordo(e.target.checked)}
@@ -806,10 +795,7 @@ export default function Sorteio({ raffles, url }) {
                   Reservando seu(s) número(s), você declara que leu e concorda
                   com nossos{" "}
                   <Link href="/condicoesdeuso" passHref>
-                    <a
-                      target="_blank"
-                      style={{ color: "blue", textDecoration: "underline" }}
-                    >
+                    <a target="_blank" style={{ textDecoration: "underline" }}>
                       Termos de uso
                     </a>
                   </Link>
@@ -839,7 +825,7 @@ export default function Sorteio({ raffles, url }) {
         size="2xl"
       >
         <ModalOverlay />
-        <ModalContent borderWidth="3px" borderColor="green.400">
+        <ModalContent>
           <ModalHeader>
             <Flex align="center">
               <Icon as={AiFillBank} />
