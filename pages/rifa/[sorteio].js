@@ -18,6 +18,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalFooter,
+  Tooltip,
   ModalBody,
   ModalCloseButton,
   Icon,
@@ -33,6 +34,7 @@ import {
   Skeleton,
   useColorMode,
   Stack,
+  Progress,
 } from "@chakra-ui/react";
 import {
   Breadcrumb,
@@ -40,8 +42,14 @@ import {
   BreadcrumbLink,
 } from "../../components/sliders";
 import Image from "next/image";
-import { FaCheck, FaCopy, FaSave, FaTrash, FaWhatsapp } from "react-icons/fa";
-import { AiFillBank, AiOutlineLogin } from "react-icons/ai";
+import { FaCheck, FaCopy, FaTrash, FaWhatsapp } from "react-icons/fa";
+import {
+  AiFillBank,
+  AiOutlineFacebook,
+  AiOutlineInstagram,
+  AiOutlineUser,
+  AiOutlineWhatsApp,
+} from "react-icons/ai";
 import MaskedInput from "react-text-mask";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -297,18 +305,15 @@ export default function Sorteio({ raffles, url }) {
               </BreadcrumbItem>
             </Breadcrumb>
 
-            <Heading fontSize="4xl" mt={10} mb={10}>
-              {raffle.name}
-            </Heading>
-
             <Grid
               templateColumns={[
                 "1fr",
                 "1fr 1fr",
                 "1fr 1fr",
-                "1fr 400px",
-                "1fr 400px",
+                "1fr 1fr",
+                "1fr 1fr",
               ]}
+              mt={10}
               gap={20}
               justifyItems="center"
             >
@@ -321,65 +326,110 @@ export default function Sorteio({ raffles, url }) {
               >
                 <Image
                   src={`${url}/${raffle.thumbnail}`}
-                  width={260}
+                  width={240}
                   height={240}
                   layout="responsive"
                   objectFit="cover"
                   alt="PA Rifas, rifas online"
                 />
               </Box>
-              <Box w="100%" rounded="xl" h="min-content">
-                <Text fontSize="xl">{raffle.description}</Text>
-                <Text fontSize="xl" mt={5}>
-                  SORTEIO:{" "}
-                  <strong>
-                    {format(
-                      new Date(raffle.draw_date),
-                      "dd 'de' MMMM', às ' HH:mm'h'",
-                      { locale: pt_br }
-                    )}
-                  </strong>
-                </Text>
-                <HStack fontSize={"4xl"} spacing="15px" mt={2} mb={5}>
-                  <Text>R$</Text>
-                  <Text fontWeight="700">
-                    {parseFloat(raffle.raffle_value).toLocaleString("pt-br", {
-                      minimumFractionDigits: 2,
-                    })}
-                  </Text>
-                </HStack>
-                <Stack spacing={5}>
-                  <Flex
-                    w="100%"
-                    rounded="xl"
-                    p={3}
-                    borderWidth="1px"
-                    direction="column"
-                    align="center"
+              <Box
+                w="100%"
+                rounded="xl"
+                h="min-content"
+                rounded="xl"
+                shadow="lg"
+                borderWidth="1px"
+              >
+                <Box p={5}>
+                  <Heading
+                    fontSize="2xl"
+                    color={colorMode === "light" ? "green.500" : "green.200"}
                   >
-                    <Text fontSize="2xl" fontWeight="bold">
-                      PRÊMIOS
-                    </Text>
-                    <Divider mt={3} mb={3} />
-                    <Stack spacing={4}>
-                      <Text textAlign="justify">
-                        1º Prêmio: <strong>Um Prêmio</strong>
+                    {raffle.name}
+                  </Heading>
+                  <Text fontSize="md" mt={3}>
+                    {raffle.description}
+                  </Text>
+                  <HStack mt={3}>
+                    <Stat>
+                      <StatLabel>Valor</StatLabel>
+                      <StatNumber>
+                        R${" "}
+                        {parseFloat(raffle.raffle_value).toLocaleString(
+                          "pt-br",
+                          {
+                            minimumFractionDigits: 2,
+                          }
+                        )}
+                      </StatNumber>
+                    </Stat>
+
+                    <Stat>
+                      <StatLabel>Sorteio</StatLabel>
+                      <StatNumber>
+                        {format(new Date(raffle.draw_date), "dd/MM/yyyy", {
+                          locale: pt_br,
+                        })}
+                      </StatNumber>
+                    </Stat>
+                  </HStack>
+                </Box>
+                <Progress hasStripe value={50} size="lg" colorScheme="green" />
+                <Box p={5}>
+                  <Flex>
+                    <Flex
+                      rounded="full"
+                      w="50px"
+                      h="50px"
+                      bg={
+                        colorMode === "light"
+                          ? "blackAlpha.100"
+                          : "whiteAlpha.200"
+                      }
+                      justify="center"
+                      align="center"
+                    >
+                      <Icon as={AiOutlineUser} fontSize="3xl" />
+                    </Flex>
+                    <Box ml={3}>
+                      <Text fontSize="sm" fontWeight="bold">
+                        NATANAEL DOS SANTOS BEZERRA
                       </Text>
-                      <Text textAlign="justify">
-                        2º Prêmio: <strong>Um Prêmio</strong>
+                      <Text
+                        color={
+                          colorMode === "light" ? "green.500" : "green.200"
+                        }
+                        fontSize="sm"
+                      >
+                        PEDRO AFONSO - TO
                       </Text>
-                      <Text textAlign="justify">
-                        3º Prêmio: <strong>Um Prêmio</strong>
-                      </Text>
-                      <Text textAlign="justify">
-                        4º Prêmio: <strong>Um Prêmio</strong>
-                      </Text>
-                      <Text textAlign="justify">
-                        5º Prêmio: <strong>Um Prêmio</strong>
-                      </Text>
-                    </Stack>
+                    </Box>
                   </Flex>
-                </Stack>
+                </Box>
+                <Divider />
+                <Center mt={3}>
+                  <Text fontSize="sm">COMPARTILHAR</Text>
+                </Center>
+                <Center p={3}>
+                  <IconButton
+                    icon={<AiOutlineFacebook />}
+                    colorScheme="green"
+                    variant="outline"
+                  />
+                  <IconButton
+                    icon={<AiOutlineWhatsApp />}
+                    colorScheme="green"
+                    ml={3}
+                    mr={3}
+                    variant="outline"
+                  />
+                  <IconButton
+                    icon={<AiOutlineInstagram />}
+                    colorScheme="green"
+                    variant="outline"
+                  />
+                </Center>
               </Box>
             </Grid>
           </>
@@ -387,205 +437,212 @@ export default function Sorteio({ raffles, url }) {
 
         <Grid
           templateColumns={[
-            "1fr",
-            "1fr 300px",
-            "1fr 300px",
-            "1fr 300px",
-            "1fr 300px",
+            "repeat(2, 180px)",
+            "repeat(3, 180px)",
+            "repeat(4, 180px)",
+            "repeat(4, 180px)",
+            "repeat(4, 180px)",
           ]}
-          gap={10}
-          mt={20}
+          gap="15px"
+          mt={10}
         >
           <Box
-            rounded="xl"
-            p={4}
-            shadow="lg"
-            bg={colorMode === "light" ? "whiteAlpha.500" : "whiteAlpha.300"}
-            borderWidth="1px"
+            rounded="3xl"
+            pt={1}
+            pb={1}
+            pr={3}
+            pl={3}
+            bg="black"
+            color="white"
+            textAlign="center"
           >
-            <Grid
-              templateColumns={[
-                "repeat(2, 130px)",
-                "repeat(2, 180px)",
-                "repeat(2, 180px)",
-                "repeat(3, 180px)",
-                "repeat(4, 180px)",
-              ]}
-              gap="15px"
-            >
-              <Box
-                rounded="3xl"
-                pt={1}
-                pb={1}
-                pr={3}
-                pl={3}
-                bg="black"
-                color="white"
-                textAlign="center"
-                fontSize={["xs", "md", "md", "md", "md"]}
-              >
-                Livres (
-                {nums.length > 0 && JSON.stringify(raffle) !== "{}"
-                  ? raffle.qtd_numbers -
-                    nums.filter((obj) => obj.status === "reserved").length -
-                    nums.filter((obj) => obj.status === "paid_out").length
-                  : raffle.qtd_numbers}
-                )
-              </Box>
-              <Box
-                rounded="3xl"
-                pt={1}
-                pb={1}
-                pr={3}
-                pl={3}
-                bg="orange.400"
-                color="white"
-                textAlign="center"
-                fontSize={["xs", "md", "md", "md", "md"]}
-              >
-                Reservado (
-                {nums.length > 0
-                  ? nums.filter((obj) => obj.status === "reserved").length
-                  : 0}
-                )
-              </Box>
-              <Box
-                rounded="3xl"
-                pt={1}
-                pb={1}
-                pr={3}
-                pl={3}
-                bg="green.400"
-                color="white"
-                textAlign="center"
-                fontSize={["xs", "md", "md", "md", "md"]}
-              >
-                Pago (
-                {nums.length > 0
-                  ? nums.filter((obj) => obj.status === "paid_out").length
-                  : 0}
-                )
-              </Box>
-              <Box
-                rounded="3xl"
-                pt={1}
-                pb={1}
-                pr={3}
-                pl={3}
-                bg="red.600"
-                color="white"
-                textAlign="center"
-                fontSize={["xs", "md", "md", "md", "md"]}
-              >
-                Meus Números (
-                {JSON.stringify(client) !== "{}"
-                  ? nums.filter((obj) => obj.id_client === client.id).length
-                  : 0}
-                )
-              </Box>
-            </Grid>
+            Livres (
+            {nums.length > 0 && JSON.stringify(raffle) !== "{}"
+              ? raffle.qtd_numbers -
+                nums.filter((obj) => obj.status === "reserved").length -
+                nums.filter((obj) => obj.status === "paid_out").length
+              : raffle.qtd_numbers}
+            )
+          </Box>
+          <Box
+            rounded="3xl"
+            pt={1}
+            pb={1}
+            pr={3}
+            pl={3}
+            bg="orange.400"
+            color="white"
+            textAlign="center"
+          >
+            Reservado (
+            {nums.length > 0
+              ? nums.filter((obj) => obj.status === "reserved").length
+              : 0}
+            )
+          </Box>
+          <Box
+            rounded="3xl"
+            pt={1}
+            pb={1}
+            pr={3}
+            pl={3}
+            bg="green.400"
+            color="white"
+            textAlign="center"
+          >
+            Pago (
+            {nums.length > 0
+              ? nums.filter((obj) => obj.status === "paid_out").length
+              : 0}
+            )
+          </Box>
+          <Box
+            rounded="3xl"
+            pt={1}
+            pb={1}
+            pr={3}
+            pl={3}
+            bg="red.600"
+            color="white"
+            textAlign="center"
+          >
+            Meus Números (
+            {JSON.stringify(client) !== "{}"
+              ? nums.filter((obj) => obj.id_client === client.id).length
+              : 0}
+            )
+          </Box>
+        </Grid>
 
-            <Divider mt={5} mb={5} />
-
-            <Grid
-              templateColumns="repeat(auto-fit, minmax(75px, 75px))"
-              gap="15px"
-              justifyContent="center"
-            >
-              {generate.map((num) => (
-                <Button
-                  w="75px"
-                  colorScheme="blackAlpha"
-                  isDisabled={
+        <Box
+          rounded="xl"
+          p={4}
+          shadow="lg"
+          bg={colorMode === "light" ? "rgba(0,0,0,0.02)" : "whiteAlpha.300"}
+          borderWidth="1px"
+          mt={5}
+        >
+          <Grid
+            templateColumns="repeat(auto-fit, minmax(75px, 75px))"
+            gap="5px"
+            justifyContent="center"
+            h="400px"
+            overflow="auto"
+          >
+            {generate.map((num) => (
+              <Button
+                w="75px"
+                colorScheme="blackAlpha"
+                isDisabled={
+                  nums.find((obj) => obj.number === parseInt(num.num))
+                    ? true
+                    : false
+                }
+                bg={
+                  mynumbers.find((obj) => obj === num.num)
+                    ? "blue.500"
+                    : "black"
+                }
+                _focus={{
+                  outline: "none",
+                  bg: mynumbers.find((obj) => obj === num.num)
+                    ? "blue.500"
+                    : "gray.800",
+                }}
+                _active={{
+                  bg: mynumbers.find((obj) => obj === num.num)
+                    ? "blue.500"
+                    : "gray.800",
+                }}
+                _hover={{
+                  bg: mynumbers.find((obj) => obj === num.num)
+                    ? "blue.500"
+                    : "gray.800",
+                }}
+                key={num.num}
+                onClick={() => handleNumbers(num.num)}
+                color="gray.100"
+                _disabled={{
+                  bg: handleBG(
                     nums.find((obj) => obj.number === parseInt(num.num))
-                      ? true
-                      : false
-                  }
-                  bg={
-                    mynumbers.find((obj) => obj === num.num)
-                      ? "blue.500"
-                      : "black"
-                  }
-                  _focus={{
-                    outline: "none",
-                    bg: mynumbers.find((obj) => obj === num.num)
-                      ? "blue.500"
-                      : "gray.800",
-                  }}
-                  _active={{
-                    bg: mynumbers.find((obj) => obj === num.num)
-                      ? "blue.500"
-                      : "gray.800",
-                  }}
-                  _hover={{
-                    bg: mynumbers.find((obj) => obj === num.num)
-                      ? "blue.500"
-                      : "gray.800",
-                  }}
-                  key={num.num}
-                  onClick={() => handleNumbers(num.num)}
-                  color="gray.100"
-                  _disabled={{
+                  ),
+                  _hover: {
                     bg: handleBG(
                       nums.find((obj) => obj.number === parseInt(num.num))
                     ),
-                    _hover: {
-                      bg: handleBG(
-                        nums.find((obj) => obj.number === parseInt(num.num))
-                      ),
-                    },
-                    _active: {
-                      bg: handleBG(
-                        nums.find((obj) => obj.number === parseInt(num.num))
-                      ),
-                    },
-                    _focus: {
-                      bg: handleBG(
-                        nums.find((obj) => obj.number === parseInt(num.num))
-                      ),
-                    },
-                  }}
-                >
-                  {num.num}
-                </Button>
-              ))}
-            </Grid>
-          </Box>
-
-          <Box rounded="xl" shadow="lg" borderWidth="1px" p={5} h="min-content">
-            <Stat>
-              <StatLabel>Total a Pagar</StatLabel>
-              <StatNumber>
-                {parseFloat(amount).toLocaleString("pt-br", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
-              </StatNumber>
-            </Stat>
-
-            <Divider mt={5} mb={5} />
-
-            <Stack spacing={3} w="100%">
-              <Button
-                leftIcon={<FaTrash />}
-                colorScheme="red"
-                onClick={() => clearNumbers()}
-                isFullWidth
-                variant="outline"
+                  },
+                  _active: {
+                    bg: handleBG(
+                      nums.find((obj) => obj.number === parseInt(num.num))
+                    ),
+                  },
+                  _focus: {
+                    bg: handleBG(
+                      nums.find((obj) => obj.number === parseInt(num.num))
+                    ),
+                  },
+                }}
               >
-                Limpar Números
+                {num.num}
               </Button>
-              <Button
-                leftIcon={<FaCheck />}
-                colorScheme="green"
-                size="lg"
-                onClick={() => setModalSent(true)}
-                isFullWidth
-              >
-                Finalizar Compra
-              </Button>
-            </Stack>
-          </Box>
+            ))}
+          </Grid>
+        </Box>
+
+        <Grid
+          rounded="xl"
+          shadow="lg"
+          borderWidth="1px"
+          p={5}
+          h="min-content"
+          templateColumns={["1fr", "1fr 1fr", "1fr 1fr", "1fr 1fr", "1fr 1fr"]}
+          gap={5}
+          mt={10}
+          alignItems="center"
+          justifyItems={["center", "initial", "initial", "initial", "initial"]}
+        >
+          <Stat>
+            <StatLabel>Total a Pagar</StatLabel>
+            <StatNumber>
+              {parseFloat(amount).toLocaleString("pt-br", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </StatNumber>
+          </Stat>
+
+          <Grid
+            templateColumns={[
+              "1fr",
+              "1fr 1fr",
+              "1fr 1fr",
+              "1fr 1fr",
+              "1fr 1fr",
+            ]}
+            gap={[2, 5, 5, 5, 5]}
+            w="100%"
+          >
+            <Button
+              leftIcon={<FaTrash />}
+              colorScheme="red"
+              size="lg"
+              onClick={() => clearNumbers()}
+              isFullWidth
+              variant="outline"
+            >
+              Limpar Números
+            </Button>
+
+            <Button
+              leftIcon={<FaCheck />}
+              colorScheme="green"
+              size="lg"
+              onClick={() => setModalSent(true)}
+              isFullWidth
+            >
+              Finalizar Compra
+            </Button>
+          </Grid>
         </Grid>
       </Container>
 

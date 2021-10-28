@@ -20,6 +20,11 @@ import {
   InputLeftElement,
   Select,
   Skeleton,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
 } from "@chakra-ui/react";
 import {
   Breadcrumb,
@@ -46,17 +51,7 @@ export default function MeusDados({ information }) {
       <>
         <HeaderApp />
         <Container maxW="7xl" mt={10}>
-          <Grid
-            templateColumns={[
-              "1fr",
-              "1fr",
-              "200px 1fr",
-              "200px 1fr",
-              "200px 1fr",
-            ]}
-            gap="30px"
-          >
-            <Skeleton w="200px" h="250px" rounded="lg" />
+          <Grid templateColumns={"1fr"} gap="30px">
             <Box>
               <Skeleton w="100%" h="40px" mb={3} />
               <Skeleton w="100%" h="40px" mb={3} />
@@ -88,6 +83,7 @@ export default function MeusDados({ information }) {
   const [cep, setCep] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
+  const [tabIndex, setTabIndex] = useState(0);
 
   const [loading, setLoading] = useState(false);
 
@@ -245,59 +241,19 @@ export default function MeusDados({ information }) {
           </BreadcrumbItem>
         </Breadcrumb>
 
-        <Grid
-          templateColumns={[
-            "1fr",
-            "1fr",
-            "200px 1fr",
-            "200px 1fr",
-            "200px 1fr",
-          ]}
-          gap="30px"
+        <Tabs
+          mt={10}
+          variant="enclosed-colored"
+          colorScheme="green"
+          onChange={(index) => setTabIndex(index)}
         >
-          <Box borderWidth="1px" rounded="lg" h="min-content">
-            <Flex p={3} align="center">
-              <Icon as={FaBars} />
-              <Heading fontSize="lg" ml={3}>
-                Menu
-              </Heading>
-            </Flex>
-            <Divider />
+          <TabList>
+            <Tab roundedTop="md">Meus Dados</Tab>
+            <Tab roundedTop="md">Minhas Rifas</Tab>
+          </TabList>
 
-            <Flex direction="column" p={3}>
-              <Button
-                colorScheme="purple"
-                variant="outline"
-                mb={5}
-                onClick={() => setPage("data")}
-                size="sm"
-              >
-                Meus Dados
-              </Button>
-              <Text fontSize="sm" mb={2}>
-                Meus Sorteios:
-              </Text>
-              <Button
-                colorScheme="purple"
-                variant="outline"
-                mb={3}
-                onClick={() => setPage("admin")}
-                size="sm"
-              >
-                Como Administrador
-              </Button>
-              <Button
-                colorScheme="purple"
-                variant="outline"
-                onClick={() => setPage("client")}
-                size="sm"
-              >
-                Como Participante
-              </Button>
-            </Flex>
-          </Box>
-          <Box borderWidth="1px" rounded="lg" p={3} h="min-content">
-            {page === "data" && (
+          <TabPanels>
+            <TabPanel>
               <>
                 <Grid templateColumns="1fr" gap="15px">
                   <FormControl
@@ -311,7 +267,7 @@ export default function MeusDados({ information }) {
                     <FormLabel>Nome Completo</FormLabel>
                     <Input
                       id="name"
-                      focusBorderColor="purple.400"
+                      focusBorderColor="green.500"
                       placeholder="Nome Completo"
                       value={name}
                       onChange={(e) => setName(e.target.value.toUpperCase())}
@@ -368,7 +324,7 @@ export default function MeusDados({ information }) {
                         <Input
                           ref={ref}
                           {...props}
-                          focusBorderColor="purple.400"
+                          focusBorderColor="green.500"
                           isReadOnly
                         />
                       )}
@@ -417,7 +373,7 @@ export default function MeusDados({ information }) {
                             placeholder="Telefone"
                             ref={ref}
                             {...props}
-                            focusBorderColor="purple.400"
+                            focusBorderColor="green.500"
                           />
                         </InputGroup>
                       )}
@@ -441,7 +397,7 @@ export default function MeusDados({ information }) {
                   >
                     <FormLabel>Email</FormLabel>
                     <Input
-                      focusBorderColor="purple.400"
+                      focusBorderColor="green.500"
                       placeholder="Email"
                       id="email"
                       value={email}
@@ -477,7 +433,7 @@ export default function MeusDados({ information }) {
                       Logradouro - Rua, Avenida, Alameda, etc...
                     </FormLabel>
                     <Input
-                      focusBorderColor="purple.400"
+                      focusBorderColor="green.500"
                       placeholder="Logradouro - Rua, Avenida, Alameda, etc..."
                       value={street}
                       onChange={(e) => setStreet(e.target.value.toUpperCase())}
@@ -500,7 +456,7 @@ export default function MeusDados({ information }) {
                   >
                     <FormLabel>Número</FormLabel>
                     <Input
-                      focusBorderColor="purple.400"
+                      focusBorderColor="green.500"
                       placeholder="Número"
                       value={number}
                       onChange={(e) => setNumber(e.target.value.toUpperCase())}
@@ -528,7 +484,7 @@ export default function MeusDados({ information }) {
                   <FormControl>
                     <FormLabel>Ponto de Referência</FormLabel>
                     <Input
-                      focusBorderColor="purple.400"
+                      focusBorderColor="green.500"
                       placeholder="Ponto de Referência"
                       value={comp}
                       onChange={(e) => setComp(e.target.value.toUpperCase())}
@@ -544,7 +500,7 @@ export default function MeusDados({ information }) {
                   >
                     <FormLabel>Bairro / Distrito</FormLabel>
                     <Input
-                      focusBorderColor="purple.400"
+                      focusBorderColor="green.500"
                       placeholder="Bairro / Distrito"
                       value={district}
                       onChange={(e) =>
@@ -601,7 +557,7 @@ export default function MeusDados({ information }) {
                         <Input
                           ref={ref}
                           {...props}
-                          focusBorderColor={"purple.400"}
+                          focusBorderColor={"green.500"}
                         />
                       )}
                     />
@@ -621,7 +577,7 @@ export default function MeusDados({ information }) {
                   >
                     <FormLabel>Cidade</FormLabel>
                     <Input
-                      focusBorderColor="purple.400"
+                      focusBorderColor="green.500"
                       placeholder="Cidade"
                       value={city}
                       onChange={(e) => setCity(e.target.value.toUpperCase())}
@@ -645,7 +601,7 @@ export default function MeusDados({ information }) {
                     <Select
                       placeholder="Selecione"
                       variant="outline"
-                      focusBorderColor={"purple.400"}
+                      focusBorderColor={"green.500"}
                       id="state"
                       value={state}
                       onChange={(e) => setState(e.target.value)}
@@ -689,7 +645,7 @@ export default function MeusDados({ information }) {
 
                 <Button
                   size="lg"
-                  colorScheme="purple"
+                  colorScheme="green"
                   leftIcon={<FaSave />}
                   isLoading={loading}
                   onClick={() => update()}
@@ -697,15 +653,39 @@ export default function MeusDados({ information }) {
                   Salvar Alterações
                 </Button>
               </>
-            )}
-            {page === "admin" && (
-              <Admin info={query.cliente} url={url} configs={configs} />
-            )}
-            {page === "client" && (
-              <Client info={query.cliente} url={url} configs={configs} />
-            )}
-          </Box>
-        </Grid>
+            </TabPanel>
+            <TabPanel>
+              <Tabs
+                colorScheme="green"
+                onChange={(index) => setTabIndex(index)}
+                defaultIndex={0}
+                size="sm"
+                mt={5}
+              >
+                <TabList>
+                  <Tab>Participante</Tab>
+                  <Tab>Administrador</Tab>
+                </TabList>
+                <TabPanels>
+                  <TabPanel>
+                    {tabIndex === 0 && (
+                      <Admin info={query.cliente} url={url} configs={configs} />
+                    )}
+                  </TabPanel>
+                  <TabPanel>
+                    {tabIndex === 1 && (
+                      <Client
+                        info={query.cliente}
+                        url={url}
+                        configs={configs}
+                      />
+                    )}
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       </Container>
       <FooterApp />
     </>
