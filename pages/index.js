@@ -5,11 +5,7 @@ import {
   Flex,
   Grid,
   Heading,
-  LinkBox,
-  LinkOverlay,
   Text,
-  Divider,
-  Icon,
   useColorMode,
   Button,
 } from "@chakra-ui/react";
@@ -17,14 +13,13 @@ import Link from "next/link";
 import HeaderApp from "../components/header";
 import Image from "next/image";
 import { IoMdArrowForward } from "react-icons/io";
-import { FaUserAlt } from "react-icons/fa";
 import configsGlobal from "../configs/index";
 import FooterApp from "../components/footer";
 import { useConfigs } from "../context/Configs";
-import { format } from "date-fns";
-import pt_br from "date-fns/locale/pt-BR";
 
-export default function Home({ config, raffles, url }) {
+import ShowRaffles from "../components/raffles";
+
+export default function Home({ config, raffles }) {
   const { setConfigs } = useConfigs();
   const { colorMode } = useColorMode();
 
@@ -37,7 +32,7 @@ export default function Home({ config, raffles, url }) {
       <HeaderApp />
 
       <Container maxW="6xl" mt={20}>
-        <Flex justify="center" align="center" direction="column">
+        <Flex justify="center" align="center" direction="column" mb={10}>
           <Heading textAlign="center">Rifas em Destaque</Heading>
           <Box
             bgGradient={
@@ -52,83 +47,7 @@ export default function Home({ config, raffles, url }) {
           />
         </Flex>
 
-        <Grid
-          templateColumns="repeat(auto-fit, minmax(250px, 250px))"
-          gap={5}
-          justifyItems="center"
-          mt={10}
-          justifyContent="center"
-        >
-          {raffles.map((raf) => (
-            <LinkBox
-              rounded="xl"
-              overflow="hidden"
-              w="250px"
-              shadow="lg"
-              key={raf.id}
-              borderWidth="1px"
-            >
-              <Box w="250px" h="250px">
-                <Image
-                  src={`${url}/${raf.thumbnail}`}
-                  width={260}
-                  height={260}
-                  layout="responsive"
-                  objectFit="cover"
-                  alt="PA Rifas, rifas online"
-                />
-              </Box>
-              <Box p={4}>
-                <Link href={`/rifa/${raf.identify}`} passHref>
-                  <LinkOverlay>
-                    <Heading
-                      color={colorMode === "light" ? "green.500" : "green.200"}
-                      fontSize="md"
-                      noOfLines={2}
-                      textAlign="center"
-                    >
-                      {raf.name}
-                    </Heading>
-                  </LinkOverlay>
-                </Link>
-
-                <Flex
-                  align="center"
-                  mt={1}
-                  justify="center"
-                  fontSize="xl"
-                  mt={3}
-                  mb={3}
-                >
-                  <Text fontWeight="300" mr={2}>
-                    R$
-                  </Text>
-                  <Text fontWeight="800">
-                    {parseFloat(raf.raffle_value).toLocaleString("pt-br", {
-                      minimumFractionDigits: 2,
-                    })}
-                  </Text>
-                </Flex>
-
-                <Text fontSize="xs" mt={2} noOfLines={1} textAlign="center">
-                  Sorteio:{" "}
-                  <strong>
-                    {format(
-                      new Date(raf.draw_date),
-                      "dd 'de' MMMM', às ' HH:mm'h'",
-                      { locale: pt_br }
-                    )}
-                  </strong>{" "}
-                </Text>
-                <Divider mt={3} mb={3} />
-                <Flex align="center" fontSize="xs" justify="center">
-                  <Icon as={FaUserAlt} mr={2} />
-                  <Text noOfLines={1}>{raf.name_client}</Text>
-                </Flex>
-              </Box>
-            </LinkBox>
-          ))}
-        </Grid>
+        <ShowRaffles raffle={raffles} destination={"rifa"} />
 
         <Flex justify="center" align="center" mt={10}>
           <Link href="/rifas" passHref>
@@ -372,14 +291,10 @@ export const getStaticProps = async () => {
   const data = await response.json();
   let conf = !data.configs ? null : data.configs;
   let raf = !data.raffles ? null : data.raffles;
-  let url = !data.url ? null : data.url;
-  let banners = !data.banners ? null : data.banners;
   return {
     props: {
       config: conf,
       raffles: raf,
-      url: url,
-      banners,
     },
     revalidate: 10,
   };

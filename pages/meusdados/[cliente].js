@@ -222,7 +222,7 @@ export default function MeusDados({ information }) {
   return (
     <>
       <HeaderApp />
-      <Container maxW="7xl" mt={10}>
+      <Container maxW="5xl" mt={10}>
         <Breadcrumb fontSize={["xx-small", "md", "md", "md", "md"]} mb={10}>
           <BreadcrumbItem>
             <Link href="/" passHref>
@@ -654,17 +654,18 @@ export default function MeusDados({ information }) {
                 </Button>
               </>
             </TabPanel>
-            <TabPanel>
+            <TabPanel p={0}>
               <Tabs
                 colorScheme="green"
                 onChange={(index) => setTabIndex(index)}
                 defaultIndex={0}
-                size="sm"
-                mt={5}
+                mt={10}
+                variant="enclosed-colored"
+                isFitted
               >
                 <TabList>
-                  <Tab>Participante</Tab>
-                  <Tab>Administrador</Tab>
+                  <Tab roundedTop="md">ADMINISTRADOR</Tab>
+                  <Tab roundedTop="md">PARTICIPANTE</Tab>
                 </TabList>
                 <TabPanels>
                   <TabPanel>
@@ -673,13 +674,7 @@ export default function MeusDados({ information }) {
                     )}
                   </TabPanel>
                   <TabPanel>
-                    {tabIndex === 1 && (
-                      <Client
-                        info={query.cliente}
-                        url={url}
-                        configs={configs}
-                      />
-                    )}
+                    {tabIndex === 1 && <Client info={query.cliente} />}
                   </TabPanel>
                 </TabPanels>
               </Tabs>

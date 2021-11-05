@@ -46,6 +46,8 @@ import configsGlobal from "../configs/index";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+import ShowRaffles from "../components/raffles";
+
 export default function Sorteios({ raffles }) {
   const { colorMode } = useColorMode();
   const [raffle, setRaffle] = useState([]);
@@ -189,141 +191,7 @@ export default function Sorteios({ raffles }) {
                 <Heading fontSize="2xl">Nenhum sorteio para mostrar</Heading>
               </Center>
             ) : (
-              <Grid
-                templateColumns="repeat(auto-fit, minmax(250px, 250px))"
-                gap={5}
-                justifyContent="center"
-              >
-                {raffle.map((raf) => (
-                  <LinkBox
-                    rounded="lg"
-                    overflow="hidden"
-                    w="250px"
-                    shadow="lg"
-                    borderWidth="1px"
-                    key={raf.id}
-                  >
-                    {raf.status === "drawn" && (
-                      <Box
-                        pos="absolute"
-                        zIndex={900}
-                        fontWeight="bold"
-                        ml={3}
-                        mt={3}
-                        shadow="md"
-                        bg="green.500"
-                        color="white"
-                        rounded="lg"
-                        p={2}
-                      >
-                        FINALIZADA
-                      </Box>
-                    )}
-                    {raf.status === "cancel" && (
-                      <Box
-                        pos="absolute"
-                        zIndex={900}
-                        fontWeight="bold"
-                        ml={3}
-                        mt={3}
-                        shadow="md"
-                        bg="red.500"
-                        color="white"
-                        rounded="lg"
-                        p={2}
-                      >
-                        CANCELADA
-                      </Box>
-                    )}
-
-                    {raf.status === "refused" && (
-                      <Box
-                        pos="absolute"
-                        zIndex={900}
-                        fontWeight="bold"
-                        ml={3}
-                        mt={3}
-                        shadow="md"
-                        bg="gray.900"
-                        color="white"
-                        rounded="lg"
-                        p={2}
-                      >
-                        RECUSADA
-                      </Box>
-                    )}
-
-                    <Box w="250px" h="250px">
-                      <Image
-                        src={`${url}/${raf.thumbnail}`}
-                        width={260}
-                        height={260}
-                        layout="responsive"
-                        objectFit="cover"
-                        alt="PA Rifas, rifas online"
-                      />
-                    </Box>
-                    <Box p={4}>
-                      <Link href={`/rifa/${raf.identify}`} passHref>
-                        <LinkOverlay>
-                          <Heading
-                            color={
-                              colorMode === "light" ? "green.500" : "green.200"
-                            }
-                            fontSize="md"
-                            noOfLines={2}
-                            textAlign="center"
-                          >
-                            {raf.name}
-                          </Heading>
-                        </LinkOverlay>
-                      </Link>
-                      <Flex
-                        align="center"
-                        mt={1}
-                        justify="center"
-                        fontSize="xl"
-                        mt={3}
-                        mb={3}
-                      >
-                        <Text fontWeight="300" mr={2}>
-                          R$
-                        </Text>
-                        <Text fontWeight="800">
-                          {parseFloat(raf.raffle_value).toLocaleString(
-                            "pt-br",
-                            {
-                              minimumFractionDigits: 2,
-                            }
-                          )}
-                        </Text>
-                      </Flex>
-                      <Text
-                        fontSize="xs"
-                        mt={2}
-                        noOfLines={1}
-                        textAlign="center"
-                      >
-                        Sorteio:{" "}
-                        <strong>
-                          {format(
-                            new Date(raf.draw_date),
-                            "dd 'de' MMMM', às ' HH:mm'h'",
-                            { locale: ptBR }
-                          )}
-                        </strong>
-                      </Text>
-                      <Divider mt={3} mb={3} />
-                      <Flex align="center" fontSize="xs" justify="center">
-                        <Icon as={FaUserAlt} mr={2} />
-                        <Text isTruncated noOfLines={1}>
-                          {raf.name_client}
-                        </Text>
-                      </Flex>
-                    </Box>
-                  </LinkBox>
-                ))}
-              </Grid>
+              <ShowRaffles raffle={raffle} destination="rifa" />
             )}
 
             <Center mt={10}>
