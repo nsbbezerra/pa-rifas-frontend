@@ -5,21 +5,15 @@ import {
   Container,
   Center,
   Grid,
-  LinkBox,
-  LinkOverlay,
   Box,
-  Text,
   Heading,
   Flex,
-  Divider,
   FormControl,
   FormLabel,
-  Icon,
   Input,
   Select,
   Button,
   Tooltip,
-  useColorMode,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -34,24 +28,13 @@ import {
   BreadcrumbLink,
 } from "../components/sliders";
 import Link from "next/link";
-import {
-  FaArrowLeft,
-  FaArrowRight,
-  FaSearch,
-  FaUserAlt,
-  FaWhatsapp,
-} from "react-icons/fa";
-import Image from "next/image";
+import { FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
 import configsGlobal from "../configs/index";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 
 import ShowRaffles from "../components/raffles";
 
 export default function Sorteios({ raffles }) {
-  const { colorMode } = useColorMode();
   const [raffle, setRaffle] = useState([]);
-  const [url, setUrl] = useState("");
   const [search, setSearch] = useState("all");
   const [text, setText] = useState("");
   const [modal, setModal] = useState(false);
@@ -59,7 +42,6 @@ export default function Sorteios({ raffles }) {
   useEffect(() => {
     if (raffles !== null) {
       setRaffle(raffles.raffles);
-      setUrl(raffles.url);
     }
   }, [raffles]);
 

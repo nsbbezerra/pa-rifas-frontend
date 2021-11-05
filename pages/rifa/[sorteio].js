@@ -375,7 +375,7 @@ export default function Sorteio({ raffles, url }) {
                     </Stat>
                   </HStack>
                 </Box>
-                <Progress hasStripe value={50} size="lg" colorScheme="green" />
+                <Progress hasStripe value={100} size="lg" colorScheme="green" />
                 <Box p={5}>
                   <Flex>
                     <Flex
