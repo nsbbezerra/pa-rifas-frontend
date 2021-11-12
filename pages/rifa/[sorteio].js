@@ -48,6 +48,7 @@ import {
   AiFillBank,
   AiOutlineFacebook,
   AiOutlineInstagram,
+  AiOutlineTrophy,
   AiOutlineUser,
   AiOutlineWhatsApp,
 } from "react-icons/ai";
@@ -475,7 +476,129 @@ export default function Sorteio({ raffles, url }) {
 
         <Grid
           templateColumns={[
-            "repeat(2, 180px)",
+            "repeat(2, 1fr)",
+            "repeat(3, 1fr)",
+            "repeat(3, 1fr)",
+            "repeat(5, 1fr)",
+            "repeat(5, 1fr)",
+          ]}
+          gap={5}
+          mt={10}
+          justifyContent="center"
+        >
+          <Flex
+            rounded="xl"
+            shadow="lg"
+            borderWidth="1px"
+            direction="column"
+            justify="center"
+            align="center"
+            h="min-content"
+          >
+            <Flex align="center">
+              <Icon as={AiOutlineTrophy} />
+              <Heading fontSize="sm" textAlign="center" p={2} w="100%">
+                1º PRÊMIO
+              </Heading>
+            </Flex>
+            <Divider />
+            <Text fontSize="sm" p={2}>
+              It is a long established fact that a reader will be distracted by
+              the readable content of a page when looking at its layout.
+            </Text>
+          </Flex>
+
+          <Flex
+            rounded="xl"
+            shadow="lg"
+            borderWidth="1px"
+            direction="column"
+            justify="center"
+            align="center"
+            h="min-content"
+          >
+            <Flex align="center">
+              <Icon as={AiOutlineTrophy} />
+              <Heading fontSize="sm" textAlign="center" p={2} w="100%">
+                2º PRÊMIO
+              </Heading>
+            </Flex>
+            <Divider />
+            <Text fontSize="sm" p={2}>
+              It is a long established fact that a reader will be distracted by
+              the readable content of a page when looking at its layout.
+            </Text>
+          </Flex>
+
+          <Flex
+            rounded="xl"
+            shadow="lg"
+            borderWidth="1px"
+            direction="column"
+            justify="center"
+            align="center"
+            h="min-content"
+          >
+            <Flex align="center">
+              <Icon as={AiOutlineTrophy} />
+              <Heading fontSize="sm" textAlign="center" p={2} w="100%">
+                3º PRÊMIO
+              </Heading>
+            </Flex>
+            <Divider />
+            <Text fontSize="sm" p={2}>
+              It is a long established fact that a reader will be distracted by
+              the readable content of a page when looking at its layout.
+            </Text>
+          </Flex>
+
+          <Flex
+            rounded="xl"
+            shadow="lg"
+            borderWidth="1px"
+            direction="column"
+            justify="center"
+            align="center"
+            h="min-content"
+          >
+            <Flex align="center">
+              <Icon as={AiOutlineTrophy} />
+              <Heading fontSize="sm" textAlign="center" p={2} w="100%">
+                4º PRÊMIO
+              </Heading>
+            </Flex>
+            <Divider />
+            <Text fontSize="sm" p={2}>
+              It is a long established fact that a reader will be distracted by
+              the readable content of a page when looking at its layout.
+            </Text>
+          </Flex>
+          <Flex
+            rounded="xl"
+            shadow="lg"
+            borderWidth="1px"
+            direction="column"
+            justify="center"
+            align="center"
+            h="min-content"
+          >
+            <Flex align="center">
+              <Icon as={AiOutlineTrophy} />
+              <Heading fontSize="sm" textAlign="center" p={2} w="100%">
+                5º PRÊMIO
+              </Heading>
+            </Flex>
+            <Divider />
+            <Text fontSize="sm" p={2}>
+              It is a long established fact that a reader will be distracted by
+              the readable content of a page when looking at its layout.
+            </Text>
+          </Flex>
+        </Grid>
+
+        <Grid
+          templateColumns={[
+            "repeat(2, 140px)",
             "repeat(3, 180px)",
             "repeat(4, 180px)",
             "repeat(4, 180px)",
@@ -493,6 +616,7 @@ export default function Sorteio({ raffles, url }) {
             bg="black"
             color="white"
             textAlign="center"
+            fontSize={["xs", "md", "md", "md", "md"]}
           >
             Livres (
             {nums.length > 0 && JSON.stringify(raffle) !== "{}"
@@ -511,6 +635,7 @@ export default function Sorteio({ raffles, url }) {
             bg="orange.400"
             color="white"
             textAlign="center"
+            fontSize={["xs", "md", "md", "md", "md"]}
           >
             Reservado (
             {nums.length > 0
@@ -527,6 +652,7 @@ export default function Sorteio({ raffles, url }) {
             bg="green.400"
             color="white"
             textAlign="center"
+            fontSize={["xs", "md", "md", "md", "md"]}
           >
             Pago (
             {nums.length > 0
@@ -543,6 +669,7 @@ export default function Sorteio({ raffles, url }) {
             bg="red.600"
             color="white"
             textAlign="center"
+            fontSize={["xs", "md", "md", "md", "md"]}
           >
             Meus Números (
             {JSON.stringify(client) !== "{}"
@@ -625,6 +752,15 @@ export default function Sorteio({ raffles, url }) {
               </Button>
             ))}
           </Grid>
+
+          <Button
+            leftIcon={<FaTrash />}
+            colorScheme="red"
+            onClick={() => clearNumbers()}
+            mt={5}
+          >
+            Limpar Números
+          </Button>
         </Box>
 
         <Grid
@@ -633,7 +769,7 @@ export default function Sorteio({ raffles, url }) {
           borderWidth="1px"
           p={5}
           h="min-content"
-          templateColumns={["1fr", "1fr 1fr", "1fr 1fr", "1fr 1fr", "1fr 1fr"]}
+          templateColumns={["1fr", "1fr 1fr", "1fr 1fr", "2fr 1fr", "2fr 1fr"]}
           gap={5}
           mt={10}
           alignItems="center"
@@ -649,28 +785,7 @@ export default function Sorteio({ raffles, url }) {
             </StatNumber>
           </Stat>
 
-          <Grid
-            templateColumns={[
-              "1fr",
-              "1fr 1fr",
-              "1fr 1fr",
-              "1fr 1fr",
-              "1fr 1fr",
-            ]}
-            gap={[2, 5, 5, 5, 5]}
-            w="100%"
-          >
-            <Button
-              leftIcon={<FaTrash />}
-              colorScheme="red"
-              size="lg"
-              onClick={() => clearNumbers()}
-              isFullWidth
-              variant="outline"
-            >
-              Limpar Números
-            </Button>
-
+          <Grid templateColumns={"1fr"} gap={[2, 5, 5, 5, 5]} w="100%">
             <Button
               leftIcon={<FaCheck />}
               colorScheme="green"

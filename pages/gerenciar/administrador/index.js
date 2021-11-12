@@ -2,25 +2,25 @@ import Header from "../../../components/header";
 import Footer from "../../../components/footer";
 import {
   Box,
-  Center,
   Container,
   Divider,
   Flex,
   Grid,
   Heading,
   HStack,
-  Stack,
   Text,
 } from "@chakra-ui/layout";
 import Image from "next/image";
 import { useColorMode, useColorModeValue } from "@chakra-ui/color-mode";
 import { Stat, StatLabel, StatNumber, StatHelpText } from "@chakra-ui/stat";
 import { Button } from "@chakra-ui/button";
-import { GiCancel, GiCardRandom } from "react-icons/gi";
+import { GiCardRandom } from "react-icons/gi";
 import Icon from "@chakra-ui/icon";
 import { AiOutlineTrophy, AiOutlineWhatsApp } from "react-icons/ai";
-import { FaCalendar, FaEdit } from "react-icons/fa";
-import { IoMdImage } from "react-icons/io";
+import { FaRegEdit, FaEdit } from "react-icons/fa";
+import { IoImagesOutline, IoCalendarOutline } from "react-icons/io5";
+import { ImCancelCircle } from "react-icons/im";
+import { Tag } from "@chakra-ui/tag";
 
 export default function AdminRaffles() {
   const { colorMode } = useColorMode();
@@ -29,9 +29,9 @@ export default function AdminRaffles() {
     <>
       <Header />
       <Container maxW="6xl" mt={10}>
-        <Heading fontSize="2xl" mb={10}>
-          Rifa nº: 1
-        </Heading>
+        <Tag colorScheme="green" size="lg" fontWeight="bold" mb={10}>
+          RIFA Nº 1
+        </Tag>
         <Grid
           templateColumns={[
             "1fr",
@@ -90,7 +90,13 @@ export default function AdminRaffles() {
 
           <Box w="100%">
             <Grid
-              templateColumns="repeat(auto-fit, minmax(180px, 180px))"
+              templateColumns={[
+                "repeat(2, 1fr)",
+                "repeat(2, 1fr)",
+                "repeat(3, 1fr)",
+                "repeat(4, 1fr)",
+                "repeat(4, 1fr)",
+              ]}
               gap={5}
               justifyContent="center"
             >
@@ -105,7 +111,7 @@ export default function AdminRaffles() {
                   <StatLabel>Total Reservados</StatLabel>
                   <StatNumber>R$ 0.00</StatNumber>
                   <StatHelpText fontSize="xs">
-                    Atualizado em 08/11/2021
+                    * Já descontado as taxas
                   </StatHelpText>
                 </Stat>
               </Box>
@@ -120,7 +126,7 @@ export default function AdminRaffles() {
                   <StatLabel>Total Arrecadado</StatLabel>
                   <StatNumber>R$ 0.00</StatNumber>
                   <StatHelpText fontSize="xs">
-                    Atualizado em 08/11/2021
+                    * Já descontado as taxas
                   </StatHelpText>
                 </Stat>
               </Box>
@@ -135,7 +141,7 @@ export default function AdminRaffles() {
                   <StatLabel>Total Bloqueado</StatLabel>
                   <StatNumber>R$ 0.00</StatNumber>
                   <StatHelpText fontSize="xs">
-                    Atualizado em 08/11/2021
+                    * Já descontado as taxas
                   </StatHelpText>
                 </Stat>
               </Box>
@@ -150,7 +156,7 @@ export default function AdminRaffles() {
                   <StatLabel>Total Liberado</StatLabel>
                   <StatNumber>R$ 0.00</StatNumber>
                   <StatHelpText fontSize="xs">
-                    Atualizado em 08/11/2021
+                    * Já descontado as taxas
                   </StatHelpText>
                 </Stat>
               </Box>
@@ -176,7 +182,13 @@ export default function AdminRaffles() {
             />
 
             <Grid
-              templateColumns="repeat(auto-fit, minmax(140px, 140px))"
+              templateColumns={[
+                "repeat(2, 1fr)",
+                "repeat(3, 1fr)",
+                "repeat(3, 1fr)",
+                "repeat(4, 1fr)",
+                "repeat(5, 1fr)",
+              ]}
               gap={5}
               mt={5}
               justifyContent="center"
@@ -319,40 +331,49 @@ export default function AdminRaffles() {
         <Grid
           mt={5}
           templateColumns={[
-            "repeat(1, 1fr)",
+            "repeat(2, 1fr)",
             "repeat(2, 1fr)",
             "repeat(3, 1fr)",
-            "repeat(3, 1fr)",
-            "repeat(3, 1fr)",
+            "repeat(4, 1fr)",
+            "repeat(6, 1fr)",
           ]}
           gap={5}
         >
-          <Button size="lg" leftIcon={<IoMdImage />}>
-            Alterar Imagem
+          <Button size="md" rounded="xl" h="90px">
+            <Flex justify="center" align="center" direction="column">
+              <Icon as={IoImagesOutline} fontSize="5xl" />
+              <Text mt={2}>Alterar Imagem</Text>
+            </Flex>
           </Button>
-          <Button size="lg" leftIcon={<FaEdit />}>
-            Alterar Informação
+          <Button size="md" rounded="xl" h="90px">
+            <Flex justify="center" align="center" direction="column">
+              <Icon as={FaRegEdit} fontSize="5xl" />
+              <Text mt={2}>Alterar Informação</Text>
+            </Flex>
           </Button>
-          <Button size="lg" leftIcon={<FaCalendar />}>
-            Alterar Data e Hora
+          <Button size="md" rounded="xl" h="90px">
+            <Flex justify="center" align="center" direction="column">
+              <Icon as={IoCalendarOutline} fontSize="5xl" />
+              <Text mt={2}>Alterar Data e Hora</Text>
+            </Flex>
           </Button>
-          <Button
-            isFullWidth
-            colorScheme="red"
-            size="lg"
-            leftIcon={<GiCancel />}
-          >
-            Cancelar Rifa
+          <Button isFullWidth colorScheme="red" size="md" rounded="xl" h="90px">
+            <Flex justify="center" align="center" direction="column">
+              <Icon as={ImCancelCircle} fontSize="5xl" />
+              <Text mt={2}>Cancelar Rifa</Text>
+            </Flex>
           </Button>
-          <Button size="lg" colorScheme="green" leftIcon={<GiCardRandom />}>
-            Realizar Sorteio
+          <Button size="md" rounded="xl" h="90px" colorScheme="green">
+            <Flex justify="center" align="center" direction="column">
+              <Icon as={GiCardRandom} fontSize="5xl" />
+              <Text mt={2}>Realizar Sorteio</Text>
+            </Flex>
           </Button>
-          <Button
-            size="lg"
-            colorScheme="whatsapp"
-            leftIcon={<AiOutlineWhatsApp />}
-          >
-            Contato PA Rifas
+          <Button size="md" rounded="xl" h="90px" colorScheme="whatsapp">
+            <Flex justify="center" align="center" direction="column">
+              <Icon as={AiOutlineWhatsApp} fontSize="5xl" />
+              <Text mt={2}>Contato PA Rifas</Text>
+            </Flex>
           </Button>
         </Grid>
       </Container>
