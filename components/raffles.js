@@ -15,7 +15,14 @@ import pt_br from "date-fns/locale/pt-BR";
 import Icon from "@chakra-ui/icon";
 import { FaUserAlt } from "react-icons/fa";
 import configs from "../configs";
-import { useColorMode } from "@chakra-ui/color-mode";
+import { useColorMode, useColorModeValue } from "@chakra-ui/color-mode";
+import {
+  Slider,
+  SliderFilledTrack,
+  SliderThumb,
+  SliderTrack,
+} from "@chakra-ui/slider";
+import { Tag } from "@chakra-ui/tag";
 
 export default function ShowRaffles({ raffle, destination }) {
   const { colorMode } = useColorMode();
@@ -35,6 +42,46 @@ export default function ShowRaffles({ raffle, destination }) {
           key={raf.id}
           borderWidth="1px"
         >
+          {raf.status === "drawn" && (
+            <Flex
+              bg={useColorModeValue("green.500", "green.200")}
+              p={2}
+              justify="center"
+              align="center"
+              color={useColorModeValue("white", "gray.700")}
+              pos="absolute"
+              zIndex={1000}
+              transform="rotate(-40deg)"
+              w="250px"
+              left="-70px"
+              top="25px"
+              shadow="lg"
+              fontWeight="bold"
+              fontSize="lg"
+            >
+              FINALIZADA
+            </Flex>
+          )}
+          {raf.status === "cancel" && (
+            <Flex
+              bg={useColorModeValue("red.500", "red.200")}
+              p={2}
+              justify="center"
+              align="center"
+              color={useColorModeValue("white", "gray.700")}
+              pos="absolute"
+              zIndex={1000}
+              transform="rotate(-40deg)"
+              w="250px"
+              left="-70px"
+              top="25px"
+              shadow="lg"
+              fontWeight="bold"
+              fontSize="lg"
+            >
+              CANCELADA
+            </Flex>
+          )}
           <Box w="250px" h="250px">
             <Image
               src={`${configs.url}/img/${raf.thumbnail}`}
@@ -45,7 +92,46 @@ export default function ShowRaffles({ raffle, destination }) {
               alt="PA Rifas, rifas online"
             />
           </Box>
-          <Box p={4}>
+          <Slider
+            aria-label="slider-ex-4"
+            defaultValue={30}
+            size="lg"
+            mt="-12px"
+            isReadOnly
+          >
+            <SliderTrack
+              bg={useColorModeValue("green.100", "green.100")}
+              h="10px"
+              rounded="none"
+            >
+              <SliderFilledTrack
+                bg={useColorModeValue("green.500", "green.300")}
+              />
+            </SliderTrack>
+            <SliderThumb boxSize={9} borderWidth="1px" borderColor="green.100">
+              <Flex
+                justify="center"
+                align="center"
+                fontSize="xs"
+                fontWeight="bold"
+                color="green.500"
+              >
+                30%
+              </Flex>
+            </SliderThumb>
+          </Slider>
+          <Box p={4} mt="-12px">
+            <Tag
+              pos="absolute"
+              right={2}
+              top={2}
+              shadow="md"
+              bg={useColorModeValue("green.400", "green.200")}
+              color={useColorModeValue("gray.100", "gray.700")}
+              fontWeight="semibold"
+            >
+              Nº {raf.id}
+            </Tag>
             <Link href={`/${destination}/${raf.identify}`} passHref>
               <LinkOverlay>
                 <Heading

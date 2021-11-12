@@ -35,6 +35,7 @@ import {
   useColorMode,
   Stack,
   Progress,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import {
   Breadcrumb,
@@ -63,6 +64,12 @@ import api from "../../configs/axios";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import useFetch from "../../hooks/useFetch";
 import FooterApp from "../../components/footer";
+import {
+  Slider,
+  SliderFilledTrack,
+  SliderThumb,
+  SliderTrack,
+} from "@chakra-ui/slider";
 
 export default function Sorteio({ raffles, url }) {
   const { colorMode } = useColorMode();
@@ -375,8 +382,39 @@ export default function Sorteio({ raffles, url }) {
                     </Stat>
                   </HStack>
                 </Box>
-                <Progress hasStripe value={100} size="lg" colorScheme="green" />
-                <Box p={5}>
+                <Slider
+                  aria-label="slider-ex-4"
+                  defaultValue={30}
+                  size="lg"
+                  mt="-12px"
+                  isReadOnly
+                >
+                  <SliderTrack
+                    bg={useColorModeValue("green.100", "green.100")}
+                    h="10px"
+                    rounded="none"
+                  >
+                    <SliderFilledTrack
+                      bg={useColorModeValue("green.500", "green.300")}
+                    />
+                  </SliderTrack>
+                  <SliderThumb
+                    boxSize={10}
+                    borderWidth="1px"
+                    borderColor="green.200"
+                  >
+                    <Flex
+                      justify="center"
+                      align="center"
+                      fontSize="sm"
+                      fontWeight="bold"
+                      color="green.500"
+                    >
+                      30%
+                    </Flex>
+                  </SliderThumb>
+                </Slider>
+                <Box p={5} mt="-12px">
                   <Flex>
                     <Flex
                       rounded="full"
