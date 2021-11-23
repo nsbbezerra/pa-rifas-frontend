@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import {useEffect} from 'react';
 import {
   Box,
   Container,
@@ -8,20 +8,26 @@ import {
   Text,
   useColorMode,
   Button,
-} from "@chakra-ui/react";
-import Link from "next/link";
-import HeaderApp from "../components/header";
-import Image from "next/image";
-import { IoMdArrowForward } from "react-icons/io";
-import configsGlobal from "../configs/index";
-import FooterApp from "../components/footer";
-import { useConfigs } from "../context/Configs";
+  FormControl,
+  FormLabel,
+  Input,
+  Textarea,
+  Select,
+} from '@chakra-ui/react';
+import Link from 'next/link';
+import HeaderApp from '../components/header';
+import Image from 'next/image';
+import {IoMdArrowForward} from 'react-icons/io';
+import {RiMailSendLine} from 'react-icons/ri';
+import configsGlobal from '../configs/index';
+import FooterApp from '../components/footer';
+import {useConfigs} from '../context/Configs';
 
-import ShowRaffles from "../components/raffles";
+import ShowRaffles from '../components/raffles';
 
-export default function Home({ config, raffles }) {
-  const { setConfigs } = useConfigs();
-  const { colorMode } = useColorMode();
+export default function Home({config, raffles}) {
+  const {setConfigs} = useConfigs();
+  const {colorMode} = useColorMode();
 
   useEffect(() => {
     setConfigs(config);
@@ -36,9 +42,9 @@ export default function Home({ config, raffles }) {
           <Heading textAlign="center">Rifas em Destaque</Heading>
           <Box
             bgGradient={
-              colorMode === "light"
-                ? "linear(to-r, green.500, orange.500)"
-                : "linear(to-r, green.200, orange.200)"
+              colorMode === 'light'
+                ? 'linear(to-r, green.500, orange.500)'
+                : 'linear(to-r, green.200, orange.200)'
             }
             w="200px"
             h="5px"
@@ -47,7 +53,7 @@ export default function Home({ config, raffles }) {
           />
         </Flex>
 
-        <ShowRaffles raffle={raffles} destination={"rifa"} />
+        <ShowRaffles raffle={raffles} destination={'rifa'} />
 
         <Flex justify="center" align="center" mt={10}>
           <Link href="/rifas" passHref>
@@ -55,8 +61,7 @@ export default function Home({ config, raffles }) {
               <Button
                 rightIcon={<IoMdArrowForward />}
                 colorScheme="green"
-                variant="outline"
-              >
+                variant="outline">
                 Mais Rifas
               </Button>
             </a>
@@ -67,9 +72,8 @@ export default function Home({ config, raffles }) {
       <Box
         pt={10}
         pb={10}
-        bg={colorMode === "light" ? "blackAlpha.100" : "whiteAlpha.200"}
-        mt={20}
-      >
+        bg={colorMode === 'light' ? 'blackAlpha.100' : 'whiteAlpha.200'}
+        mt={20}>
         <Container maxW="6xl">
           <Flex justify="center" align="center" direction="column">
             <Heading textAlign="center">
@@ -77,9 +81,9 @@ export default function Home({ config, raffles }) {
             </Heading>
             <Box
               bgGradient={
-                colorMode === "light"
-                  ? "linear(to-r, green.500, orange.500)"
-                  : "linear(to-r, green.200, orange.200)"
+                colorMode === 'light'
+                  ? 'linear(to-r, green.500, orange.500)'
+                  : 'linear(to-r, green.200, orange.200)'
               }
               w="200px"
               h="5px"
@@ -94,8 +98,7 @@ export default function Home({ config, raffles }) {
             justifyItems="center"
             mt={10}
             justifyContent="center"
-            alignItems="flex-start"
-          >
+            alignItems="flex-start">
             <Flex justify="center" align="center" direction="column">
               <Box w="70px" h="70px">
                 <Image
@@ -175,110 +178,62 @@ export default function Home({ config, raffles }) {
         </Container>
       </Box>
 
-      <Container mt={20} maxW="6xl">
+      <Container mt={20} maxW="4xl">
         <Flex justify="center" align="center" direction="column">
-          <Heading textAlign="center">Formas de Pagamento</Heading>
+          <Heading textAlign="center">Envie-nos o seu Feedback</Heading>
           <Box
             bgGradient={
-              colorMode === "light"
-                ? "linear(to-r, green.500, orange.500)"
-                : "linear(to-r, green.200, orange.200)"
+              colorMode === 'light'
+                ? 'linear(to-r, green.500, orange.500)'
+                : 'linear(to-r, green.200, orange.200)'
             }
             w="200px"
             h="5px"
             mt={3}
             mb={3}
           />
+          <Text textAlign="center" fontSize="sm">
+            Nos envie a sua Sugestão, Crítica, Elogio, o seu Feedback é muito
+            importante para nós, assim estaremos melhorando cada vez mais os
+            nossos serviços.
+          </Text>
         </Flex>
-
         <Grid
-          templateColumns="repeat(auto-fit, minmax(280px, 280px))"
-          gap={7}
-          justifyContent="center"
-          justifyItems="center"
           mt={10}
-        >
-          <Flex
-            justify="center"
-            align="center"
-            direction="column"
-            p={5}
-            rounded="xl"
-            borderWidth="1px"
-            shadow="lg"
-            w="100%"
-          >
-            <Box w="70px" h="70px">
-              <Image
-                src="/img/credit.svg"
-                width={100}
-                height={100}
-                layout="responsive"
-                objectFit="contain"
-              />
-            </Box>
-            <Heading textAlign="center" fontSize="2xl" mt={3}>
-              Cartão de Crédito
-            </Heading>
-            <Text textAlign="center" mt={2}>
-              Receba das principais bandeiras de cartões
-            </Text>
-          </Flex>
-
-          <Flex
-            justify="center"
-            align="center"
-            direction="column"
-            p={5}
-            rounded="xl"
-            borderWidth="1px"
-            shadow="lg"
-            w="100%"
-          >
-            <Box w="200px">
-              <Image
-                src="/img/pix.svg"
-                width={250}
-                height={130}
-                layout="responsive"
-                objectFit="contain"
-              />
-            </Box>
-            <Heading textAlign="center" fontSize="2xl" mt={3}>
-              PIX
-            </Heading>
-            <Text textAlign="center" mt={2}>
-              Receba instantaneamente
-            </Text>
-          </Flex>
-
-          <Flex
-            justify="center"
-            align="center"
-            direction="column"
-            p={5}
-            rounded="xl"
-            borderWidth="1px"
-            shadow="lg"
-            w="100%"
-          >
-            <Box w="70px" h="70px">
-              <Image
-                src="/img/boleto.svg"
-                width={100}
-                height={100}
-                layout="responsive"
-                objectFit="contain"
-              />
-            </Box>
-            <Heading textAlign="center" fontSize="2xl" mt={3}>
-              Boleto Bancário
-            </Heading>
-            <Text textAlign="center" mt={2}>
-              Emita boletos com facilidade
-            </Text>
-          </Flex>
+          templateColumns={['1fr', '1fr 3fr', '1fr 3fr', '1fr 3fr', '1fr 3fr']}
+          gap={5}>
+          <FormControl>
+            <FormLabel>Selecione uma Opção</FormLabel>
+            <Select
+              focusBorderColor="green.500"
+              placeholder="Selecione uma Opção">
+              <option value="1">Sugestão</option>
+              <option value="2">Crítica</option>
+              <option value="3">Elogio</option>
+            </Select>
+          </FormControl>
+          <FormControl>
+            <FormLabel>Insira seu Nome</FormLabel>
+            <Input focusBorderColor="green.500" placeholder="Insira seu Nome" />
+          </FormControl>
         </Grid>
+        <FormControl mt={5}>
+          <FormLabel>Insira uma Mensagem</FormLabel>
+          <Textarea
+            focusBorderColor="green.500"
+            placeholder="Insira uma Mensagem"
+            rows={5}
+            resize="none"
+          />
+        </FormControl>
+
+        <Button
+          leftIcon={<RiMailSendLine />}
+          colorScheme="green"
+          size="lg"
+          mt={5}>
+          Enviar Mensagem
+        </Button>
       </Container>
 
       <FooterApp />
