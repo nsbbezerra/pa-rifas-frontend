@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
-import HeaderApp from "../components/header";
-import FooterApp from "../components/footer";
-import { File, InputFile } from "../styles/uploader";
+import {useEffect, useMemo, useState} from 'react';
+import HeaderApp from '../components/header';
+import FooterApp from '../components/footer';
+import {File, InputFile} from '../styles/uploader';
 import {
   Container,
   FormControl,
@@ -36,144 +36,117 @@ import {
   Switch,
   Checkbox,
   CheckboxGroup,
-} from "@chakra-ui/react";
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  StatHelpText,
+  ModalBody,
+  ModalCloseButton,
+} from '@chakra-ui/react';
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
-} from "../components/sliders";
-import Link from "next/link";
+} from '../components/sliders';
+import Link from 'next/link';
 import {
   FaImage,
   FaCalendarAlt,
   FaWhatsapp,
-  FaSave,
+  FaPercentage,
   FaCheck,
-  FaStop,
   FaPlus,
   FaTrash,
-} from "react-icons/fa";
-import DatePicker, { registerLocale } from "react-datepicker";
-import pt_br from "date-fns/locale/pt-BR";
-import MaskedInput from "react-text-mask";
-import { AiOutlineWarning } from "react-icons/ai";
-import Image from "next/image";
-import { useClient } from "../context/Clients";
-import configsGlobal from "../configs/index";
-import api from "../configs/axios";
-import { useLoginModal } from "../context/ModalLogin";
-import { useRegisterModal } from "../context/ModalRegister";
+} from 'react-icons/fa';
+import DatePicker, {registerLocale} from 'react-datepicker';
+import pt_br from 'date-fns/locale/pt-BR';
+import MaskedInput from 'react-text-mask';
+import Image from 'next/image';
+import {useClient} from '../context/Clients';
+import configsGlobal from '../configs/index';
+import api from '../configs/axios';
+import {useLoginModal} from '../context/ModalLogin';
+import {useRegisterModal} from '../context/ModalRegister';
 
-registerLocale("pt_br", pt_br);
+registerLocale('pt_br', pt_br);
 
-export default function NovoSorteio({ config }) {
-  const { colorMode } = useColorMode();
+export default function NovoSorteio({config}) {
+  const {colorMode} = useColorMode();
   const toast = useToast();
-  const { client } = useClient();
-  const { setOpenLogin } = useLoginModal();
-  const { setOpenRegister } = useRegisterModal();
+  const {client} = useClient();
+  const {setOpenLogin} = useLoginModal();
+  const {setOpenRegister} = useRegisterModal();
 
   const [startDate, setStartDate] = useState(new Date());
   const [modalConfirm, setModalConfirm] = useState(false);
+  const [modalTaxes, setModalTaxes] = useState(false);
 
-  const [typeKeyPix, setTypeKeyPix] = useState("CPF");
-  const [keyPix, setKeyPix] = useState("");
-
-  const [bank, setBank] = useState("");
-  const [ag, setAg] = useState("");
-  const [tipoCc, setTipoCc] = useState("Conta Corrente");
-  const [cc, setCc] = useState("");
-  const [variation, setVariation] = useState("");
-  const [operation, setOperation] = useState("");
-
-  const [pix, setPix] = useState([]);
-  const [transfer, setTransfer] = useState([]);
-
-  const [raffle, setRaffle] = useState("");
-  const [qtdNumbers, setQtdNumbers] = useState("0");
-  const [raffleValue, setRaffleValue] = useState("0");
+  const [raffle, setRaffle] = useState('');
+  const [qtdNumbers, setQtdNumbers] = useState('0');
+  const [raffleValue, setRaffleValue] = useState('0');
 
   const [validators, setValidators] = useState([]);
   const [thumbnail, setThumbnail] = useState(null);
-  const [banner, setBanner] = useState(null);
-  const [description, setDescription] = useState("");
-
-  const [disableBanner, setDisableBanner] = useState(false);
+  const [description, setDescription] = useState('');
 
   const [loadingSave, setLoadingSave] = useState(false);
 
-  const [idToBanner, setIdToBanner] = useState(null);
-  const [loadingBanner, setLoadingBanner] = useState(false);
+  const [checkOne, setCheckOne] = useState(false);
+  const [checkTwo, setCheckTwo] = useState(false);
+  const [checkThree, setCheckThree] = useState(false);
+  const [checkFour, setCheckFour] = useState(false);
+  const [checkFive, setCheckFive] = useState(false);
 
   function clear() {
-    setRaffle("");
-    setQtdNumbers("0");
-    setRaffleValue("0");
-    setPix([]);
-    setTransfer([]);
+    setRaffle('');
+    setQtdNumbers('0');
+    setRaffleValue('0');
     setThumbnail(null);
-    setBanner(null);
-    removeBanner();
     removeThumbnail();
-    setDescription("");
+    setDescription('');
     setStartDate(new Date());
+    setCheckOne(false);
+    setCheckTwo(false);
+    setCheckThree(false);
+    setCheckFour(false);
+    setCheckFive(false);
   }
 
   useEffect(() => {
     if (thumbnail) {
       let size = thumbnail.size / 1024;
       let thumbname = thumbnail.name;
-      if (thumbname.includes(" ")) {
-        handleValidator("image", "Nome da imagem não pode conter espaços");
+      if (thumbname.includes(' ')) {
+        handleValidator('image', 'Nome da imagem não pode conter espaços');
       }
       if (size > 500) {
         handleValidator(
-          "image",
-          "Imagem maior que 500kb, insira uma imagem menor"
+          'image',
+          'Imagem maior que 500kb, insira uma imagem menor',
         );
       }
     } else {
       setValidators([]);
     }
   }, [thumbnail]);
-  useEffect(() => {
-    if (banner) {
-      let size = banner.size / 1024;
-      let thumbname = banner.name;
-      if (thumbname.includes(" ")) {
-        handleValidator("banner", "Nome da imagem não pode conter espaços");
-      }
-      if (size > 500) {
-        handleValidator(
-          "banner",
-          "Imagem maior que 500kb, insira uma imagem menor"
-        );
-      }
-    } else {
-      setValidators([]);
-    }
-  }, [banner]);
 
   const previewThumbnail = useMemo(() => {
     return thumbnail ? URL.createObjectURL(thumbnail) : null;
   }, [thumbnail]);
 
-  const previewBanner = useMemo(() => {
-    return banner ? URL.createObjectURL(banner) : null;
-  }, [banner]);
-
   function handleValidator(path, message) {
     let val = [];
-    let info = { path: path, message: message };
+    let info = {path: path, message: message};
     val.push(info);
     setValidators(val);
-    if (path !== "image" || path !== "banner") {
+    if (path !== 'image' || path !== 'banner') {
       const inpt = document.getElementById(path);
       inpt.focus();
     }
   }
 
-  const CustomInputPicker = ({ value, onClick }) => (
+  const CustomInputPicker = ({value, onClick}) => (
     <InputGroup>
       <Input
         focusBorderColor="green.500"
@@ -189,7 +162,7 @@ export default function NovoSorteio({ config }) {
       title: title,
       description: message,
       status: status,
-      position: "bottom-right",
+      position: 'bottom-right',
     });
   }
 
@@ -199,173 +172,73 @@ export default function NovoSorteio({ config }) {
     setValidators([]);
   }
 
-  async function removeBanner() {
-    await URL.revokeObjectURL(banner);
-    setBanner(null);
-    setValidators([]);
-  }
-
-  async function handlePix() {
-    const result = await pix.find((obj) => obj.pix === keyPix);
-    if (result) {
-      showToast("Chave pix já inserida", "warning", "Atenção");
-      return false;
-    } else {
-      let info = { type: typeKeyPix, pix: keyPix };
-      setPix([...pix, info]);
-      setTypeKeyPix("CPF");
-      setKeyPix("");
-    }
-  }
-
-  async function removePix(id) {
-    const result = await pix.filter((obj) => obj.pix !== id);
-    setPix(result);
-  }
-
-  async function handleTransfer() {
-    const result = await transfer.find((obj) => obj.cc === cc);
-    if (result) {
-      showToast("Conta já adicionada", "warning", "Atenção");
-      return false;
-    } else {
-      let info = {
-        bank: bank,
-        ag: ag,
-        cc: cc,
-        type: tipoCc,
-        op: operation,
-        vr: variation,
-      };
-      setTransfer([...transfer, info]);
-      setBank("");
-      setAg("");
-      setCc("");
-      setTipoCc("Conta Corrente");
-      setOperation("");
-      setVariation("");
-    }
-  }
-
-  async function removeTransfer(id) {
-    const result = transfer.filter((obj) => obj.cc !== id);
-    setTransfer(result);
-  }
-
   async function saveRaffle() {
     if (!thumbnail) {
-      handleValidator("image", "Insira uma imagem");
-      showToast("Insira uma imagem", "warning", "Atenção");
-      setModalConfirm(false);
+      handleValidator('image', 'Insira uma imagem');
+      showToast('Insira uma imagem', 'warning', 'Atenção');
       return false;
     }
     let size = thumbnail.size / 1024;
     if (size > 500) {
       handleValidator(
-        "image",
-        "Imagem maior que 500kb, insira uma imagem menor"
+        'image',
+        'Imagem maior que 500kb, insira uma imagem menor',
       );
       showToast(
-        "Imagem maior que 500kb, insira uma imagem menor",
-        "warning",
-        "Atenção"
+        'Imagem maior que 500kb, insira uma imagem menor',
+        'warning',
+        'Atenção',
       );
-      setModalConfirm(false);
       return false;
     }
-    if (raffle === "") {
-      handleValidator("raffle", "Campo Obrigatório");
-      showToast("Campo Obrigatório", "warning", "Atenção");
-      setModalConfirm(false);
+    if (raffle === '') {
+      handleValidator('raffle', 'Campo Obrigatório');
+      showToast('Campo Obrigatório', 'warning', 'Atenção');
       return false;
     }
     if (parseFloat(qtdNumbers) > parseFloat(config.max_numbers)) {
       showToast(
         `O número de rifas ultrapassa o número máximo permitido, a quatidade máxima permitida é de ${config.max_numbers} números.`,
-        "warning",
-        "Atenção"
+        'warning',
+        'Atenção',
       );
-      setModalConfirm(false);
       return false;
     }
-    if (description === "") {
-      handleValidator("description", "Campo Obrigatório");
-      showToast("A descrição é obrigatória", "warning", "Atenção");
-      setModalConfirm(false);
-      return false;
-    }
-    if (pix.length === 0 && transfer.length === 0) {
-      showToast(
-        "Insira pelo menos uma forma de pagamento",
-        "warning",
-        "Atenção"
-      );
-      setModalConfirm(false);
+    if (description === '') {
+      handleValidator('description', 'Campo Obrigatório');
+      showToast('A descrição é obrigatória', 'warning', 'Atenção');
       return false;
     }
     setLoadingSave(true);
     try {
       let data = new FormData();
-      data.append("thumbnail", thumbnail);
-      data.append("name", raffle);
-      data.append("qtd_numbers", parseFloat(qtdNumbers));
-      data.append("draw_date", startDate);
-      data.append("draw_time", startDate);
-      data.append("client_id", client.id);
-      data.append("pix_keys", JSON.stringify(pix));
-      data.append("bank_transfer", JSON.stringify(transfer));
-      data.append("description", description);
-      data.append("raffle_value", raffleValue);
+      data.append('thumbnail', thumbnail);
+      data.append('name', raffle);
+      data.append('qtd_numbers', parseFloat(qtdNumbers));
+      data.append('draw_date', startDate);
+      data.append('draw_time', startDate);
+      data.append('client_id', client.id);
+      data.append('description', description);
+      data.append('raffle_value', raffleValue);
 
-      const response = await api.post("/raffle", data);
+      const response = await api.post('/raffle', data);
 
-      showToast(response.data.message, "success", "Sucesso");
-      setIdToBanner(response.data.id);
-      setDisableBanner(true);
+      showToast(response.data.message, 'success', 'Sucesso');
 
       setLoadingSave(false);
-      setModalConfirm(false);
-    } catch (error) {
-      setLoadingSave(false);
-      if (error.message === "Network Error") {
-        alert(
-          "Sem conexão com o servidor, verifique sua conexão com a internet."
-        );
-        return false;
-      }
-      let mess = !error.response.data
-        ? "Erro no cadastro do cliente"
-        : error.response.data.message;
-      showToast(mess, "error", "Erro");
-    }
-  }
-
-  async function saveBanner() {
-    if (banner === null) {
-      showToast("Insira uma imagem de banner", "warning", "Atenção");
-      return false;
-    }
-    setLoadingBanner(true);
-    try {
-      let data = new FormData();
-      data.append("banner", banner);
-      const response = await api.put(`/banner/${idToBanner}`, data);
       clear();
-      showToast(response.data.message, "success", "Sucesso");
-      setDisableBanner(false);
-      setLoadingBanner(false);
     } catch (error) {
-      setLoadingBanner(false);
-      if (error.message === "Network Error") {
+      setLoadingSave(false);
+      if (error.message === 'Network Error') {
         alert(
-          "Sem conexão com o servidor, verifique sua conexão com a internet."
+          'Sem conexão com o servidor, verifique sua conexão com a internet.',
         );
         return false;
       }
       let mess = !error.response.data
-        ? "Erro no cadastro do cliente"
+        ? 'Erro no cadastro do cliente'
         : error.response.data.message;
-      showToast(mess, "error", "Erro");
+      showToast(mess, 'error', 'Erro');
     }
   }
 
@@ -373,7 +246,7 @@ export default function NovoSorteio({ config }) {
     <>
       <HeaderApp />
       <Container maxW="6xl" mt={10}>
-        <Breadcrumb mb={10} fontSize={["xx-small", "md", "md", "md", "md"]}>
+        <Breadcrumb mb={10} fontSize={['xx-small', 'md', 'md', 'md', 'md']}>
           <BreadcrumbItem>
             <Link href="/" passHref>
               <a>
@@ -391,15 +264,15 @@ export default function NovoSorteio({ config }) {
           </BreadcrumbItem>
         </Breadcrumb>
 
-        {JSON.stringify(client) === "{}" ? (
+        {JSON.stringify(client) === '{}' ? (
           <Container maxW="4xl">
             <Flex justify="center" align="center" direction="column">
               <Heading textAlign="center">Não encontramos você!</Heading>
               <Box
                 bgGradient={
-                  colorMode === "light"
-                    ? "linear(to-r, green.500, orange.500)"
-                    : "linear(to-r, green.200, orange.200)"
+                  colorMode === 'light'
+                    ? 'linear(to-r, green.500, orange.500)'
+                    : 'linear(to-r, green.200, orange.200)'
                 }
                 w="200px"
                 h="5px"
@@ -409,16 +282,15 @@ export default function NovoSorteio({ config }) {
             </Flex>
             <Grid
               templateColumns={[
-                "280px",
-                "350px",
-                "350px 350px",
-                "350px 350px",
-                "350px 350px",
+                '280px',
+                '350px',
+                '350px 350px',
+                '350px 350px',
+                '350px 350px',
               ]}
               gap={10}
               mt={10}
-              justifyContent="center"
-            >
+              justifyContent="center">
               <Flex
                 w="100%"
                 rounded="xl"
@@ -427,8 +299,7 @@ export default function NovoSorteio({ config }) {
                 direction="column"
                 justify="center"
                 align="center"
-                p={5}
-              >
+                p={5}>
                 <Box w="40%">
                   <Image
                     src="/img/register.svg"
@@ -449,8 +320,7 @@ export default function NovoSorteio({ config }) {
                   isFullWidth
                   mt={5}
                   colorScheme="orange"
-                  onClick={() => setOpenRegister(true)}
-                >
+                  onClick={() => setOpenRegister(true)}>
                   CADASTRE-SE
                 </Button>
               </Flex>
@@ -463,8 +333,7 @@ export default function NovoSorteio({ config }) {
                 direction="column"
                 justify="center"
                 align="center"
-                p={5}
-              >
+                p={5}>
                 <Box w="40%">
                   <Image
                     src="/img/login.svg"
@@ -485,8 +354,7 @@ export default function NovoSorteio({ config }) {
                   isFullWidth
                   mt={5}
                   colorScheme="green"
-                  onClick={() => setOpenLogin(true)}
-                >
+                  onClick={() => setOpenLogin(true)}>
                   FAÇA LOGIN
                 </Button>
               </Flex>
@@ -496,29 +364,26 @@ export default function NovoSorteio({ config }) {
           <>
             {client.active_admin === true ? (
               <Grid
-                templateColumns={["1fr", "1fr", "1fr", "1fr", "1fr 300px"]}
-                gap={10}
-              >
+                templateColumns={['1fr', '1fr', '1fr', '1fr', '1fr 300px']}
+                gap={10}>
                 <Box>
                   <Grid
                     templateColumns={[
-                      "1fr",
-                      "1fr",
-                      "1fr",
-                      "220px 1fr",
-                      "220px 1fr",
+                      '1fr',
+                      '1fr',
+                      '1fr',
+                      '220px 1fr',
+                      '220px 1fr',
                     ]}
                     gap="20px"
-                    justifyContent="center"
-                  >
+                    justifyContent="center">
                     <FormControl
                       isRequired
                       isInvalid={
-                        validators.find((obj) => obj.path === "image")
+                        validators.find(obj => obj.path === 'image')
                           ? true
                           : false
-                      }
-                    >
+                      }>
                       <FormLabel>Imagem do Sorteio</FormLabel>
                       {thumbnail ? (
                         <Box w="220px" h="220px" rounded="lg" overflow="hidden">
@@ -541,75 +406,70 @@ export default function NovoSorteio({ config }) {
                         <InputFile lar={220} alt={220}>
                           <File
                             type="file"
-                            onChange={(event) =>
+                            onChange={event =>
                               setThumbnail(event.target.files[0])
                             }
                             id="image"
                           />
-                          <FaImage style={{ fontSize: 50, marginBottom: 20 }} />
+                          <FaImage style={{fontSize: 50, marginBottom: 20}} />
                           <p>
                             Insira uma imagem 220px x 220px com no máximo 300kb
                           </p>
                         </InputFile>
                       )}
                       <FormErrorMessage>
-                        {validators.find((obj) => obj.path === "image")
-                          ? validators.find((obj) => obj.path === "image")
-                              .message
-                          : ""}
+                        {validators.find(obj => obj.path === 'image')
+                          ? validators.find(obj => obj.path === 'image').message
+                          : ''}
                       </FormErrorMessage>
                     </FormControl>
                     <Box>
                       <Grid
                         templateColumns={[
-                          "1fr",
-                          "3fr 1fr",
-                          "3fr 1fr",
-                          "3fr 1fr",
-                          "3fr 1fr",
+                          '1fr',
+                          '3fr 1fr',
+                          '3fr 1fr',
+                          '3fr 1fr',
+                          '3fr 1fr',
                         ]}
-                        gap="20px"
-                      >
+                        gap="20px">
                         <FormControl
                           isRequired
                           isInvalid={
-                            validators.find((obj) => obj.path === "raffle")
+                            validators.find(obj => obj.path === 'raffle')
                               ? true
                               : false
-                          }
-                        >
+                          }>
                           <FormLabel>Nome do Sorteio</FormLabel>
                           <Input
                             id="raffle"
                             placeholder="Nome do Sorteio"
                             focusBorderColor="green.500"
                             value={raffle}
-                            onChange={(e) =>
+                            onChange={e =>
                               setRaffle(e.target.value.toUpperCase())
                             }
                           />
                           <FormErrorMessage>
-                            {validators.find((obj) => obj.path === "raffle")
-                              ? validators.find((obj) => obj.path === "raffle")
+                            {validators.find(obj => obj.path === 'raffle')
+                              ? validators.find(obj => obj.path === 'raffle')
                                   .message
-                              : ""}
+                              : ''}
                           </FormErrorMessage>
                         </FormControl>
                         <FormControl
                           isRequired
                           isInvalid={
-                            validators.find((obj) => obj.path === "qtd")
+                            validators.find(obj => obj.path === 'qtd')
                               ? true
                               : false
-                          }
-                        >
+                          }>
                           <FormLabel>Qtd. de Números</FormLabel>
                           <NumberInput
                             focusBorderColor="green.500"
                             id="qtd"
                             value={qtdNumbers}
-                            onChange={(e) => setQtdNumbers(e)}
-                          >
+                            onChange={e => setQtdNumbers(e)}>
                             <NumberInputField />
                             <NumberInputStepper>
                               <NumberIncrementStepper />
@@ -617,40 +477,37 @@ export default function NovoSorteio({ config }) {
                             </NumberInputStepper>
                           </NumberInput>
                           <FormErrorMessage>
-                            {validators.find((obj) => obj.path === "qtd")
-                              ? validators.find((obj) => obj.path === "qtd")
+                            {validators.find(obj => obj.path === 'qtd')
+                              ? validators.find(obj => obj.path === 'qtd')
                                   .message
-                              : ""}
+                              : ''}
                           </FormErrorMessage>
                         </FormControl>
                       </Grid>
                       <Grid
                         templateColumns={[
-                          "1fr",
-                          "repeat(3, 1fr)",
-                          "repeat(3, 1fr)",
-                          "repeat(3, 1fr)",
-                          "repeat(3, 1fr)",
+                          '1fr',
+                          'repeat(3, 1fr)',
+                          'repeat(3, 1fr)',
+                          'repeat(3, 1fr)',
+                          'repeat(3, 1fr)',
                         ]}
                         gap="20px"
-                        mt={4}
-                      >
+                        mt={4}>
                         <FormControl
                           isRequired
                           isInvalid={
-                            validators.find((obj) => obj.path === "value")
+                            validators.find(obj => obj.path === 'value')
                               ? true
                               : false
-                          }
-                        >
+                          }>
                           <FormLabel>Valor do Sorteio (R$)</FormLabel>
                           <NumberInput
                             focusBorderColor="green.500"
                             step={0.01}
                             id="value"
                             value={raffleValue}
-                            onChange={(e) => setRaffleValue(e)}
-                          >
+                            onChange={e => setRaffleValue(e)}>
                             <NumberInputField />
                             <NumberInputStepper>
                               <NumberIncrementStepper />
@@ -658,10 +515,10 @@ export default function NovoSorteio({ config }) {
                             </NumberInputStepper>
                           </NumberInput>
                           <FormErrorMessage>
-                            {validators.find((obj) => obj.path === "value")
-                              ? validators.find((obj) => obj.path === "value")
+                            {validators.find(obj => obj.path === 'value')
+                              ? validators.find(obj => obj.path === 'value')
                                   .message
-                              : ""}
+                              : ''}
                           </FormErrorMessage>
                         </FormControl>
 
@@ -670,7 +527,7 @@ export default function NovoSorteio({ config }) {
                           <div className="customDatePickerWidth">
                             <DatePicker
                               selected={startDate}
-                              onChange={(date) => setStartDate(date)}
+                              onChange={date => setStartDate(date)}
                               customInput={<CustomInputPicker />}
                               locale="pt_br"
                               dateFormat="dd/MM/yyyy"
@@ -683,7 +540,7 @@ export default function NovoSorteio({ config }) {
                           <div className="customDatePickerWidth">
                             <DatePicker
                               selected={startDate}
-                              onChange={(date) => setStartDate(date)}
+                              onChange={date => setStartDate(date)}
                               customInput={<CustomInputPicker />}
                               locale="pt_br"
                               showTimeSelect
@@ -698,15 +555,14 @@ export default function NovoSorteio({ config }) {
 
                       <Grid
                         templateColumns={[
-                          "1fr",
-                          "repeat(3, 1fr)",
-                          "repeat(3, 1fr)",
-                          "repeat(3, 1fr)",
-                          "repeat(3, 1fr)",
+                          '1fr',
+                          'repeat(3, 1fr)',
+                          'repeat(3, 1fr)',
+                          'repeat(3, 1fr)',
+                          'repeat(3, 1fr)',
                         ]}
                         gap="20px"
-                        mt={4}
-                      >
+                        mt={4}>
                         <FormControl>
                           <FormLabel>Nome do Administrador</FormLabel>
                           <Input
@@ -729,17 +585,17 @@ export default function NovoSorteio({ config }) {
                           <FormLabel>Telefone - Whatsapp</FormLabel>
                           <MaskedInput
                             mask={[
-                              "(",
+                              '(',
                               /[0-9]/,
                               /\d/,
-                              ")",
-                              " ",
+                              ')',
+                              ' ',
                               /\d/,
                               /\d/,
                               /\d/,
                               /\d/,
                               /\d/,
-                              "-",
+                              '-',
                               /\d/,
                               /\d/,
                               /\d/,
@@ -771,11 +627,10 @@ export default function NovoSorteio({ config }) {
                       isRequired
                       mt={4}
                       isInvalid={
-                        validators.find((obj) => obj.path === "description")
+                        validators.find(obj => obj.path === 'description')
                           ? true
                           : false
-                      }
-                    >
+                      }>
                       <FormLabel>Descrição do Sorteio</FormLabel>
                       <Textarea
                         placeholder="Descrição do Sorteio"
@@ -783,16 +638,16 @@ export default function NovoSorteio({ config }) {
                         rows={5}
                         resize="none"
                         value={description}
-                        onChange={(e) =>
+                        onChange={e =>
                           setDescription(e.target.value.toUpperCase())
                         }
                         id="description"
                       />
                       <FormErrorMessage>
-                        {validators.find((obj) => obj.path === "description")
-                          ? validators.find((obj) => obj.path === "description")
+                        {validators.find(obj => obj.path === 'description')
+                          ? validators.find(obj => obj.path === 'description')
                               .message
-                          : ""}
+                          : ''}
                       </FormErrorMessage>
                     </FormControl>
                   </Grid>
@@ -802,18 +657,16 @@ export default function NovoSorteio({ config }) {
 
                     <Grid
                       templateColumns={[
-                        "1fr",
-                        "1fr 3fr 1fr",
-                        "1fr 3fr 1fr",
-                        "1fr 3fr 1fr",
-                        "1fr 3fr 1fr",
+                        '1fr',
+                        '1fr 3fr 1fr',
+                        '1fr 3fr 1fr',
+                        '1fr 3fr 1fr',
+                        '1fr 3fr 1fr',
                       ]}
-                      gap={3}
-                    >
+                      gap={3}>
                       <Select
                         focusBorderColor="green.500"
-                        placeholder="Selecione uma opção"
-                      >
+                        placeholder="Selecione uma opção">
                         <option>1º Prêmio</option>
                         <option>2º Prêmio</option>
                         <option>3º Prêmio</option>
@@ -849,35 +702,9 @@ export default function NovoSorteio({ config }) {
                         </Box>
                         <Text
                           fontWeight="semibold"
-                          fontSize={["sm", "md", "md", "md", "md"]}
-                        >
+                          fontSize={['sm', 'md', 'md', 'md', 'md']}>
                           Habilitar pagamento por Cartão de Crédito
                         </Text>
-                        <Button size="sm" ml={3}>
-                          Taxas
-                        </Button>
-                      </Flex>
-                      <Flex align="center">
-                        <Switch colorScheme="green" size="lg" />
-                        <Box w="35px" h="35px" ml={5} mr={3}>
-                          <Image
-                            src="/img/boleto.svg"
-                            height={50}
-                            width={50}
-                            layout="responsive"
-                            objectFit="contain"
-                            alt="PA Rifas, rifas online"
-                          />
-                        </Box>
-                        <Text
-                          fontWeight="semibold"
-                          fontSize={["sm", "md", "md", "md", "md"]}
-                        >
-                          Habilitar pagamento por Boleto Bancário
-                        </Text>
-                        <Button size="sm" ml={3}>
-                          Taxas
-                        </Button>
                       </Flex>
                       <Flex align="center">
                         <Switch colorScheme="green" size="lg" />
@@ -893,16 +720,19 @@ export default function NovoSorteio({ config }) {
                         </Box>
                         <Text
                           fontWeight="semibold"
-                          fontSize={["sm", "md", "md", "md", "md"]}
-                        >
+                          fontSize={['sm', 'md', 'md', 'md', 'md']}>
                           Habilitar pagamento por PIX
                         </Text>
-                        <Button size="sm" ml={3}>
-                          Taxas
-                        </Button>
                       </Flex>
                     </Stack>
                   </FormControl>
+                  <Button
+                    colorScheme="orange"
+                    mt={5}
+                    leftIcon={<FaPercentage />}
+                    onClick={() => setModalTaxes(true)}>
+                    Verificar Taxas
+                  </Button>
                 </Box>
 
                 <Box
@@ -910,19 +740,18 @@ export default function NovoSorteio({ config }) {
                   p={5}
                   shadow="lg"
                   h="min-content"
-                  borderWidth="1px"
-                >
+                  borderWidth="1px">
                   <Stat size="md">
                     <StatLabel>Total a Pagar</StatLabel>
                     <StatNumber>
                       {!config
                         ? 0
                         : parseFloat(config.raffle_value).toLocaleString(
-                            "pt-br",
+                            'pt-br',
                             {
-                              style: "currency",
-                              currency: "BRL",
-                            }
+                              style: 'currency',
+                              currency: 'BRL',
+                            },
                           )}
                     </StatNumber>
                   </Stat>
@@ -933,23 +762,38 @@ export default function NovoSorteio({ config }) {
 
                     <CheckboxGroup size="sm">
                       <Stack spacing={3}>
-                        <Checkbox colorScheme="green">
+                        <Checkbox
+                          colorScheme="green"
+                          defaultChecked={checkOne}
+                          onChange={e => setCheckOne(e.target.checked)}>
                           O valor arrecadado só será liberado após o sorteio e a
                           comprovação de entrega do prêmio.
                         </Checkbox>
-                        <Checkbox colorScheme="green">
+                        <Checkbox
+                          colorScheme="green"
+                          defaultChecked={checkTwo}
+                          onChange={e => setCheckTwo(e.target.checked)}>
                           Não haverá reembolso caso haja o cancelamento desta
                           rifa.
                         </Checkbox>
-                        <Checkbox colorScheme="green">
+                        <Checkbox
+                          colorScheme="green"
+                          defaultChecked={checkThree}
+                          onChange={e => setCheckThree(e.target.checked)}>
                           Realize o sorteio na data marcada pois o não
                           cumprimento deste item causará penalizações.
                         </Checkbox>
-                        <Checkbox colorScheme="green">
+                        <Checkbox
+                          colorScheme="green"
+                          defaultChecked={checkFour}
+                          onChange={e => setCheckFour(e.target.checked)}>
                           Esta rifa só estará liberada após a confirmação do
                           pagamento pela equipe do PA Rifas.
                         </Checkbox>
-                        <Checkbox colorScheme="green">
+                        <Checkbox
+                          colorScheme="green"
+                          defaultChecked={checkFive}
+                          onChange={e => setCheckFive(e.target.checked)}>
                           Verifique as taxas cobradas pelos meios de pagamento,
                           caso precise compense no valor da rifa.
                         </Checkbox>
@@ -964,9 +808,18 @@ export default function NovoSorteio({ config }) {
                     isFullWidth
                     size="lg"
                     leftIcon={<FaCheck />}
-                    onClick={() => setModalConfirm(true)}
-                  >
-                    Finalizar Rifa
+                    isLoading={loadingSave}
+                    onClick={() => saveRaffle()}
+                    isDisabled={
+                      checkOne === true &&
+                      checkTwo === true &&
+                      checkThree === true &&
+                      checkFour === true &&
+                      checkFive === true
+                        ? false
+                        : true
+                    }>
+                    Criar Rifa
                   </Button>
                 </Box>
               </Grid>
@@ -979,8 +832,7 @@ export default function NovoSorteio({ config }) {
                   p={10}
                   rounded="xl"
                   shadow="lg"
-                  borderWidth="1px"
-                >
+                  borderWidth="1px">
                   <Box w="20%" mb={10}>
                     <Image
                       src="/img/blocked.svg"
@@ -992,15 +844,15 @@ export default function NovoSorteio({ config }) {
                     />
                   </Box>
                   <Heading textAlign="center" color="red.500" fontSize="xl">
-                    Você foi impedido de criar sorteios por não cumprir os{" "}
+                    Você foi impedido de criar sorteios por não cumprir os{' '}
                     <Link href="/condicoesdeuso" passHref>
-                      <a style={{ color: "blue", textDecoration: "underline" }}>
+                      <a style={{color: 'blue', textDecoration: 'underline'}}>
                         Termos de Uso
                       </a>
                     </Link>
-                    , para mais informações entre em{" "}
+                    , para mais informações entre em{' '}
                     <Link href="/faleconosco">
-                      <a style={{ color: "blue", textDecoration: "underline" }}>
+                      <a style={{color: 'blue', textDecoration: 'underline'}}>
                         Contato Conosco
                       </a>
                     </Link>
@@ -1013,6 +865,32 @@ export default function NovoSorteio({ config }) {
         )}
       </Container>
       <FooterApp />
+
+      <Modal isOpen={modalTaxes} onClose={() => setModalTaxes(false)} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Taxas</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={5}>
+            <Grid templateColumns="1fr 1fr" gap={5}>
+              <Box rounded="xl" borderWidth="1px" p={3}>
+                <Stat>
+                  <StatLabel>PIX</StatLabel>
+                  <StatNumber>R$ 1,50</StatNumber>
+                  <StatHelpText>* Por transação</StatHelpText>
+                </Stat>
+              </Box>
+              <Box rounded="xl" borderWidth="1px" p={3}>
+                <Stat>
+                  <StatLabel>Cartão de Crédito</StatLabel>
+                  <StatNumber>4,39% + R$ 0,40</StatNumber>
+                  <StatHelpText>* Por transação</StatHelpText>
+                </Stat>
+              </Box>
+            </Grid>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 }
