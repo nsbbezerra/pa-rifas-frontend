@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import HeaderApp from "../components/header";
-import FooterApp from "../components/footer";
+import {useEffect, useState} from 'react';
+import HeaderApp from '../components/header';
+import FooterApp from '../components/footer';
 import {
   Container,
   Center,
@@ -21,54 +21,49 @@ import {
   ModalBody,
   ModalCloseButton,
   IconButton,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
-} from "../components/sliders";
-import Link from "next/link";
-import { FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
-import configsGlobal from "../configs/index";
+} from '../components/sliders';
+import Link from 'next/link';
+import {FaArrowLeft, FaArrowRight, FaSearch} from 'react-icons/fa';
+import configsGlobal from '../configs/index';
 
-import ShowRaffles from "../components/raffles";
+import ShowRaffles from '../components/raffles';
 
-export default function Sorteios({ raffles }) {
-  const [raffle, setRaffle] = useState([]);
-  const [search, setSearch] = useState("all");
-  const [text, setText] = useState("");
+export default function Sorteios({raffles, numbers}) {
+  const [raffle, setRaffle] = useState(raffles);
+  const [search, setSearch] = useState('all');
+  const [text, setText] = useState('');
   const [modal, setModal] = useState(false);
-
-  useEffect(() => {
-    if (raffles !== null) {
-      setRaffle(raffles.raffles);
-    }
-  }, [raffles]);
+  const [number] = useState(numbers);
 
   async function finderBySource() {
-    if (search === "all") {
-      await setRaffle(raffles.raffles);
-      setText("");
+    if (search === 'all') {
+      await setRaffle(raffles);
+      setText('');
     }
-    if (search === "user") {
-      let termos = await text.split(" ");
-      let frasesFiltradas = await raffles.raffles.filter((frase) => {
+    if (search === 'user') {
+      let termos = await text.split(' ');
+      let frasesFiltradas = await raffles.filter(frase => {
         return termos.reduce((resultadoAnterior, termoBuscado) => {
           return resultadoAnterior && frase.name_client.includes(termoBuscado);
         }, true);
       });
       await setRaffle(frasesFiltradas);
-      setText("");
+      setText('');
     }
-    if (search === "title") {
-      let termos = await text.split(" ");
-      let frasesFiltradas = await raffles.raffles.filter((frase) => {
+    if (search === 'title') {
+      let termos = await text.split(' ');
+      let frasesFiltradas = await raffles.filter(frase => {
         return termos.reduce((resultadoAnterior, termoBuscado) => {
           return resultadoAnterior && frase.name.includes(termoBuscado);
         }, true);
       });
       await setRaffle(frasesFiltradas);
-      setText("");
+      setText('');
     }
   }
 
@@ -80,8 +75,7 @@ export default function Sorteios({ raffles }) {
           placeholder="Selecione uma opção"
           focusBorderColor="green.500"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        >
+          onChange={e => setSearch(e.target.value)}>
           <option value="all">Todos os Sorteios</option>
           <option value="user">Nome do usuário</option>
           <option value="title">Título do Sorteio</option>
@@ -93,8 +87,8 @@ export default function Sorteios({ raffles }) {
           focusBorderColor="green.500"
           placeholder="Digite para buscar"
           value={text}
-          onChange={(e) => setText(e.target.value.toUpperCase())}
-          isDisabled={search === "all" ? true : false}
+          onChange={e => setText(e.target.value.toUpperCase())}
+          isDisabled={search === 'all' ? true : false}
         />
       </FormControl>
       <Button
@@ -102,8 +96,7 @@ export default function Sorteios({ raffles }) {
         isFullWidth
         leftIcon={<FaSearch />}
         colorScheme="green"
-        onClick={() => finderBySource()}
-      >
+        onClick={() => finderBySource()}>
         Buscar
       </Button>
     </>
@@ -114,7 +107,7 @@ export default function Sorteios({ raffles }) {
       <HeaderApp />
 
       <Container maxW="6xl" mt={10}>
-        <Breadcrumb fontSize={["xx-small", "md", "md", "md", "md"]} mb={10}>
+        <Breadcrumb fontSize={['xx-small', 'md', 'md', 'md', 'md']} mb={10}>
           <BreadcrumbItem>
             <Link href="/" passHref>
               <a>
@@ -142,28 +135,26 @@ export default function Sorteios({ raffles }) {
           fontSize="2xl"
           shadow="lg"
           colorScheme="orange"
-          d={["flex", "flex", "none", "none", "none"]}
+          d={['flex', 'flex', 'none', 'none', 'none']}
           onClick={() => setModal(true)}
         />
 
         <Grid
           templateColumns={[
-            "1fr",
-            "1fr",
-            "270px 1fr",
-            "270px 1fr",
-            "270px 1fr",
+            '1fr',
+            '1fr',
+            '270px 1fr',
+            '270px 1fr',
+            '270px 1fr',
           ]}
-          gap={7}
-        >
+          gap={7}>
           <Box
             rounded="xl"
             borderWidth="1px"
             p={3}
             shadow="lg"
             h="min-content"
-            d={["none", "none", "block", "block", "block"]}
-          >
+            d={['none', 'none', 'block', 'block', 'block']}>
             <SearchCustom />
           </Box>
 
@@ -173,7 +164,11 @@ export default function Sorteios({ raffles }) {
                 <Heading fontSize="2xl">Nenhum sorteio para mostrar</Heading>
               </Center>
             ) : (
-              <ShowRaffles raffle={raffle} destination="rifa" />
+              <ShowRaffles
+                raffle={raffle}
+                destination="rifa"
+                numbers={numbers}
+              />
             )}
 
             <Center mt={10}>
@@ -181,8 +176,7 @@ export default function Sorteios({ raffles }) {
                 rounded="full"
                 borderWidth="1px"
                 overflow="hidden"
-                shadow="md"
-              >
+                shadow="md">
                 <Tooltip label="Página Anterior" hasArrow>
                   <IconButton icon={<FaArrowLeft />} rounded="none" />
                 </Tooltip>
@@ -191,8 +185,7 @@ export default function Sorteios({ raffles }) {
                   fontWeight="bold"
                   w="100px"
                   justify="center"
-                  align="center"
-                >
+                  align="center">
                   1 / 2
                 </Flex>
                 <Tooltip label="Próxima Página" hasArrow>
@@ -223,10 +216,12 @@ export default function Sorteios({ raffles }) {
 export const getStaticProps = async () => {
   const response = await fetch(`${configsGlobal.url}/showRaffles`);
   const data = await response.json();
-  let raffles = !data ? null : data;
+  let raffles = !data.raffles ? null : data.raffles;
+  let numbers = !data.numbers ? null : data.numbers;
   return {
     props: {
       raffles,
+      numbers,
     },
     revalidate: 10,
   };

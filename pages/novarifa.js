@@ -43,6 +43,7 @@ import {
   StatHelpText,
   ModalBody,
   ModalCloseButton,
+  Icon,
 } from '@chakra-ui/react';
 import {
   Breadcrumb,
@@ -58,6 +59,7 @@ import {
   FaCheck,
   FaPlus,
   FaTrash,
+  FaTrophy,
 } from 'react-icons/fa';
 import DatePicker, {registerLocale} from 'react-datepicker';
 import pt_br from 'date-fns/locale/pt-BR';
@@ -79,7 +81,6 @@ export default function NovoSorteio({config}) {
   const {setOpenRegister} = useRegisterModal();
 
   const [startDate, setStartDate] = useState(new Date());
-  const [modalConfirm, setModalConfirm] = useState(false);
   const [modalTaxes, setModalTaxes] = useState(false);
 
   const [raffle, setRaffle] = useState('');
@@ -98,6 +99,13 @@ export default function NovoSorteio({config}) {
   const [checkFour, setCheckFour] = useState(false);
   const [checkFive, setCheckFive] = useState(false);
 
+  const [pix, setPix] = useState(false);
+  const [card, setCard] = useState(false);
+
+  const [trophys, setTrophys] = useState([]);
+  const [trophyOrder, setTrophyOrder] = useState('');
+  const [trophyDescription, setTrophyDescription] = useState('');
+
   function clear() {
     setRaffle('');
     setQtdNumbers('0');
@@ -111,6 +119,34 @@ export default function NovoSorteio({config}) {
     setCheckThree(false);
     setCheckFour(false);
     setCheckFive(false);
+    setPix(false);
+    setCard(false);
+    setTrophys([]);
+  }
+
+  function handleTrophy() {
+    if (trophyOrder === '') {
+      showToast('Escolha uma posição para o prêmio', 'warning', 'Atenção');
+      return false;
+    }
+    if (trophyDescription === '') {
+      showToast('Insira uma descrição para o Prêmio', 'warning', 'Atenção');
+      return false;
+    }
+    const find = trophys.find(obj => obj.order === trophyOrder);
+    if (find) {
+      showToast('Já existe um prêmio nesta posição', 'warning', 'Atenção');
+      return false;
+    }
+    const info = {order: trophyOrder, desc: trophyDescription};
+    setTrophys([...trophys, info]);
+    setTrophyOrder('');
+    setTrophyDescription('');
+  }
+
+  function handleDelTrophy(pos) {
+    const result = trophys.filter(obj => obj.order !== pos);
+    setTrophys(result);
   }
 
   useEffect(() => {
@@ -209,7 +245,25 @@ export default function NovoSorteio({config}) {
       showToast('A descrição é obrigatória', 'warning', 'Atenção');
       return false;
     }
+    if (pix === false && card === false) {
+      showToast(
+        'Habilite pelo menos uma forma de pagamento',
+        'warning',
+        'Atenção',
+      );
+      return false;
+    }
     setLoadingSave(true);
+    let payment;
+    if (pix === true && card === false) {
+      payment = 'pix';
+    }
+    if (pix === false && card === true) {
+      payment = 'card';
+    }
+    if (pix === true && card === true) {
+      payment = 'all';
+    }
     try {
       let data = new FormData();
       data.append('thumbnail', thumbnail);
@@ -220,6 +274,8 @@ export default function NovoSorteio({config}) {
       data.append('client_id', client.id);
       data.append('description', description);
       data.append('raffle_value', raffleValue);
+      data.append('payment', payment);
+      data.append('trophys', JSON.stringify(trophys));
 
       const response = await api.post('/raffle', data);
 
@@ -666,22 +722,66 @@ export default function NovoSorteio({config}) {
                       gap={3}>
                       <Select
                         focusBorderColor="green.500"
-                        placeholder="Selecione uma opção">
-                        <option>1º Prêmio</option>
-                        <option>2º Prêmio</option>
-                        <option>3º Prêmio</option>
-                        <option>4º Prêmio</option>
-                        <option>5º Prêmio</option>
+                        placeholder="Selecione uma opção"
+                        value={trophyOrder}
+                        onChange={e => setTrophyOrder(e.target.value)}>
+                        <option value="1">1º Prêmio</option>
+                        <option value="2">2º Prêmio</option>
+                        <option value="3">3º Prêmio</option>
+                        <option value="4">4º Prêmio</option>
+                        <option value="5">5º Prêmio</option>
                       </Select>
                       <Input
                         placeholder="Descrição do Prêmio"
                         focusBorderColor="green.500"
+                        value={trophyDescription}
+                        onChange={e =>
+                          setTrophyDescription(e.target.value.toUpperCase())
+                        }
                       />
-                      <Button leftIcon={<FaPlus />} colorScheme="green">
+                      <Button
+                        leftIcon={<FaPlus />}
+                        colorScheme="green"
+                        onClick={() => handleTrophy()}>
                         Adicionar
                       </Button>
                     </Grid>
                   </FormControl>
+
+                  <Grid
+                    templateColumns={[
+                      'repeat(1, 1fr)',
+                      'repeat(2, 1fr)',
+                      'repeat(3, 1fr)',
+                      'repeat(3, 1fr)',
+                      'repeat(3, 1fr)',
+                    ]}
+                    gap={5}
+                    mt={5}>
+                    {trophys.map(tro => (
+                      <Box
+                        rounded="xl"
+                        borderWidth="1px"
+                        h="min-content"
+                        key={tro.order}>
+                        <IconButton
+                          icon={<FaTrash />}
+                          size="xs"
+                          colorScheme="red"
+                          position="absolute"
+                          mt={1}
+                          ml={2}
+                          onClick={() => handleDelTrophy(tro.order)}
+                        />
+                        <Flex justify="center" align="center" p={1}>
+                          <Icon as={FaTrophy} mr={3} />
+                          <Text fontWeight="bold">{tro.order}º Prêmio</Text>
+                        </Flex>
+                        <Divider />
+                        <Text p={2}>{tro.desc}</Text>
+                      </Box>
+                    ))}
+                  </Grid>
 
                   <Divider mt={5} mb={5} />
 
@@ -689,7 +789,12 @@ export default function NovoSorteio({config}) {
                     <FormLabel>Opções de Pagamento:</FormLabel>
                     <Stack spacing={4} mt={3}>
                       <Flex align="center">
-                        <Switch colorScheme="green" size="lg" />
+                        <Switch
+                          colorScheme="green"
+                          size="lg"
+                          isChecked={card}
+                          onChange={e => setCard(e.target.checked)}
+                        />
                         <Box w="35px" h="35px" ml={5} mr={3}>
                           <Image
                             src="/img/credit.svg"
@@ -707,7 +812,12 @@ export default function NovoSorteio({config}) {
                         </Text>
                       </Flex>
                       <Flex align="center">
-                        <Switch colorScheme="green" size="lg" />
+                        <Switch
+                          colorScheme="green"
+                          size="lg"
+                          isChecked={pix}
+                          onChange={e => setPix(e.target.checked)}
+                        />
                         <Box w="35px" ml={5} mr={3}>
                           <Image
                             src="/img/pix.svg"
@@ -764,35 +874,35 @@ export default function NovoSorteio({config}) {
                       <Stack spacing={3}>
                         <Checkbox
                           colorScheme="green"
-                          defaultChecked={checkOne}
+                          isChecked={checkOne}
                           onChange={e => setCheckOne(e.target.checked)}>
                           O valor arrecadado só será liberado após o sorteio e a
                           comprovação de entrega do prêmio.
                         </Checkbox>
                         <Checkbox
                           colorScheme="green"
-                          defaultChecked={checkTwo}
+                          isChecked={checkTwo}
                           onChange={e => setCheckTwo(e.target.checked)}>
                           Não haverá reembolso caso haja o cancelamento desta
                           rifa.
                         </Checkbox>
                         <Checkbox
                           colorScheme="green"
-                          defaultChecked={checkThree}
+                          isChecked={checkThree}
                           onChange={e => setCheckThree(e.target.checked)}>
                           Realize o sorteio na data marcada pois o não
                           cumprimento deste item causará penalizações.
                         </Checkbox>
                         <Checkbox
                           colorScheme="green"
-                          defaultChecked={checkFour}
+                          isChecked={checkFour}
                           onChange={e => setCheckFour(e.target.checked)}>
                           Esta rifa só estará liberada após a confirmação do
                           pagamento pela equipe do PA Rifas.
                         </Checkbox>
                         <Checkbox
                           colorScheme="green"
-                          defaultChecked={checkFive}
+                          isChecked={checkFive}
                           onChange={e => setCheckFive(e.target.checked)}>
                           Verifique as taxas cobradas pelos meios de pagamento,
                           caso precise compense no valor da rifa.

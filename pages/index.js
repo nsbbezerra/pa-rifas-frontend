@@ -25,7 +25,7 @@ import {useConfigs} from '../context/Configs';
 
 import ShowRaffles from '../components/raffles';
 
-export default function Home({config, raffles}) {
+export default function Home({config, raffles, numbers}) {
   const {setConfigs} = useConfigs();
   const {colorMode} = useColorMode();
 
@@ -53,7 +53,7 @@ export default function Home({config, raffles}) {
           />
         </Flex>
 
-        <ShowRaffles raffle={raffles} destination={'rifa'} />
+        <ShowRaffles raffle={raffles} destination={'rifa'} numbers={numbers} />
 
         <Flex justify="center" align="center" mt={10}>
           <Link href="/rifas" passHref>
@@ -246,10 +246,12 @@ export const getStaticProps = async () => {
   const data = await response.json();
   let conf = !data.configs ? null : data.configs;
   let raf = !data.raffles ? null : data.raffles;
+  let numbers = !data.numbersRaffle ? null : data.numbersRaffle;
   return {
     props: {
       config: conf,
       raffles: raf,
+      numbers,
     },
     revalidate: 10,
   };
