@@ -43,12 +43,12 @@ import {
   ModalBody,
   ModalCloseButton,
   Icon,
-  HStack,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
   useColorModeValue,
 } from "@chakra-ui/react";
 import {
@@ -79,7 +79,6 @@ import configsGlobal from "../configs/index";
 import api from "../configs/axios";
 import { useLoginModal } from "../context/ModalLogin";
 import { useRegisterModal } from "../context/ModalRegister";
-import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useRouter } from "next/router";
 
 registerLocale("pt_br", pt_br);
@@ -270,7 +269,7 @@ export default function NovoSorteio({ config }) {
       showToast(response.data.message, "success", "Sucesso");
       setLoadingSave(false);
       clear();
-      push(response.data.redirect_url);
+      setModalPayment(true);
     } catch (error) {
       setLoadingSave(false);
       if (error.message === "Network Error") {
@@ -857,16 +856,13 @@ export default function NovoSorteio({ config }) {
                   <Stat size="md">
                     <StatLabel>Total a Pagar</StatLabel>
                     <StatNumber>
-                      {!config
-                        ? 0
-                        : parseFloat(config.raffle_value).toLocaleString(
-                            "pt-br",
-                            {
-                              style: "currency",
-                              currency: "BRL",
-                            }
-                          )}
+                      {!config ? 0 : `${parseFloat(config.raffle_value)}%`}
                     </StatNumber>
+                    <StatHelpText
+                      color={useColorModeValue("red.500", "red.200")}
+                    >
+                      * Do valor arrecadado
+                    </StatHelpText>
                   </Stat>
                   <Divider mt={3} mb={3} />
 
@@ -1011,6 +1007,47 @@ export default function NovoSorteio({ config }) {
           </ModalBody>
         </ModalContent>
       </Modal>
+
+      <AlertDialog
+        isOpen={modalPayment}
+        onClose={() => setModalPayment(false)}
+        size="xl"
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Informação
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              <Text>
+                Sua Rifa está criada, porém ainda inativa, entre em contato com
+                o atendimento da PA Rifas para a liberação da sua rifa.
+              </Text>
+
+              <Button
+                colorScheme="whatsapp"
+                leftIcon={<FaWhatsapp />}
+                mt={4}
+                isFullWidth
+                variant="outline"
+                size="lg"
+                onClick={() => push("/faleconosco")}
+              >
+                Ir Para Contato
+              </Button>
+            </AlertDialogBody>
+            <AlertDialogFooter>
+              <Button
+                onClick={() => setModalPayment(false)}
+                colorScheme="green"
+              >
+                Fechar
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </>
   );
 }
