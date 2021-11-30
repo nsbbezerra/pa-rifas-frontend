@@ -33,7 +33,6 @@ import {
   Heading,
   useColorMode,
   Stack,
-  Switch,
   Checkbox,
   CheckboxGroup,
   Modal,
@@ -44,12 +43,13 @@ import {
   ModalBody,
   ModalCloseButton,
   Icon,
-  ModalFooter,
+  HStack,
   Tabs,
   TabList,
   TabPanels,
   Tab,
   TabPanel,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import {
   Breadcrumb,
@@ -68,6 +68,7 @@ import {
   FaTrophy,
   FaQrcode,
   FaCopy,
+  FaCreditCard,
 } from "react-icons/fa";
 import DatePicker, { registerLocale } from "react-datepicker";
 import pt_br from "date-fns/locale/pt-BR";
@@ -78,11 +79,14 @@ import configsGlobal from "../configs/index";
 import api from "../configs/axios";
 import { useLoginModal } from "../context/ModalLogin";
 import { useRegisterModal } from "../context/ModalRegister";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { useRouter } from "next/router";
 
 registerLocale("pt_br", pt_br);
 
 export default function NovoSorteio({ config }) {
   const { colorMode } = useColorMode();
+  const { push } = useRouter();
   const toast = useToast();
   const { client } = useClient();
   const { setOpenLogin } = useLoginModal();
@@ -90,7 +94,7 @@ export default function NovoSorteio({ config }) {
 
   const [startDate, setStartDate] = useState(new Date());
   const [modalTaxes, setModalTaxes] = useState(false);
-  const [modalPayment, setModalPayment] = useState(true);
+  const [modalPayment, setModalPayment] = useState(false);
 
   const [raffle, setRaffle] = useState("");
   const [qtdNumbers, setQtdNumbers] = useState("0");
@@ -108,27 +112,9 @@ export default function NovoSorteio({ config }) {
   const [checkFour, setCheckFour] = useState(false);
   const [checkFive, setCheckFive] = useState(false);
 
-  const [pix, setPix] = useState(false);
-  const [card, setCard] = useState(false);
-
   const [trophys, setTrophys] = useState([]);
   const [trophyOrder, setTrophyOrder] = useState("");
   const [trophyDescription, setTrophyDescription] = useState("");
-
-  const [payment_method, setPayment_method] = useState("");
-
-  const [numberCard, setNumberCard] = useState("");
-  const [ownerCard, setOwnerCard] = useState("");
-  const [validationCard, setValidationCard] = useState("");
-  const [cvvCard, setCvvCard] = useState("");
-
-  const [qrCode, setQrCode] = useState(
-    "00020126580014br.gov.bcb.pix013607766818-3921-4827-91db-537b86f9a1c15204000053039865406100.005802BR5909Uplinx1366006recife62230519mpqrinter124412749963045ECF"
-  );
-  const [qrCode64, setQrCode64] = useState(
-    "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"
-  );
-  const [idRaffle, setIdRaffle] = useState("");
 
   function clear() {
     setRaffle("");
@@ -143,8 +129,6 @@ export default function NovoSorteio({ config }) {
     setCheckThree(false);
     setCheckFour(false);
     setCheckFive(false);
-    setPix(false);
-    setCard(false);
     setTrophys([]);
   }
 
@@ -269,25 +253,7 @@ export default function NovoSorteio({ config }) {
       showToast("A descrição é obrigatória", "warning", "Atenção");
       return false;
     }
-    if (pix === false && card === false) {
-      showToast(
-        "Habilite pelo menos uma forma de pagamento",
-        "warning",
-        "Atenção"
-      );
-      return false;
-    }
     setLoadingSave(true);
-    let payment;
-    if (pix === true && card === false) {
-      payment = "pix";
-    }
-    if (pix === false && card === true) {
-      payment = "card";
-    }
-    if (pix === true && card === true) {
-      payment = "all";
-    }
     try {
       let data = new FormData();
       data.append("thumbnail", thumbnail);
@@ -298,15 +264,13 @@ export default function NovoSorteio({ config }) {
       data.append("client_id", client.id);
       data.append("description", description);
       data.append("raffle_value", raffleValue);
-      data.append("payment", payment);
       data.append("trophys", JSON.stringify(trophys));
 
       const response = await api.post("/raffle", data);
-
       showToast(response.data.message, "success", "Sucesso");
-
       setLoadingSave(false);
       clear();
+      push(response.data.redirect_url);
     } catch (error) {
       setLoadingSave(false);
       if (error.message === "Network Error") {
@@ -833,16 +797,10 @@ export default function NovoSorteio({ config }) {
                   <Divider mt={5} mb={5} />
 
                   <FormControl isRequired>
-                    <FormLabel>Opções de Pagamento:</FormLabel>
+                    <FormLabel>Opções de Pagamento dos Números:</FormLabel>
                     <Stack spacing={4} mt={3}>
                       <Flex align="center">
-                        <Switch
-                          colorScheme="green"
-                          size="lg"
-                          isChecked={card}
-                          onChange={(e) => setCard(e.target.checked)}
-                        />
-                        <Box w="35px" h="35px" ml={5} mr={3}>
+                        <Box w="35px" h="35px" mr={3}>
                           <Image
                             src="/img/credit.svg"
                             height={50}
@@ -856,17 +814,11 @@ export default function NovoSorteio({ config }) {
                           fontWeight="semibold"
                           fontSize={["sm", "md", "md", "md", "md"]}
                         >
-                          Habilitar pagamento por Cartão de Crédito
+                          Cartão de Crédito
                         </Text>
                       </Flex>
                       <Flex align="center">
-                        <Switch
-                          colorScheme="green"
-                          size="lg"
-                          isChecked={pix}
-                          onChange={(e) => setPix(e.target.checked)}
-                        />
-                        <Box w="35px" ml={5} mr={3}>
+                        <Box w="35px" mr={3}>
                           <Image
                             src="/img/pix.svg"
                             height={30}
@@ -880,7 +832,7 @@ export default function NovoSorteio({ config }) {
                           fontWeight="semibold"
                           fontSize={["sm", "md", "md", "md", "md"]}
                         >
-                          Habilitar pagamento por PIX
+                          PIX
                         </Text>
                       </Flex>
                     </Stack>
@@ -1056,202 +1008,6 @@ export default function NovoSorteio({ config }) {
                 </Stat>
               </Box>
             </Grid>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-
-      <Modal
-        isOpen={modalPayment}
-        closeOnEsc={false}
-        closeOnOverlayClick={false}
-        size="xl"
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Pagamento</ModalHeader>
-
-          <ModalBody>
-            <Tabs
-              colorScheme="green"
-              variant="enclosed"
-              defaultIndex={0}
-              onChange={(e) => setPayment_method(e)}
-            >
-              <TabList>
-                <Tab>PIX</Tab>
-                <Tab>Cartão de Crédito</Tab>
-              </TabList>
-
-              <TabPanels>
-                <TabPanel>
-                  <Flex
-                    align="center"
-                    justify="center"
-                    direction="column"
-                    p={5}
-                  >
-                    <ChakraImage
-                      w="250px"
-                      h="250px"
-                      src={`data:image/jpeg;base64,${qrCode64}`}
-                    />
-                    <Box w="100%" textAlign="center">
-                      <Text mt={3}>{qrCode}</Text>
-                    </Box>
-                    <Button leftIcon={<FaCopy />} size="sm" mt={3} mb={3}>
-                      Clique para Copiar
-                    </Button>
-
-                    <Stat mt={3}>
-                      <StatLabel>Total a Pagar</StatLabel>
-                      <StatNumber>
-                        {!config
-                          ? 0
-                          : parseFloat(config.raffle_value).toLocaleString(
-                              "pt-br",
-                              {
-                                style: "currency",
-                                currency: "BRL",
-                              }
-                            )}
-                      </StatNumber>
-                    </Stat>
-
-                    <Button
-                      size="lg"
-                      colorScheme="green"
-                      leftIcon={<FaQrcode />}
-                    >
-                      Gerar Pagamento
-                    </Button>
-                  </Flex>
-                </TabPanel>
-                <TabPanel>
-                  <FormControl mt={5}>
-                    <FormLabel>Número do Cartão</FormLabel>
-                    <MaskedInput
-                      mask={[
-                        /[0-9]/,
-                        /\d/,
-                        /\d/,
-                        /\d/,
-                        " ",
-                        " ",
-                        /\d/,
-                        /\d/,
-                        /\d/,
-                        /\d/,
-                        " ",
-                        /\d/,
-                        /\d/,
-                        /\d/,
-                        /\d/,
-                        " ",
-                        /\d/,
-                        /\d/,
-                        /\d/,
-                        /\d/,
-                      ]}
-                      placeholder="Número do Cartão"
-                      id="contact"
-                      value={numberCard}
-                      onChange={(e) => setNumberCard(e.target.value)}
-                      render={(ref, props) => (
-                        <Input
-                          placeholder="Número do Cartão"
-                          ref={ref}
-                          {...props}
-                          focusBorderColor="green.500"
-                        />
-                      )}
-                    />
-                  </FormControl>
-                  <FormControl mt={3}>
-                    <FormLabel>Titular do Cartão</FormLabel>
-                    <Input
-                      placeholder="Titular do Cartão"
-                      focusBorderColor="green.500"
-                      value={ownerCard}
-                      onChange={(e) => setOwnerCard(e.target.value)}
-                    />
-                  </FormControl>
-
-                  <Grid
-                    mt={3}
-                    templateColumns={[
-                      "1fr",
-                      "2fr 1fr",
-                      "2fr 1fr",
-                      "2fr 1fr",
-                      "2fr 1fr",
-                    ]}
-                    gap={3}
-                  >
-                    <FormControl>
-                      <FormLabel>Validade</FormLabel>
-                      <MaskedInput
-                        mask={[/[0-9]/, /\d/, "/", /\d/, /\d/]}
-                        placeholder="Validade"
-                        id="contact"
-                        value={validationCard}
-                        onChange={(e) => setValidationCard(e.target.value)}
-                        render={(ref, props) => (
-                          <Input
-                            placeholder="Validade"
-                            ref={ref}
-                            {...props}
-                            focusBorderColor="green.500"
-                          />
-                        )}
-                      />
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>Cód. Segurança</FormLabel>
-                      <MaskedInput
-                        mask={[/[0-9]/, /\d/, /\d/]}
-                        placeholder="Cód. Segurança"
-                        id="contact"
-                        value={cvvCard}
-                        onChange={(e) => setCvvCard(e.target.value)}
-                        render={(ref, props) => (
-                          <Input
-                            placeholder="Validade"
-                            ref={ref}
-                            {...props}
-                            focusBorderColor="green.500"
-                          />
-                        )}
-                      />
-                    </FormControl>
-                  </Grid>
-
-                  <Stat mt={5}>
-                    <StatLabel>Total a Pagar</StatLabel>
-                    <StatNumber>
-                      {!config
-                        ? 0
-                        : parseFloat(config.raffle_value).toLocaleString(
-                            "pt-br",
-                            {
-                              style: "currency",
-                              currency: "BRL",
-                            }
-                          )}
-                    </StatNumber>
-                  </Stat>
-
-                  <Flex mt={5} justify="center" align="center">
-                    <Button
-                      leftIcon={<FaCheck />}
-                      colorScheme="green"
-                      size="lg"
-                    >
-                      Pagar
-                    </Button>
-                  </Flex>
-                </TabPanel>
-              </TabPanels>
-            </Tabs>
           </ModalBody>
         </ModalContent>
       </Modal>
