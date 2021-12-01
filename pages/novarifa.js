@@ -50,6 +50,9 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   useColorModeValue,
+  Tooltip,
+  Center,
+  InputLeftAddon,
 } from "@chakra-ui/react";
 import {
   Breadcrumb,
@@ -69,6 +72,7 @@ import {
   FaQrcode,
   FaCopy,
   FaCreditCard,
+  FaCalculator,
 } from "react-icons/fa";
 import DatePicker, { registerLocale } from "react-datepicker";
 import pt_br from "date-fns/locale/pt-BR";
@@ -94,6 +98,7 @@ export default function NovoSorteio({ config }) {
   const [startDate, setStartDate] = useState(new Date());
   const [modalTaxes, setModalTaxes] = useState(false);
   const [modalPayment, setModalPayment] = useState(false);
+  const [modalCalc, setModalCalc] = useState(false);
 
   const [raffle, setRaffle] = useState("");
   const [qtdNumbers, setQtdNumbers] = useState("0");
@@ -108,7 +113,6 @@ export default function NovoSorteio({ config }) {
   const [checkOne, setCheckOne] = useState(false);
   const [checkTwo, setCheckTwo] = useState(false);
   const [checkThree, setCheckThree] = useState(false);
-  const [checkFour, setCheckFour] = useState(false);
   const [checkFive, setCheckFive] = useState(false);
 
   const [trophys, setTrophys] = useState([]);
@@ -126,7 +130,6 @@ export default function NovoSorteio({ config }) {
     setCheckOne(false);
     setCheckTwo(false);
     setCheckThree(false);
-    setCheckFour(false);
     setCheckFive(false);
     setTrophys([]);
   }
@@ -864,6 +867,17 @@ export default function NovoSorteio({ config }) {
                       * Do valor arrecadado
                     </StatHelpText>
                   </Stat>
+
+                  <Button
+                    isFullWidth
+                    size="sm"
+                    colorScheme="green"
+                    leftIcon={<FaCalculator />}
+                    onClick={() => setModalCalc(true)}
+                  >
+                    Calculadora de Custos
+                  </Button>
+
                   <Divider mt={3} mb={3} />
 
                   <FormControl isRequired>
@@ -897,14 +911,6 @@ export default function NovoSorteio({ config }) {
                         </Checkbox>
                         <Checkbox
                           colorScheme="green"
-                          isChecked={checkFour}
-                          onChange={(e) => setCheckFour(e.target.checked)}
-                        >
-                          Esta rifa só estará liberada após a confirmação do
-                          pagamento pela equipe do PA Rifas.
-                        </Checkbox>
-                        <Checkbox
-                          colorScheme="green"
                           isChecked={checkFive}
                           onChange={(e) => setCheckFive(e.target.checked)}
                         >
@@ -913,6 +919,27 @@ export default function NovoSorteio({ config }) {
                         </Checkbox>
                       </Stack>
                     </CheckboxGroup>
+                  </FormControl>
+
+                  <Divider mt={3} mb={3} />
+
+                  <FormControl>
+                    <Flex align="center">
+                      <Input
+                        focusBorderColor="green.500"
+                        placeholder="Cupom de Desconto"
+                      />
+                      <Tooltip hasArrow label="Aplicar Desconto">
+                        <IconButton
+                          colorScheme="green"
+                          variant="outline"
+                          icon={<FaCheck />}
+                          w="min-content"
+                          ml={2}
+                          rounded="xl"
+                        />
+                      </Tooltip>
+                    </Flex>
                   </FormControl>
 
                   <Divider mt={3} mb={3} />
@@ -928,7 +955,6 @@ export default function NovoSorteio({ config }) {
                       checkOne === true &&
                       checkTwo === true &&
                       checkThree === true &&
-                      checkFour === true &&
                       checkFive === true
                         ? false
                         : true
@@ -1048,6 +1074,136 @@ export default function NovoSorteio({ config }) {
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
+
+      <Modal isOpen={modalCalc} onClose={() => setModalCalc(false)} size="2xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Calcular Custos</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={5}>
+            <Center
+              p={2}
+              bg={useColorModeValue("blackAlpha.100", "whiteAlpha.200")}
+              fontWeight="bold"
+              rounded="full"
+            >
+              CUSTOS DE ALOCAÇÃO DA RIFA
+            </Center>
+            <Grid
+              templateColumns={[
+                "1fr",
+                "1fr 2fr 2fr",
+                "1fr 2fr 2fr",
+                "1fr 2fr 2fr",
+                "1fr 2fr 2fr",
+              ]}
+              gap={3}
+              mt={5}
+            >
+              <FormControl>
+                <FormLabel mb={0}>Taxa</FormLabel>
+                <InputGroup>
+                  <InputLeftAddon children="%" />
+                  <Input focusBorderColor="green.500" />
+                </InputGroup>
+              </FormControl>
+              <FormControl>
+                <FormLabel mb={0}>Arrecadação Prevista</FormLabel>
+                <InputGroup>
+                  <InputLeftAddon children="R$" />
+                  <Input focusBorderColor="green.500" />
+                </InputGroup>
+              </FormControl>
+              <FormControl>
+                <FormLabel mb={0}>Total a Pagar</FormLabel>
+                <InputGroup>
+                  <InputLeftAddon children="R$" />
+                  <Input focusBorderColor="green.500" />
+                </InputGroup>
+              </FormControl>
+            </Grid>
+
+            <Center
+              p={2}
+              bg={useColorModeValue("blackAlpha.100", "whiteAlpha.200")}
+              fontWeight="bold"
+              rounded="full"
+              mt={10}
+            >
+              CUSTOS DAS COMPRAS DOS NÚMEROS
+            </Center>
+            <Text mt={5}>CARTÃO DE CRÉDITO</Text>
+            <Divider mt={1} mb={1} />
+            <Grid
+              templateColumns={[
+                "1fr",
+                "1fr 2fr 2fr",
+                "1fr 2fr 2fr",
+                "1fr 2fr 2fr",
+                "1fr 2fr 2fr",
+              ]}
+              gap={3}
+            >
+              <FormControl>
+                <FormLabel mb={0}>Taxa</FormLabel>
+                <InputGroup>
+                  <InputLeftAddon children="%" />
+                  <Input focusBorderColor="green.500" />
+                </InputGroup>
+              </FormControl>
+              <FormControl>
+                <FormLabel mb={0}>Valor Previsto</FormLabel>
+                <InputGroup>
+                  <InputLeftAddon children="R$" />
+                  <Input focusBorderColor="green.500" />
+                </InputGroup>
+              </FormControl>
+              <FormControl>
+                <FormLabel mb={0}>Valor Descontado</FormLabel>
+                <InputGroup>
+                  <InputLeftAddon children="R$" />
+                  <Input focusBorderColor="green.500" />
+                </InputGroup>
+              </FormControl>
+            </Grid>
+
+            <Text mt={5}>PIX</Text>
+            <Divider mt={1} mb={1} />
+            <Grid
+              templateColumns={[
+                "1fr",
+                "1fr 2fr 2fr",
+                "1fr 2fr 2fr",
+                "1fr 2fr 2fr",
+                "1fr 2fr 2fr",
+              ]}
+              gap={3}
+            >
+              <FormControl>
+                <FormLabel mb={0}>Taxa</FormLabel>
+                <InputGroup>
+                  <InputLeftAddon children="%" />
+                  <Input focusBorderColor="green.500" />
+                </InputGroup>
+              </FormControl>
+              <FormControl>
+                <FormLabel mb={0}>Valor Previsto</FormLabel>
+                <InputGroup>
+                  <InputLeftAddon children="R$" />
+                  <Input focusBorderColor="green.500" />
+                </InputGroup>
+              </FormControl>
+              <FormControl>
+                <FormLabel mb={0}>Valor Descontado</FormLabel>
+                <InputGroup>
+                  <InputLeftAddon children="R$" />
+                  <Input focusBorderColor="green.500" />
+                </InputGroup>
+              </FormControl>
+            </Grid>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 }

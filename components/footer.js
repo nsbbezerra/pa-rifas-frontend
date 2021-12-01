@@ -8,39 +8,42 @@ import {
   Stack,
   IconButton,
   Flex,
-} from '@chakra-ui/react';
+} from "@chakra-ui/react";
 import {
   AiOutlineWhatsApp,
   AiOutlineInstagram,
   AiOutlineFacebook,
-} from 'react-icons/ai';
-import Image from 'next/image';
+} from "react-icons/ai";
+import Image from "next/image";
 
 export default function FooterApp() {
-  const {colorMode} = useColorMode();
+  const { colorMode } = useColorMode();
   return (
     <Box mt={20}>
       <Box
-        bg={colorMode === 'light' ? 'green.500' : 'green.800'}
+        bg={colorMode === "light" ? "green.500" : "green.800"}
         pt={10}
-        pb={10}>
+        pb={10}
+      >
         <Container maxW="4xl">
           <Grid
             templateColumns={[
-              '1fr',
-              '1fr 1fr',
-              '1fr 1fr',
-              '1fr 1fr',
-              '1fr 1fr',
+              "1fr",
+              "1fr 1fr",
+              "1fr 1fr",
+              "1fr 1fr",
+              "1fr 1fr",
             ]}
-            gap={20}>
+            gap={20}
+          >
             <Box w="100%">
               <Box bg="whiteAlpha.300" p={8} rounded="xl">
                 <Text
                   fontSize="xl"
                   fontWeight="bold"
                   textAlign="center"
-                  color="gray.100">
+                  color="gray.100"
+                >
                   ENTRE EM CONTATO CONOSCO
                 </Text>
 
@@ -49,7 +52,8 @@ export default function FooterApp() {
                   colorScheme="orange"
                   isFullWidth
                   size="lg"
-                  mt={5}>
+                  mt={5}
+                >
                   WHATSAPP
                 </Button>
               </Box>
@@ -57,53 +61,93 @@ export default function FooterApp() {
                 fontWeight="bold"
                 textAlign="center"
                 mt={10}
-                color="gray.100">
+                color="gray.100"
+              >
                 © 2021 - PA Rifas, Todos os Direitos Reservados!
               </Text>
               <Flex mt={5} align="center" justify="center">
-                <Box w="50px" h="35px" rounded="md" overflow="hidden">
+                <Box
+                  w="40px"
+                  h="40px"
+                  rounded="full"
+                  overflow="hidden"
+                  bg="white"
+                  p={1}
+                >
                   <Image
                     src="/img/visa.svg"
                     width={250}
-                    height={180}
+                    height={250}
                     layout="responsive"
-                    objectFit="cover"
+                    objectFit="contain"
                   />
                 </Box>
-                <Box w="50px" h="35px" rounded="md" overflow="hidden" ml={3}>
+                <Box
+                  w="40px"
+                  h="40px"
+                  rounded="full"
+                  overflow="hidden"
+                  ml={3}
+                  p={1}
+                  bg="white"
+                >
                   <Image
                     src="/img/mastercard.svg"
                     width={250}
-                    height={180}
+                    height={250}
                     layout="responsive"
-                    objectFit="cover"
+                    objectFit="contain"
                   />
                 </Box>
-                <Box w="50px" h="25px" rounded="md" overflow="hidden" ml={3}>
+                <Box
+                  w="40px"
+                  h="40px"
+                  rounded="full"
+                  overflow="hidden"
+                  ml={3}
+                  p={0}
+                  bg="black"
+                >
                   <Image
                     src="/img/elo.svg"
-                    width={390}
-                    height={190}
+                    width={250}
+                    height={250}
                     layout="responsive"
-                    objectFit="cover"
+                    objectFit="contain"
                   />
                 </Box>
-                <Box w="50px" h="26px" rounded="md" overflow="hidden" ml={3}>
+                <Box
+                  w="40px"
+                  h="40px"
+                  rounded="full"
+                  bg="white"
+                  overflow="hidden"
+                  ml={3}
+                  p={0.5}
+                >
                   <Image
                     src="/img/hipercard.svg"
-                    width={350}
-                    height={180}
+                    width={250}
+                    height={250}
                     layout="responsive"
-                    objectFit="cover"
+                    objectFit="contain"
                   />
                 </Box>
-                <Box w="50px" h="25px" rounded="md" overflow="hidden" ml={3}>
+                <Box
+                  w="40px"
+                  h="40px"
+                  rounded="full"
+                  overflow="hidden"
+                  ml={3}
+                  p={0.5}
+                  bg="white"
+                >
                   <Image
                     src="/img/pix.svg"
-                    width={390}
-                    height={180}
+                    width={250}
+                    height={250}
                     layout="responsive"
-                    objectFit="cover"
+                    objectFit="contain"
                   />
                 </Box>
               </Flex>
@@ -113,7 +157,8 @@ export default function FooterApp() {
                 fontSize="xl"
                 fontWeight="bold"
                 textAlign="center"
-                color={colorMode === 'light' ? 'orange.500' : 'orange.200'}>
+                color={colorMode === "light" ? "orange.500" : "orange.200"}
+              >
                 PÁGINAS
               </Text>
 
@@ -122,32 +167,36 @@ export default function FooterApp() {
                   variant="link"
                   colorScheme="whiteAlpha"
                   size="lg"
-                  _hover={{textDecor: 'none'}}
-                  color="whiteAlpha.900">
+                  _hover={{ textDecor: "none" }}
+                  color="whiteAlpha.900"
+                >
                   RIFAS
                 </Button>
                 <Button
                   variant="link"
                   colorScheme="whiteAlpha"
                   size="lg"
-                  _hover={{textDecor: 'none'}}
-                  color="whiteAlpha.900">
+                  _hover={{ textDecor: "none" }}
+                  color="whiteAlpha.900"
+                >
                   FALE CONOSCO
                 </Button>
                 <Button
                   variant="link"
                   colorScheme="whiteAlpha"
                   size="lg"
-                  _hover={{textDecor: 'none'}}
-                  color="whiteAlpha.900">
+                  _hover={{ textDecor: "none" }}
+                  color="whiteAlpha.900"
+                >
                   CRIAR RIFA
                 </Button>
                 <Button
                   variant="link"
                   colorScheme="whiteAlpha"
                   size="lg"
-                  _hover={{textDecor: 'none'}}
-                  color="whiteAlpha.900">
+                  _hover={{ textDecor: "none" }}
+                  color="whiteAlpha.900"
+                >
                   CONDIÇÕES DE USO
                 </Button>
               </Stack>
@@ -158,14 +207,14 @@ export default function FooterApp() {
                   size="lg"
                   fontSize="2xl"
                   colorScheme="whiteAlpha"
-                  color={'gray.100'}
+                  color={"gray.100"}
                 />
                 <IconButton
                   icon={<AiOutlineFacebook />}
                   size="lg"
                   fontSize="2xl"
                   colorScheme="whiteAlpha"
-                  color={'gray.100'}
+                  color={"gray.100"}
                   ml={5}
                 />
               </Flex>
@@ -176,9 +225,10 @@ export default function FooterApp() {
       <Box
         textAlign="center"
         p={4}
-        bg={colorMode === 'light' ? 'orange.500' : 'orange.800'}
+        bg={colorMode === "light" ? "orange.500" : "orange.800"}
         color="gray.100"
-        fontSize={'sm'}>
+        fontSize={"sm"}
+      >
         Desenvolvido por: NK Informática, Responsável: Natanael Bezerra (63)
         99971-1716
       </Box>

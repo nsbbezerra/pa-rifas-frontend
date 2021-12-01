@@ -42,6 +42,7 @@ import {
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { FaWhatsapp, FaUserAlt, FaSave, FaMoon, FaSun } from "react-icons/fa";
 import Image from "next/image";
@@ -343,6 +344,17 @@ function HeaderApp() {
         <meta httpEquiv="content-language" content="pt-br" />
         <meta content="Global" name="distribution" />
       </Head>
+      <Flex
+        h="60px"
+        position="fixed"
+        top={0}
+        right={0}
+        left={0}
+        bg={useColorModeValue("orange.500", "orange.800")}
+        zIndex={3000}
+        shadow="xl"
+        borderBottomColor={useColorModeValue("green.500", "green.800")}
+      ></Flex>
       <Box
         bgGradient={
           colorMode === "light"
@@ -351,6 +363,7 @@ function HeaderApp() {
         }
         pt={10}
         pb={10}
+        mt="60px"
       >
         <IconButton
           icon={colorMode === "light" ? <FaMoon /> : <FaSun />}
