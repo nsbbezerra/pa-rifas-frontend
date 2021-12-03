@@ -21,7 +21,7 @@ export default function FooterApp() {
   return (
     <Box mt={20}>
       <Box
-        bg={colorMode === "light" ? "green.500" : "green.800"}
+        bg={colorMode === "light" ? "blackAlpha.100" : "whiteAlpha.200"}
         pt={10}
         pb={10}
       >
@@ -37,32 +37,10 @@ export default function FooterApp() {
             gap={20}
           >
             <Box w="100%">
-              <Box bg="whiteAlpha.300" p={8} rounded="xl">
-                <Text
-                  fontSize="xl"
-                  fontWeight="bold"
-                  textAlign="center"
-                  color="gray.100"
-                >
-                  ENTRE EM CONTATO CONOSCO
-                </Text>
-
-                <Button
-                  leftIcon={<AiOutlineWhatsApp />}
-                  colorScheme="orange"
-                  isFullWidth
-                  size="lg"
-                  mt={5}
-                >
-                  WHATSAPP
-                </Button>
-              </Box>
-              <Text
-                fontWeight="bold"
-                textAlign="center"
-                mt={10}
-                color="gray.100"
-              >
+              <Text textAlign="center">
+                Esta plataforma é um produto da empresa NK Informática.
+              </Text>
+              <Text textAlign="center">
                 © 2021 - PA Rifas, Todos os Direitos Reservados!
               </Text>
               <Flex mt={5} align="center" justify="center">
@@ -151,6 +129,17 @@ export default function FooterApp() {
                   />
                 </Box>
               </Flex>
+
+              <Button
+                leftIcon={<AiOutlineWhatsApp />}
+                colorScheme="green"
+                isFullWidth
+                size="lg"
+                mt={10}
+                variant="outline"
+              >
+                FALE CONOSCO
+              </Button>
             </Box>
             <Box>
               <Text
@@ -165,37 +154,33 @@ export default function FooterApp() {
               <Stack mt={5} spacing={4}>
                 <Button
                   variant="link"
-                  colorScheme="whiteAlpha"
+                  colorScheme="green"
                   size="lg"
                   _hover={{ textDecor: "none" }}
-                  color="whiteAlpha.900"
                 >
                   RIFAS
                 </Button>
                 <Button
                   variant="link"
-                  colorScheme="whiteAlpha"
+                  colorScheme="green"
                   size="lg"
                   _hover={{ textDecor: "none" }}
-                  color="whiteAlpha.900"
                 >
                   FALE CONOSCO
                 </Button>
                 <Button
                   variant="link"
-                  colorScheme="whiteAlpha"
+                  colorScheme="green"
                   size="lg"
                   _hover={{ textDecor: "none" }}
-                  color="whiteAlpha.900"
                 >
                   CRIAR RIFA
                 </Button>
                 <Button
                   variant="link"
-                  colorScheme="whiteAlpha"
+                  colorScheme="green"
                   size="lg"
                   _hover={{ textDecor: "none" }}
-                  color="whiteAlpha.900"
                 >
                   CONDIÇÕES DE USO
                 </Button>
@@ -206,15 +191,15 @@ export default function FooterApp() {
                   icon={<AiOutlineInstagram />}
                   size="lg"
                   fontSize="2xl"
-                  colorScheme="whiteAlpha"
-                  color={"gray.100"}
+                  colorScheme="orange"
+                  variant="outline"
                 />
                 <IconButton
                   icon={<AiOutlineFacebook />}
                   size="lg"
                   fontSize="2xl"
-                  colorScheme="whiteAlpha"
-                  color={"gray.100"}
+                  colorScheme="orange"
+                  variant="outline"
                   ml={5}
                 />
               </Flex>
@@ -225,7 +210,7 @@ export default function FooterApp() {
       <Box
         textAlign="center"
         p={4}
-        bg={colorMode === "light" ? "orange.500" : "orange.800"}
+        bg={colorMode === "light" ? "green.500" : "green.800"}
         color="gray.100"
         fontSize={"sm"}
       >

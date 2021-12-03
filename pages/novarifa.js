@@ -466,9 +466,7 @@ export default function NovoSorteio({ config }) {
                             id="image"
                           />
                           <FaImage style={{ fontSize: 50, marginBottom: 20 }} />
-                          <p>
-                            Insira uma imagem 220px x 220px com no máximo 300kb
-                          </p>
+                          <p>Insira uma imagem de proporções quadrada</p>
                         </InputFile>
                       )}
                       <FormErrorMessage>

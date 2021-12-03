@@ -48,7 +48,12 @@ import { FaWhatsapp, FaUserAlt, FaSave, FaMoon, FaSun } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
 import MaskedInput from "react-text-mask";
-import { AiOutlineLogin, AiOutlineLogout, AiOutlineMenu } from "react-icons/ai";
+import {
+  AiOutlineClose,
+  AiOutlineLogin,
+  AiOutlineLogout,
+  AiOutlineMenu,
+} from "react-icons/ai";
 import { useRegisterModal } from "../context/ModalRegister";
 import { useLoginModal } from "../context/ModalLogin";
 
@@ -249,83 +254,98 @@ function HeaderApp() {
   }
 
   const MenuButtons = () => (
-    <Flex justify="flex-end" w="100%">
+    <Flex justify="center" w="100%" h="52px">
       <HStack spacing={3} d={["none", "none", "none", "none", "flex"]}>
+        <Link href="/" passHref>
+          <a>
+            <Button colorScheme="green" variant="ghost" size="sm">
+              INÍCIO
+            </Button>
+          </a>
+        </Link>
         <Link href="/rifas" passHref>
           <a>
-            <Button colorScheme="orange" size="sm">
+            <Button colorScheme="green" variant="ghost" size="sm">
               RIFAS
             </Button>
           </a>
         </Link>
         <Link href="/faleconosco" passHref>
           <a>
-            <Button colorScheme="orange" size="sm">
+            <Button colorScheme="green" variant="ghost" size="sm">
               FALE CONOSCO
             </Button>
           </a>
         </Link>
         <Link href="/novarifa" passHref>
           <a>
-            <Button colorScheme="orange" size="sm">
+            <Button colorScheme="green" variant="ghost" size="sm">
               CRIAR RIFA
             </Button>
           </a>
         </Link>
         <Link href="/condicoesdeuso" passHref>
           <a>
-            <Button colorScheme="orange" size="sm">
+            <Button colorScheme="green" variant="ghost" size="sm">
               CONDIÇÔES DE USO
             </Button>
           </a>
         </Link>
       </HStack>
-      <HStack ml={3} spacing={3} d={["none", "none", "flex", "flex", "flex"]}>
-        <Menu placement="bottom-end">
-          <MenuButton as={IconButton} icon={<FaUserAlt />} />
-          <MenuList shadow="lg">
-            {JSON.stringify(client) === "{}" ? (
-              <>
-                <MenuItem onClick={() => setOpenRegister(true)}>
-                  CADASTRE-SE
-                </MenuItem>
-                <MenuItem onClick={() => setOpenLogin(true)}>
-                  FAÇA LOGIN
-                </MenuItem>
-              </>
-            ) : (
-              <>
-                <Link href={`/meusdados/${client.identify}`} passHref>
-                  <a>
-                    <MenuItem>MEUS DADOS</MenuItem>
-                  </a>
-                </Link>
-                <MenuDivider />
-                <MenuItem icon={<AiOutlineLogout />} onClick={() => logout()}>
-                  SAIR
-                </MenuItem>
-              </>
-            )}
-          </MenuList>
-        </Menu>
-        <Tooltip
-          label={colorMode === "light" ? "Modo Escuro" : "Modo Claro"}
-          hasArrow
-        >
-          <IconButton
-            icon={colorMode === "light" ? <FaMoon /> : <FaSun />}
-            onClick={toggleColorMode}
-          />
-        </Tooltip>
-        <IconButton
-          colorScheme="orange"
-          icon={<AiOutlineMenu />}
-          fontSize="xl"
-          d={["flex", "flex", "flex", "flex", "none"]}
-          onClick={() => setDrawerMenu(true)}
-        />
-      </HStack>
     </Flex>
+  );
+
+  const MenuButtonsIcon = () => (
+    <HStack ml={3} spacing={3} d={["none", "none", "flex", "flex", "flex"]}>
+      <IconButton
+        colorScheme="green"
+        icon={drawerMenu === false ? <AiOutlineMenu /> : <AiOutlineClose />}
+        fontSize="xl"
+        d={["flex", "flex", "flex", "flex", "none"]}
+        onClick={() => setDrawerMenu(!drawerMenu)}
+      />
+      <Menu placement="bottom-end">
+        <MenuButton
+          as={IconButton}
+          icon={<FaUserAlt />}
+          colorScheme="green"
+          variant="outline"
+        />
+        <MenuList shadow="lg">
+          {JSON.stringify(client) === "{}" ? (
+            <>
+              <MenuItem onClick={() => setOpenRegister(true)}>
+                CADASTRE-SE
+              </MenuItem>
+              <MenuItem onClick={() => setOpenLogin(true)}>FAÇA LOGIN</MenuItem>
+            </>
+          ) : (
+            <>
+              <Link href={`/meusdados/${client.identify}`} passHref>
+                <a>
+                  <MenuItem>MEUS DADOS</MenuItem>
+                </a>
+              </Link>
+              <MenuDivider />
+              <MenuItem icon={<AiOutlineLogout />} onClick={() => logout()}>
+                SAIR
+              </MenuItem>
+            </>
+          )}
+        </MenuList>
+      </Menu>
+      <Tooltip
+        label={colorMode === "light" ? "Modo Escuro" : "Modo Claro"}
+        hasArrow
+      >
+        <IconButton
+          icon={colorMode === "light" ? <FaMoon /> : <FaSun />}
+          onClick={toggleColorMode}
+          colorScheme="green"
+          variant="outline"
+        />
+      </Tooltip>
+    </HStack>
   );
 
   return (
@@ -344,17 +364,36 @@ function HeaderApp() {
         <meta httpEquiv="content-language" content="pt-br" />
         <meta content="Global" name="distribution" />
       </Head>
-      <Flex
-        h="60px"
+      <Box
+        h="55px"
         position="fixed"
         top={0}
         right={0}
         left={0}
         bg={useColorModeValue("orange.500", "orange.800")}
-        zIndex={3000}
-        shadow="xl"
-        borderBottomColor={useColorModeValue("green.500", "green.800")}
-      ></Flex>
+        zIndex={1000}
+        shadow="lg"
+      >
+        <Container maxW="6xl">
+          <Flex h="55px" justify="space-between" align="center">
+            <LinkBox overflow="hidden" p={2} h="52px" w="52px">
+              <Link href="/" passHref>
+                <LinkOverlay>
+                  <Image
+                    src="/img/logo.svg"
+                    width={300}
+                    height={300}
+                    layout="responsive"
+                    alt="PA Rifas, rifas online"
+                  />
+                </LinkOverlay>
+              </Link>
+            </LinkBox>
+            <MenuButtons />
+            <MenuButtonsIcon />
+          </Flex>
+        </Container>
+      </Box>
       <Box
         bgGradient={
           colorMode === "light"
@@ -363,7 +402,7 @@ function HeaderApp() {
         }
         pt={10}
         pb={10}
-        mt="60px"
+        mt="55px"
       >
         <IconButton
           icon={colorMode === "light" ? <FaMoon /> : <FaSun />}
@@ -400,7 +439,7 @@ function HeaderApp() {
             alignItems="center"
             justifyContent="center"
           >
-            <LinkBox overflow="hidden" p={2} w="300px">
+            <LinkBox overflow="hidden" p={2} w="250px">
               <Link href="/" passHref>
                 <LinkOverlay>
                   <Image
@@ -414,12 +453,9 @@ function HeaderApp() {
               </Link>
             </LinkBox>
             <Flex direction="column" justify="center" align="center">
-              <MenuButtons />
-
               <Heading
                 textAlign="center"
                 color="white"
-                mt={10}
                 fontSize={["4xl", "5xl", "5xl", "5xl", "5xl"]}
               >
                 Sua Rifa online está aqui!
