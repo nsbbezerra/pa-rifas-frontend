@@ -19,6 +19,7 @@ import {
   InputGroup,
   InputRightElement,
   InputLeftElement,
+  InputRightAddon,
   Divider,
   Select,
   Flex,
@@ -69,9 +70,6 @@ import {
   FaPlus,
   FaTrash,
   FaTrophy,
-  FaQrcode,
-  FaCopy,
-  FaCreditCard,
   FaCalculator,
 } from "react-icons/fa";
 import DatePicker, { registerLocale } from "react-datepicker";
@@ -102,7 +100,9 @@ export default function NovoSorteio({ config }) {
 
   const [raffle, setRaffle] = useState("");
   const [qtdNumbers, setQtdNumbers] = useState("0");
-  const [raffleValue, setRaffleValue] = useState("0");
+  const [raffleValue, setRaffleValue] = useState(config.raffle_value || 0);
+  const [raffleTotal, setRaffleTotal] = useState(0);
+  const [goal, setGoal] = useState(100);
 
   const [validators, setValidators] = useState([]);
   const [thumbnail, setThumbnail] = useState(null);
@@ -119,10 +119,22 @@ export default function NovoSorteio({ config }) {
   const [trophyOrder, setTrophyOrder] = useState("");
   const [trophyDescription, setTrophyDescription] = useState("");
 
+  const [pixTax, setPixTax] = useState(configsGlobal.pixTax);
+  const [cardTax, setCardTax] = useState(configsGlobal.cardTax);
+  const [rafflePreviousValue, setRafflePreviousValue] = useState(0);
+  const [raffleDiscountValue, setRaffleDiscountValue] = useState(0);
+  const [raffleDiscountTotal, setRaffleDiscountTotal] = useState(0);
+
+  const [cardPreviousValue, setCardPreviousValue] = useState(0);
+  const [cardDiscountValue, setCardDiscountValue] = useState(0);
+
+  const [pixPreviousValue, setPixPreviousValue] = useState(0);
+  const [pixDiscountValue, setPixDiscountValue] = useState(0);
+
   function clear() {
     setRaffle("");
     setQtdNumbers("0");
-    setRaffleValue("0");
+    setRaffleValue(config.raffle_value || 0);
     setThumbnail(null);
     removeThumbnail();
     setDescription("");
@@ -132,6 +144,8 @@ export default function NovoSorteio({ config }) {
     setCheckThree(false);
     setCheckFive(false);
     setTrophys([]);
+    setGoal(100);
+    setRaffleTotal(0);
   }
 
   function handleTrophy() {
@@ -265,8 +279,9 @@ export default function NovoSorteio({ config }) {
       data.append("draw_time", startDate);
       data.append("client_id", client.id);
       data.append("description", description);
-      data.append("raffle_value", raffleValue);
+      data.append("raffle_value", raffleTotal);
       data.append("trophys", JSON.stringify(trophys));
+      data.append("goal", goal);
 
       const response = await api.post("/raffle", data);
       showToast(response.data.message, "success", "Sucesso");
@@ -287,6 +302,57 @@ export default function NovoSorteio({ config }) {
       showToast(mess, "error", "Erro");
     }
   }
+
+  function calcPercent(value, dest) {
+    if (dest === "pix") {
+      let calc = value * (pixTax / 100);
+      let rest = value - calc;
+      setPixPreviousValue(value);
+      if (!isNaN(rest)) {
+        setPixDiscountValue(parseFloat(rest.toFixed(2)));
+      }
+    }
+    if (dest === "card") {
+      let calc = value * (cardTax / 100);
+      let rest = value - calc;
+      setCardPreviousValue(value);
+      if (!isNaN(rest)) {
+        setCardDiscountValue(parseFloat(rest.toFixed(2)));
+      }
+    }
+    if (dest === "raffle") {
+      let calc = value * (raffleValue / 100);
+      let rest = value - calc;
+      setRafflePreviousValue(value);
+      if (!isNaN(rest)) {
+        setRaffleDiscountTotal(parseFloat(calc.toFixed(2)));
+        setRaffleDiscountValue(parseFloat(rest.toFixed(2)));
+      }
+    }
+  }
+
+  function handleCloseModalCalc() {
+    setPixTax(configsGlobal.pixTax);
+    setCardTax(configsGlobal.cardTax);
+    setPixPreviousValue(0);
+    setPixDiscountValue(0);
+    setCardPreviousValue(0);
+    setCardDiscountValue(0);
+    setRafflePreviousValue(0);
+    setRaffleDiscountValue(0);
+    setRaffleDiscountTotal(0);
+    setModalCalc(false);
+  }
+
+  useEffect(() => {
+    setPixPreviousValue(0);
+    setPixDiscountValue(0);
+    setCardPreviousValue(0);
+    setCardDiscountValue(0);
+    setRafflePreviousValue(0);
+    setRaffleDiscountValue(0);
+    setRaffleDiscountTotal(0);
+  }, [raffleValue, pixTax, cardTax]);
 
   return (
     <>
@@ -565,8 +631,8 @@ export default function NovoSorteio({ config }) {
                             focusBorderColor="green.500"
                             step={0.01}
                             id="value"
-                            value={raffleValue}
-                            onChange={(e) => setRaffleValue(e)}
+                            value={raffleTotal}
+                            onChange={(e) => setRaffleTotal(e)}
                           >
                             <NumberInputField />
                             <NumberInputStepper>
@@ -683,6 +749,20 @@ export default function NovoSorteio({ config }) {
                     </Box>
                   </Grid>
 
+                  <FormControl mt={4}>
+                    <FormLabel>Meta Mínima</FormLabel>
+                    <InputGroup>
+                      <Input
+                        focusBorderColor="green.500"
+                        placeholder="Meta Mínima"
+                        value={goal}
+                        onChange={(e) => setGoal(e.target.value)}
+                        type="number"
+                      />
+                      <InputRightAddon children="%" />
+                    </InputGroup>
+                  </FormControl>
+
                   <Grid templateColumns="1fr">
                     <FormControl
                       isRequired
@@ -725,7 +805,7 @@ export default function NovoSorteio({ config }) {
                         "1fr 3fr 1fr",
                         "1fr 3fr 1fr",
                       ]}
-                      gap={3}
+                      gap={5}
                     >
                       <Select
                         focusBorderColor="green.500"
@@ -824,7 +904,7 @@ export default function NovoSorteio({ config }) {
                             height={30}
                             width={67}
                             layout="responsive"
-                            objectFit="cover"
+                            objectFit="contain"
                             alt="PA Rifas, rifas online"
                           />
                         </Box>
@@ -856,9 +936,7 @@ export default function NovoSorteio({ config }) {
                 >
                   <Stat size="md">
                     <StatLabel>Total a Pagar</StatLabel>
-                    <StatNumber>
-                      {!config ? 0 : `${parseFloat(config.raffle_value)}%`}
-                    </StatNumber>
+                    <StatNumber>{`${parseFloat(raffleValue)}%`}</StatNumber>
                     <StatHelpText
                       color={useColorModeValue("red.500", "red.200")}
                     >
@@ -1016,14 +1094,14 @@ export default function NovoSorteio({ config }) {
               <Box rounded="xl" borderWidth="1px" p={3}>
                 <Stat>
                   <StatLabel>PIX</StatLabel>
-                  <StatNumber>0,99%</StatNumber>
+                  <StatNumber>{configsGlobal.pixTax}%</StatNumber>
                   <StatHelpText>* Por transação</StatHelpText>
                 </Stat>
               </Box>
               <Box rounded="xl" borderWidth="1px" p={3}>
                 <Stat>
                   <StatLabel>Cartão de Crédito</StatLabel>
-                  <StatNumber>4,99%</StatNumber>
+                  <StatNumber>{configsGlobal.cardTax}%</StatNumber>
                   <StatHelpText>* Por transação</StatHelpText>
                 </Stat>
               </Box>
@@ -1073,7 +1151,11 @@ export default function NovoSorteio({ config }) {
         </AlertDialogOverlay>
       </AlertDialog>
 
-      <Modal isOpen={modalCalc} onClose={() => setModalCalc(false)} size="2xl">
+      <Modal
+        isOpen={modalCalc}
+        onClose={() => handleCloseModalCalc()}
+        size="3xl"
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Calcular Custos</ModalHeader>
@@ -1090,10 +1172,10 @@ export default function NovoSorteio({ config }) {
             <Grid
               templateColumns={[
                 "1fr",
-                "1fr 2fr 2fr",
-                "1fr 2fr 2fr",
-                "1fr 2fr 2fr",
-                "1fr 2fr 2fr",
+                "1fr 1fr",
+                "1fr 1fr 1fr 1fr",
+                "1fr 1fr 1fr 1fr",
+                "1fr 1fr 1fr 1fr",
               ]}
               gap={3}
               mt={5}
@@ -1102,21 +1184,49 @@ export default function NovoSorteio({ config }) {
                 <FormLabel mb={0}>Taxa</FormLabel>
                 <InputGroup>
                   <InputLeftAddon children="%" />
-                  <Input focusBorderColor="green.500" />
+                  <Input
+                    focusBorderColor="green.500"
+                    value={raffleValue}
+                    isReadOnly
+                    type="number"
+                  />
                 </InputGroup>
               </FormControl>
               <FormControl>
                 <FormLabel mb={0}>Arrecadação Prevista</FormLabel>
                 <InputGroup>
                   <InputLeftAddon children="R$" />
-                  <Input focusBorderColor="green.500" />
+                  <Input
+                    focusBorderColor="green.500"
+                    type="number"
+                    value={rafflePreviousValue}
+                    onChange={(e) =>
+                      calcPercent(parseFloat(e.target.value), "raffle")
+                    }
+                  />
                 </InputGroup>
               </FormControl>
               <FormControl>
                 <FormLabel mb={0}>Total a Pagar</FormLabel>
                 <InputGroup>
                   <InputLeftAddon children="R$" />
-                  <Input focusBorderColor="green.500" />
+                  <Input
+                    focusBorderColor="green.500"
+                    type="number"
+                    value={raffleDiscountTotal}
+                    isReadOnly
+                  />
+                </InputGroup>
+              </FormControl>
+              <FormControl>
+                <FormLabel mb={0}>Arrecadação Final</FormLabel>
+                <InputGroup>
+                  <InputLeftAddon children="R$" />
+                  <Input
+                    focusBorderColor="green.500"
+                    value={raffleDiscountValue}
+                    isReadOnly
+                  />
                 </InputGroup>
               </FormControl>
             </Grid>
@@ -1146,21 +1256,37 @@ export default function NovoSorteio({ config }) {
                 <FormLabel mb={0}>Taxa</FormLabel>
                 <InputGroup>
                   <InputLeftAddon children="%" />
-                  <Input focusBorderColor="green.500" />
+                  <Input
+                    focusBorderColor="green.500"
+                    value={cardTax}
+                    onChange={(e) => setCardTax(parseFloat(e.target.value))}
+                    type="number"
+                  />
                 </InputGroup>
               </FormControl>
               <FormControl>
                 <FormLabel mb={0}>Valor Previsto</FormLabel>
                 <InputGroup>
                   <InputLeftAddon children="R$" />
-                  <Input focusBorderColor="green.500" />
+                  <Input
+                    focusBorderColor="green.500"
+                    value={cardPreviousValue}
+                    onChange={(e) =>
+                      calcPercent(parseFloat(e.target.value), "card")
+                    }
+                    type="number"
+                  />
                 </InputGroup>
               </FormControl>
               <FormControl>
-                <FormLabel mb={0}>Valor Descontado</FormLabel>
+                <FormLabel mb={0}>Valor Final</FormLabel>
                 <InputGroup>
                   <InputLeftAddon children="R$" />
-                  <Input focusBorderColor="green.500" />
+                  <Input
+                    focusBorderColor="green.500"
+                    value={cardDiscountValue}
+                    isReadOnly
+                  />
                 </InputGroup>
               </FormControl>
             </Grid>
@@ -1181,21 +1307,38 @@ export default function NovoSorteio({ config }) {
                 <FormLabel mb={0}>Taxa</FormLabel>
                 <InputGroup>
                   <InputLeftAddon children="%" />
-                  <Input focusBorderColor="green.500" />
+                  <Input
+                    focusBorderColor="green.500"
+                    value={pixTax}
+                    onChange={(e) => setPixTax(parseFloat(e.target.value))}
+                    type="number"
+                  />
                 </InputGroup>
               </FormControl>
               <FormControl>
                 <FormLabel mb={0}>Valor Previsto</FormLabel>
                 <InputGroup>
                   <InputLeftAddon children="R$" />
-                  <Input focusBorderColor="green.500" />
+                  <Input
+                    focusBorderColor="green.500"
+                    value={pixPreviousValue}
+                    onChange={(e) =>
+                      calcPercent(parseFloat(e.target.value), "pix")
+                    }
+                    type="number"
+                  />
                 </InputGroup>
               </FormControl>
               <FormControl>
-                <FormLabel mb={0}>Valor Descontado</FormLabel>
+                <FormLabel mb={0}>Valor Final</FormLabel>
                 <InputGroup>
                   <InputLeftAddon children="R$" />
-                  <Input focusBorderColor="green.500" />
+                  <Input
+                    focusBorderColor="green.500"
+                    value={pixDiscountValue}
+                    type="number"
+                    isReadOnly
+                  />
                 </InputGroup>
               </FormControl>
             </Grid>

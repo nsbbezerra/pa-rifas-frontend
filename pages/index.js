@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import { useEffect } from "react";
 import {
   Box,
   Container,
@@ -13,21 +13,21 @@ import {
   Input,
   Textarea,
   Select,
-} from '@chakra-ui/react';
-import Link from 'next/link';
-import HeaderApp from '../components/header';
-import Image from 'next/image';
-import {IoMdArrowForward} from 'react-icons/io';
-import {RiMailSendLine} from 'react-icons/ri';
-import configsGlobal from '../configs/index';
-import FooterApp from '../components/footer';
-import {useConfigs} from '../context/Configs';
+} from "@chakra-ui/react";
+import Link from "next/link";
+import HeaderApp from "../components/header";
+import Image from "next/image";
+import { IoMdArrowForward } from "react-icons/io";
+import { RiMailSendLine } from "react-icons/ri";
+import configsGlobal from "../configs/index";
+import FooterApp from "../components/footer";
+import { useConfigs } from "../context/Configs";
 
-import ShowRaffles from '../components/raffles';
+import ShowRaffles from "../components/raffles";
 
-export default function Home({config, raffles, numbers}) {
-  const {setConfigs} = useConfigs();
-  const {colorMode} = useColorMode();
+export default function Home({ config, raffles, numbers }) {
+  const { setConfigs } = useConfigs();
+  const { colorMode } = useColorMode();
 
   useEffect(() => {
     setConfigs(config);
@@ -37,14 +37,14 @@ export default function Home({config, raffles, numbers}) {
     <>
       <HeaderApp />
 
-      <Container maxW="6xl" mt={20}>
+      <Container maxW="6xl" mt={10}>
         <Flex justify="center" align="center" direction="column" mb={10}>
           <Heading textAlign="center">Rifas em Destaque</Heading>
           <Box
             bgGradient={
-              colorMode === 'light'
-                ? 'linear(to-r, green.500, orange.500)'
-                : 'linear(to-r, green.200, orange.200)'
+              colorMode === "light"
+                ? "linear(to-r, green.500, orange.500)"
+                : "linear(to-r, green.200, orange.200)"
             }
             w="200px"
             h="5px"
@@ -53,7 +53,7 @@ export default function Home({config, raffles, numbers}) {
           />
         </Flex>
 
-        <ShowRaffles raffle={raffles} destination={'rifa'} numbers={numbers} />
+        <ShowRaffles raffle={raffles} destination={"rifa"} numbers={numbers} />
 
         <Flex justify="center" align="center" mt={10}>
           <Link href="/rifas" passHref>
@@ -61,7 +61,8 @@ export default function Home({config, raffles, numbers}) {
               <Button
                 rightIcon={<IoMdArrowForward />}
                 colorScheme="green"
-                variant="outline">
+                variant="outline"
+              >
                 Mais Rifas
               </Button>
             </a>
@@ -72,8 +73,9 @@ export default function Home({config, raffles, numbers}) {
       <Box
         pt={10}
         pb={10}
-        bg={colorMode === 'light' ? 'blackAlpha.100' : 'whiteAlpha.200'}
-        mt={20}>
+        bg={colorMode === "light" ? "blackAlpha.100" : "whiteAlpha.200"}
+        mt={10}
+      >
         <Container maxW="6xl">
           <Flex justify="center" align="center" direction="column">
             <Heading textAlign="center">
@@ -81,9 +83,9 @@ export default function Home({config, raffles, numbers}) {
             </Heading>
             <Box
               bgGradient={
-                colorMode === 'light'
-                  ? 'linear(to-r, green.500, orange.500)'
-                  : 'linear(to-r, green.200, orange.200)'
+                colorMode === "light"
+                  ? "linear(to-r, green.500, orange.500)"
+                  : "linear(to-r, green.200, orange.200)"
               }
               w="200px"
               h="5px"
@@ -98,7 +100,8 @@ export default function Home({config, raffles, numbers}) {
             justifyItems="center"
             mt={10}
             justifyContent="center"
-            alignItems="flex-start">
+            alignItems="flex-start"
+          >
             <Flex justify="center" align="center" direction="column">
               <Box w="70px" h="70px">
                 <Image
@@ -178,14 +181,14 @@ export default function Home({config, raffles, numbers}) {
         </Container>
       </Box>
 
-      <Container mt={20} maxW="4xl">
+      <Container mt={10} maxW="4xl">
         <Flex justify="center" align="center" direction="column">
           <Heading textAlign="center">Envie-nos o seu Feedback</Heading>
           <Box
             bgGradient={
-              colorMode === 'light'
-                ? 'linear(to-r, green.500, orange.500)'
-                : 'linear(to-r, green.200, orange.200)'
+              colorMode === "light"
+                ? "linear(to-r, green.500, orange.500)"
+                : "linear(to-r, green.200, orange.200)"
             }
             w="200px"
             h="5px"
@@ -200,13 +203,15 @@ export default function Home({config, raffles, numbers}) {
         </Flex>
         <Grid
           mt={10}
-          templateColumns={['1fr', '1fr 3fr', '1fr 3fr', '1fr 3fr', '1fr 3fr']}
-          gap={5}>
+          templateColumns={["1fr", "1fr 3fr", "1fr 3fr", "1fr 3fr", "1fr 3fr"]}
+          gap={5}
+        >
           <FormControl>
             <FormLabel>Selecione uma Opção</FormLabel>
             <Select
               focusBorderColor="green.500"
-              placeholder="Selecione uma Opção">
+              placeholder="Selecione uma Opção"
+            >
               <option value="1">Sugestão</option>
               <option value="2">Crítica</option>
               <option value="3">Elogio</option>
@@ -231,7 +236,8 @@ export default function Home({config, raffles, numbers}) {
           leftIcon={<RiMailSendLine />}
           colorScheme="green"
           size="lg"
-          mt={5}>
+          mt={5}
+        >
           Enviar Mensagem
         </Button>
       </Container>

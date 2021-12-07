@@ -12,6 +12,8 @@ const configs = {
   },
   url: dev,
   key: publicKey,
+  pixTax: 0.99,
+  cardTax: 4.99,
 };
 
 export default configs;

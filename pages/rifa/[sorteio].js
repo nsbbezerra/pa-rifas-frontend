@@ -1,5 +1,5 @@
-import {useEffect, useMemo, useState} from 'react';
-import HeaderApp from '../../components/header';
+import { useEffect, useMemo, useState } from "react";
+import HeaderApp from "../../components/header";
 import {
   Box,
   Grid,
@@ -33,14 +33,15 @@ import {
   Skeleton,
   useColorMode,
   useColorModeValue,
-} from '@chakra-ui/react';
+  Link as ChakraLink,
+} from "@chakra-ui/react";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
-} from '../../components/sliders';
-import Image from 'next/image';
-import {FaCheck, FaCopy, FaTrash, FaWhatsapp} from 'react-icons/fa';
+} from "../../components/sliders";
+import Image from "next/image";
+import { FaCheck, FaCopy, FaTrash, FaWhatsapp } from "react-icons/fa";
 import {
   AiFillBank,
   AiOutlineFacebook,
@@ -48,30 +49,30 @@ import {
   AiOutlineTrophy,
   AiOutlineUser,
   AiOutlineWhatsApp,
-} from 'react-icons/ai';
-import MaskedInput from 'react-text-mask';
-import Link from 'next/link';
-import {useRouter} from 'next/router';
-import configGloba from '../../configs/index';
-import {format} from 'date-fns';
-import pt_br from 'date-fns/locale/pt-BR';
-import {useClient} from '../../context/Clients';
-import {useLoginModal} from '../../context/ModalLogin';
-import {useRegisterModal} from '../../context/ModalRegister';
-import api from '../../configs/axios';
-import {CopyToClipboard} from 'react-copy-to-clipboard';
-import useFetch from '../../hooks/useFetch';
-import FooterApp from '../../components/footer';
+} from "react-icons/ai";
+import MaskedInput from "react-text-mask";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import configGloba from "../../configs/index";
+import { format } from "date-fns";
+import pt_br from "date-fns/locale/pt-BR";
+import { useClient } from "../../context/Clients";
+import { useLoginModal } from "../../context/ModalLogin";
+import { useRegisterModal } from "../../context/ModalRegister";
+import api from "../../configs/axios";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import useFetch from "../../hooks/useFetch";
+import FooterApp from "../../components/footer";
 import {
   Slider,
   SliderFilledTrack,
   SliderThumb,
   SliderTrack,
-} from '@chakra-ui/slider';
+} from "@chakra-ui/slider";
 
-export default function Sorteio({raffles, trophys}) {
-  const {colorMode} = useColorMode();
-  const {query, isFallback} = useRouter();
+export default function Sorteio({ raffles, trophys, numbersRaffle }) {
+  const { colorMode } = useColorMode();
+  const { query, isFallback, push } = useRouter();
 
   if (isFallback) {
     return (
@@ -80,17 +81,18 @@ export default function Sorteio({raffles, trophys}) {
         <Container maxW="6xl">
           <Grid
             templateColumns={[
-              '1fr',
-              '1fr',
-              '220px 1fr',
-              '220px 1fr',
-              '220px 1fr',
+              "1fr",
+              "1fr",
+              "220px 1fr",
+              "220px 1fr",
+              "220px 1fr",
             ]}
             gap="40px"
             justifyItems="center"
             alignItems="center"
             mt={10}
-            mb={10}>
+            mb={10}
+          >
             <Box w="220px" h="220px">
               <Skeleton h="220px" w="220px" rounded="lg" />
             </Box>
@@ -98,8 +100,9 @@ export default function Sorteio({raffles, trophys}) {
               <Skeleton h="40px" w="100%" mb={5} />
 
               <Flex
-                direction={['column', 'column', 'column', 'row', 'row']}
-                justifyContent="space-between">
+                direction={["column", "column", "column", "row", "row"]}
+                justifyContent="space-between"
+              >
                 <Skeleton h="30px" w="250px" />
                 <Skeleton h="30px" w="250px" />
               </Flex>
@@ -113,10 +116,10 @@ export default function Sorteio({raffles, trophys}) {
   }
 
   const toast = useToast();
-  const {client} = useClient();
-  const {setOpenRegister} = useRegisterModal();
-  const {setOpenLogin} = useLoginModal();
-  const {data, error} = useFetch(`/numbers/${query.sorteio}`);
+  const { client } = useClient();
+  const { setOpenRegister } = useRegisterModal();
+  const { setOpenLogin } = useLoginModal();
+  const { data, error } = useFetch(`/numbers/${query.sorteio}`);
 
   useEffect(() => {
     if (data !== undefined) {
@@ -145,25 +148,25 @@ export default function Sorteio({raffles, trophys}) {
       title: title,
       description: message,
       status: status,
-      position: 'bottom-right',
+      position: "bottom-right",
     });
   }
 
   if (error) {
-    if (error.message === 'Network Error') {
+    if (error.message === "Network Error") {
       showToast(
-        'Erro de conexão, verifique sua conexão com a internet',
-        'error',
-        'Erro',
+        "Erro de conexão, verifique sua conexão com a internet",
+        "error",
+        "Erro"
       );
     } else {
-      showToast('Ocorreu um erro inesperado', 'error', 'Erro');
+      showToast("Ocorreu um erro inesperado", "error", "Erro");
     }
   }
 
   const generate = useMemo(() => {
     let number = [];
-    if (JSON.stringify(raffle) !== '{}') {
+    if (JSON.stringify(raffle) !== "{}") {
       for (let index = 0; index < parseInt(raffle.qtd_numbers); index++) {
         let info = {
           num:
@@ -184,9 +187,9 @@ export default function Sorteio({raffles, trophys}) {
   }, [mynumbers]);
 
   async function handleNumbers(num) {
-    const find = await mynumbers.find(obj => obj === num);
+    const find = await mynumbers.find((obj) => obj === num);
     if (find) {
-      showToast('Este número já foi selecionado', 'warning', 'Atenção');
+      showToast("Este número já foi selecionado", "warning", "Atenção");
     } else {
       setMynumbers([...mynumbers, num]);
     }
@@ -194,11 +197,11 @@ export default function Sorteio({raffles, trophys}) {
 
   function capitalizeAllFirstLetter(string) {
     let toLower = string.toLowerCase();
-    let splited = toLower.split(' ');
-    let toJoin = splited.map(e => {
+    let splited = toLower.split(" ");
+    let toJoin = splited.map((e) => {
       return e.charAt(0).toUpperCase() + e.slice(1);
     });
-    let joined = toJoin.join(' ');
+    let joined = toJoin.join(" ");
     return joined;
   }
 
@@ -210,10 +213,11 @@ export default function Sorteio({raffles, trophys}) {
   async function storeNumbers() {
     setLoading(true);
     try {
-      const response = await api.post('/numbers', {
+      const response = await api.post("/numbers", {
         raffle_id: raffle.id,
         client_id: client.id,
         numbers: mynumbers,
+        orderValue: amount,
       });
       setModalPayment(true);
       setAmount(0);
@@ -221,57 +225,66 @@ export default function Sorteio({raffles, trophys}) {
       setConcordo(false);
       setModalSent(false);
       setLoading(false);
-      showToast(response.data.message, 'success', 'Sucesso');
+      showToast(response.data.message, "success", "Sucesso");
+      push(response.data.url);
     } catch (error) {
       setLoading(false);
-      if (error.message === 'Network Error') {
+      if (error.message === "Network Error") {
         alert(
-          'Sem conexão com o servidor, verifique sua conexão com a internet.',
+          "Sem conexão com o servidor, verifique sua conexão com a internet."
         );
         return false;
       }
       let mess = !error.response.data
-        ? 'Erro no cadastro do cliente'
+        ? "Erro no cadastro do cliente"
         : error.response.data.message;
-      showToast(mess, 'error', 'Erro');
+      showToast(mess, "error", "Erro");
     }
   }
 
   function handleBG(id) {
     if (id !== undefined) {
-      if (JSON.stringify(client) !== '{}') {
+      if (JSON.stringify(client) !== "{}") {
         if (id.id_client === client.id) {
-          return 'red.600';
+          return "red.600";
         } else {
-          if (id.status === 'reserved') {
-            return 'orange.400';
+          if (id.status === "reserved") {
+            return "orange.400";
           }
-          if (id.status === 'paid_out') {
-            return 'green.400';
+          if (id.status === "paid_out") {
+            return "green.400";
           }
         }
       } else {
-        if (id.status === 'reserved') {
-          return 'orange.400';
+        if (id.status === "reserved") {
+          return "orange.400";
         }
-        if (id.status === 'paid_out') {
-          return 'green.400';
+        if (id.status === "paid_out") {
+          return "green.400";
         }
       }
     }
+  }
+
+  function calcPercent() {
+    let totalNumbers = raffle.qtd_numbers;
+    let numberSale = numbersRaffle.length;
+    let firstCalc = 100 * numberSale;
+    let finalCalc = firstCalc / totalNumbers;
+    return finalCalc;
   }
 
   return (
     <>
       <HeaderApp />
       <Container maxW="6xl" mt={20}>
-        {JSON.stringify(raffle) === '{}' ? (
+        {JSON.stringify(raffle) === "{}" ? (
           <Center>
             <Heading fontSize="2xl">Nenhuma informação para mostrar</Heading>
           </Center>
         ) : (
           <>
-            <Breadcrumb mb={10} fontSize={['xx-small', 'md', 'md', 'md', 'md']}>
+            <Breadcrumb mb={10} fontSize={["xx-small", "md", "md", "md", "md"]}>
               <BreadcrumbItem>
                 <Link href="/" passHref>
                   <a>
@@ -300,21 +313,23 @@ export default function Sorteio({raffles, trophys}) {
 
             <Grid
               templateColumns={[
-                '1fr',
-                '1fr 1fr',
-                '1fr 1fr',
-                '1fr 1fr',
-                '1fr 1fr',
+                "1fr",
+                "1fr 1fr",
+                "1fr 1fr",
+                "1fr 1fr",
+                "1fr 1fr",
               ]}
               mt={10}
               gap={20}
-              justifyItems="center">
+              justifyItems="center"
+            >
               <Box
                 w="100%"
                 overflow="hidden"
                 rounded="lg"
                 borderWidth="1px"
-                h="min-content">
+                h="min-content"
+              >
                 <Image
                   src={`${configGloba.url}/img/${raffle.thumbnail}`}
                   width={240}
@@ -330,11 +345,13 @@ export default function Sorteio({raffles, trophys}) {
                 h="min-content"
                 rounded="xl"
                 shadow="lg"
-                borderWidth="1px">
+                borderWidth="1px"
+              >
                 <Box p={5}>
                   <Heading
                     fontSize="2xl"
-                    color={colorMode === 'light' ? 'green.500' : 'green.200'}>
+                    color={colorMode === "light" ? "green.500" : "green.200"}
+                  >
                     {raffle.name}
                   </Heading>
                   <Text fontSize="md" mt={3}>
@@ -344,12 +361,12 @@ export default function Sorteio({raffles, trophys}) {
                     <Stat>
                       <StatLabel>Valor</StatLabel>
                       <StatNumber>
-                        R${' '}
+                        R${" "}
                         {parseFloat(raffle.raffle_value).toLocaleString(
-                          'pt-br',
+                          "pt-br",
                           {
                             minimumFractionDigits: 2,
-                          },
+                          }
                         )}
                       </StatNumber>
                     </Stat>
@@ -357,41 +374,80 @@ export default function Sorteio({raffles, trophys}) {
                     <Stat>
                       <StatLabel>Sorteio</StatLabel>
                       <StatNumber>
-                        {format(new Date(raffle.draw_date), 'dd/MM/yyyy', {
+                        {format(new Date(raffle.draw_date), "dd/MM/yyyy", {
                           locale: pt_br,
                         })}
                       </StatNumber>
                     </Stat>
                   </HStack>
                 </Box>
-                <Slider
-                  aria-label="slider-ex-4"
-                  defaultValue={30}
-                  size="lg"
-                  mt="-12px"
-                  isReadOnly>
-                  <SliderTrack
-                    bg={useColorModeValue('green.100', 'green.100')}
-                    h="10px"
-                    rounded="none">
-                    <SliderFilledTrack
-                      bg={useColorModeValue('green.500', 'green.300')}
-                    />
-                  </SliderTrack>
-                  <SliderThumb
-                    boxSize={10}
-                    borderWidth="1px"
-                    borderColor="green.200">
-                    <Flex
-                      justify="center"
-                      align="center"
-                      fontSize="sm"
-                      fontWeight="bold"
-                      color="green.500">
-                      30%
-                    </Flex>
-                  </SliderThumb>
-                </Slider>
+                {calcPercent(raffle) < parseFloat(raffle.goal) ? (
+                  <Slider
+                    aria-label="slider-ex-4"
+                    defaultValue={calcPercent()}
+                    size="lg"
+                    mt="-12px"
+                    isReadOnly
+                  >
+                    <SliderTrack
+                      bg={useColorModeValue("red.100", "red.100")}
+                      h="10px"
+                      rounded="none"
+                    >
+                      <SliderFilledTrack
+                        bg={useColorModeValue("red.500", "red.300")}
+                      />
+                    </SliderTrack>
+                    <SliderThumb
+                      boxSize={10}
+                      borderWidth="1px"
+                      borderColor="red.200"
+                    >
+                      <Flex
+                        justify="center"
+                        align="center"
+                        fontSize="sm"
+                        fontWeight="bold"
+                        color="red.500"
+                      >
+                        {calcPercent()}%
+                      </Flex>
+                    </SliderThumb>
+                  </Slider>
+                ) : (
+                  <Slider
+                    aria-label="slider-ex-4"
+                    defaultValue={calcPercent()}
+                    size="lg"
+                    mt="-12px"
+                    isReadOnly
+                  >
+                    <SliderTrack
+                      bg={useColorModeValue("green.100", "green.100")}
+                      h="10px"
+                      rounded="none"
+                    >
+                      <SliderFilledTrack
+                        bg={useColorModeValue("green.500", "green.300")}
+                      />
+                    </SliderTrack>
+                    <SliderThumb
+                      boxSize={10}
+                      borderWidth="1px"
+                      borderColor="green.200"
+                    >
+                      <Flex
+                        justify="center"
+                        align="center"
+                        fontSize="sm"
+                        fontWeight="bold"
+                        color="green.500"
+                      >
+                        {calcPercent()}%
+                      </Flex>
+                    </SliderThumb>
+                  </Slider>
+                )}
                 <Box p={5} mt="-12px">
                   <Flex>
                     <Flex
@@ -399,12 +455,13 @@ export default function Sorteio({raffles, trophys}) {
                       w="50px"
                       h="50px"
                       bg={
-                        colorMode === 'light'
-                          ? 'blackAlpha.100'
-                          : 'whiteAlpha.200'
+                        colorMode === "light"
+                          ? "blackAlpha.100"
+                          : "whiteAlpha.200"
                       }
                       justify="center"
-                      align="center">
+                      align="center"
+                    >
                       <Icon as={AiOutlineUser} fontSize="3xl" />
                     </Flex>
                     <Box ml={3}>
@@ -413,9 +470,10 @@ export default function Sorteio({raffles, trophys}) {
                       </Text>
                       <Text
                         color={
-                          colorMode === 'light' ? 'green.500' : 'green.200'
+                          colorMode === "light" ? "green.500" : "green.200"
                         }
-                        fontSize="sm">
+                        fontSize="sm"
+                      >
                         {raffle.client_city} - {raffle.client_state}
                       </Text>
                     </Box>
@@ -451,16 +509,17 @@ export default function Sorteio({raffles, trophys}) {
 
         <Grid
           templateColumns={[
-            'repeat(2, 1fr)',
-            'repeat(3, 1fr)',
-            'repeat(3, 1fr)',
-            'repeat(5, 1fr)',
-            'repeat(5, 1fr)',
+            "repeat(2, 1fr)",
+            "repeat(3, 1fr)",
+            "repeat(3, 1fr)",
+            "repeat(5, 1fr)",
+            "repeat(5, 1fr)",
           ]}
           gap={5}
           mt={10}
-          justifyContent="center">
-          {trophy.map(tro => (
+          justifyContent="center"
+        >
+          {trophy.map((tro) => (
             <Flex
               rounded="xl"
               shadow="lg"
@@ -469,7 +528,8 @@ export default function Sorteio({raffles, trophys}) {
               justify="center"
               align="center"
               h="min-content"
-              key={tro.id}>
+              key={tro.id}
+            >
               <Flex align="center">
                 <Icon as={AiOutlineTrophy} />
                 <Heading fontSize="sm" textAlign="center" p={2} w="100%">
@@ -486,14 +546,15 @@ export default function Sorteio({raffles, trophys}) {
 
         <Grid
           templateColumns={[
-            'repeat(2, 140px)',
-            'repeat(3, 180px)',
-            'repeat(4, 180px)',
-            'repeat(4, 180px)',
-            'repeat(4, 180px)',
+            "repeat(2, 140px)",
+            "repeat(3, 180px)",
+            "repeat(4, 180px)",
+            "repeat(4, 180px)",
+            "repeat(4, 180px)",
           ]}
           gap="15px"
-          mt={10}>
+          mt={10}
+        >
           <Box
             rounded="3xl"
             pt={1}
@@ -503,12 +564,13 @@ export default function Sorteio({raffles, trophys}) {
             bg="black"
             color="white"
             textAlign="center"
-            fontSize={['xs', 'md', 'md', 'md', 'md']}>
+            fontSize={["xs", "md", "md", "md", "md"]}
+          >
             Livres (
-            {nums.length > 0 && JSON.stringify(raffle) !== '{}'
+            {nums.length > 0 && JSON.stringify(raffle) !== "{}"
               ? raffle.qtd_numbers -
-                nums.filter(obj => obj.status === 'reserved').length -
-                nums.filter(obj => obj.status === 'paid_out').length
+                nums.filter((obj) => obj.status === "reserved").length -
+                nums.filter((obj) => obj.status === "paid_out").length
               : raffle.qtd_numbers}
             )
           </Box>
@@ -521,10 +583,11 @@ export default function Sorteio({raffles, trophys}) {
             bg="orange.400"
             color="white"
             textAlign="center"
-            fontSize={['xs', 'md', 'md', 'md', 'md']}>
+            fontSize={["xs", "md", "md", "md", "md"]}
+          >
             Reservado (
             {nums.length > 0
-              ? nums.filter(obj => obj.status === 'reserved').length
+              ? nums.filter((obj) => obj.status === "reserved").length
               : 0}
             )
           </Box>
@@ -537,10 +600,11 @@ export default function Sorteio({raffles, trophys}) {
             bg="green.400"
             color="white"
             textAlign="center"
-            fontSize={['xs', 'md', 'md', 'md', 'md']}>
+            fontSize={["xs", "md", "md", "md", "md"]}
+          >
             Pago (
             {nums.length > 0
-              ? nums.filter(obj => obj.status === 'paid_out').length
+              ? nums.filter((obj) => obj.status === "paid_out").length
               : 0}
             )
           </Box>
@@ -553,10 +617,11 @@ export default function Sorteio({raffles, trophys}) {
             bg="red.600"
             color="white"
             textAlign="center"
-            fontSize={['xs', 'md', 'md', 'md', 'md']}>
+            fontSize={["xs", "md", "md", "md", "md"]}
+          >
             Meus Números (
-            {JSON.stringify(client) !== '{}'
-              ? nums.filter(obj => obj.id_client === client.id).length
+            {JSON.stringify(client) !== "{}"
+              ? nums.filter((obj) => obj.id_client === client.id).length
               : 0}
             )
           </Box>
@@ -566,66 +631,71 @@ export default function Sorteio({raffles, trophys}) {
           rounded="xl"
           p={4}
           shadow="lg"
-          bg={colorMode === 'light' ? 'rgba(0,0,0,0.02)' : 'whiteAlpha.300'}
+          bg={colorMode === "light" ? "rgba(0,0,0,0.02)" : "whiteAlpha.300"}
           borderWidth="1px"
-          mt={5}>
+          mt={5}
+        >
           <Grid
             templateColumns="repeat(auto-fit, minmax(75px, 75px))"
             gap="5px"
             justifyContent="center"
             h="400px"
-            overflow="auto">
-            {generate.map(num => (
+            overflow="auto"
+          >
+            {generate.map((num) => (
               <Button
                 w="75px"
                 colorScheme="blackAlpha"
                 isDisabled={
-                  nums.find(obj => obj.number === parseInt(num.num))
+                  nums.find((obj) => obj.number === parseInt(num.num))
                     ? true
                     : false
                 }
                 bg={
-                  mynumbers.find(obj => obj === num.num) ? 'blue.500' : 'black'
+                  mynumbers.find((obj) => obj === num.num)
+                    ? "blue.500"
+                    : "black"
                 }
                 _focus={{
-                  outline: 'none',
-                  bg: mynumbers.find(obj => obj === num.num)
-                    ? 'blue.500'
-                    : 'gray.800',
+                  outline: "none",
+                  bg: mynumbers.find((obj) => obj === num.num)
+                    ? "blue.500"
+                    : "gray.800",
                 }}
                 _active={{
-                  bg: mynumbers.find(obj => obj === num.num)
-                    ? 'blue.500'
-                    : 'gray.800',
+                  bg: mynumbers.find((obj) => obj === num.num)
+                    ? "blue.500"
+                    : "gray.800",
                 }}
                 _hover={{
-                  bg: mynumbers.find(obj => obj === num.num)
-                    ? 'blue.500'
-                    : 'gray.800',
+                  bg: mynumbers.find((obj) => obj === num.num)
+                    ? "blue.500"
+                    : "gray.800",
                 }}
                 key={num.num}
                 onClick={() => handleNumbers(num.num)}
                 color="gray.100"
                 _disabled={{
                   bg: handleBG(
-                    nums.find(obj => obj.number === parseInt(num.num)),
+                    nums.find((obj) => obj.number === parseInt(num.num))
                   ),
                   _hover: {
                     bg: handleBG(
-                      nums.find(obj => obj.number === parseInt(num.num)),
+                      nums.find((obj) => obj.number === parseInt(num.num))
                     ),
                   },
                   _active: {
                     bg: handleBG(
-                      nums.find(obj => obj.number === parseInt(num.num)),
+                      nums.find((obj) => obj.number === parseInt(num.num))
                     ),
                   },
                   _focus: {
                     bg: handleBG(
-                      nums.find(obj => obj.number === parseInt(num.num)),
+                      nums.find((obj) => obj.number === parseInt(num.num))
                     ),
                   },
-                }}>
+                }}
+              >
                 {num.num}
               </Button>
             ))}
@@ -635,7 +705,8 @@ export default function Sorteio({raffles, trophys}) {
             leftIcon={<FaTrash />}
             colorScheme="red"
             onClick={() => clearNumbers()}
-            mt={5}>
+            mt={5}
+          >
             Limpar Números
           </Button>
         </Box>
@@ -646,28 +717,30 @@ export default function Sorteio({raffles, trophys}) {
           borderWidth="1px"
           p={5}
           h="min-content"
-          templateColumns={['1fr', '1fr 1fr', '1fr 1fr', '2fr 1fr', '2fr 1fr']}
+          templateColumns={["1fr", "1fr 1fr", "1fr 1fr", "2fr 1fr", "2fr 1fr"]}
           gap={5}
           mt={10}
           alignItems="center"
-          justifyItems={['center', 'initial', 'initial', 'initial', 'initial']}>
+          justifyItems={["center", "initial", "initial", "initial", "initial"]}
+        >
           <Stat>
             <StatLabel>Total a Pagar</StatLabel>
             <StatNumber>
-              {parseFloat(amount).toLocaleString('pt-br', {
-                style: 'currency',
-                currency: 'BRL',
+              {parseFloat(amount).toLocaleString("pt-br", {
+                style: "currency",
+                currency: "BRL",
               })}
             </StatNumber>
           </Stat>
 
-          <Grid templateColumns={'1fr'} gap={[2, 5, 5, 5, 5]} w="100%">
+          <Grid templateColumns={"1fr"} gap={[2, 5, 5, 5, 5]} w="100%">
             <Button
               leftIcon={<FaCheck />}
               colorScheme="green"
               size="lg"
               onClick={() => setModalSent(true)}
-              isFullWidth>
+              isFullWidth
+            >
               Finalizar Compra
             </Button>
           </Grid>
@@ -682,15 +755,15 @@ export default function Sorteio({raffles, trophys}) {
           <ModalHeader>Reserva de Número</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {JSON.stringify(client) === '{}' || !client ? (
+            {JSON.stringify(client) === "{}" || !client ? (
               <>
                 <Flex justify="center" align="center" direction="column">
                   <Heading textAlign="center">Não encontramos você!</Heading>
                   <Box
                     bgGradient={
-                      colorMode === 'light'
-                        ? 'linear(to-r, green.500, orange.500)'
-                        : 'linear(to-r, green.200, orange.200)'
+                      colorMode === "light"
+                        ? "linear(to-r, green.500, orange.500)"
+                        : "linear(to-r, green.200, orange.200)"
                     }
                     w="200px"
                     h="5px"
@@ -700,15 +773,16 @@ export default function Sorteio({raffles, trophys}) {
                 </Flex>
                 <Grid
                   templateColumns={[
-                    '280px',
-                    '350px',
-                    '350px 350px',
-                    '350px 350px',
-                    '350px 350px',
+                    "280px",
+                    "350px",
+                    "350px 350px",
+                    "350px 350px",
+                    "350px 350px",
                   ]}
                   gap={10}
                   mt={10}
-                  justifyContent="center">
+                  justifyContent="center"
+                >
                   <Flex
                     w="100%"
                     rounded="xl"
@@ -716,7 +790,8 @@ export default function Sorteio({raffles, trophys}) {
                     direction="column"
                     justify="center"
                     align="center"
-                    p={5}>
+                    p={5}
+                  >
                     <Box w="40%">
                       <Image
                         src="/img/register.svg"
@@ -737,7 +812,8 @@ export default function Sorteio({raffles, trophys}) {
                       isFullWidth
                       mt={5}
                       colorScheme="orange"
-                      onClick={() => setOpenRegister(true)}>
+                      onClick={() => setOpenRegister(true)}
+                    >
                       CADASTRE-SE
                     </Button>
                   </Flex>
@@ -749,7 +825,8 @@ export default function Sorteio({raffles, trophys}) {
                     direction="column"
                     justify="center"
                     align="center"
-                    p={5}>
+                    p={5}
+                  >
                     <Box w="40%">
                       <Image
                         src="/img/login.svg"
@@ -770,7 +847,8 @@ export default function Sorteio({raffles, trophys}) {
                       isFullWidth
                       mt={5}
                       colorScheme="green"
-                      onClick={() => setOpenLogin(true)}>
+                      onClick={() => setOpenLogin(true)}
+                    >
                       FAÇA LOGIN
                     </Button>
                   </Flex>
@@ -782,7 +860,7 @@ export default function Sorteio({raffles, trophys}) {
                 <FormControl mb={3} mt={3}>
                   <FormLabel>Nome Completo</FormLabel>
                   <Input
-                    focusBorderColor="purple.400"
+                    focusBorderColor="green.500"
                     placeholder="Nome Completo"
                     value={client.name}
                     isReadOnly
@@ -791,7 +869,7 @@ export default function Sorteio({raffles, trophys}) {
                 <FormControl mb={3}>
                   <FormLabel>Email</FormLabel>
                   <Input
-                    focusBorderColor="purple.400"
+                    focusBorderColor="green.500"
                     placeholder="Email"
                     isReadOnly
                     value={client.email}
@@ -804,15 +882,15 @@ export default function Sorteio({raffles, trophys}) {
                       /[0-9]/,
                       /\d/,
                       /\d/,
-                      '.',
+                      ".",
                       /\d/,
                       /\d/,
                       /\d/,
-                      '.',
+                      ".",
                       /\d/,
                       /\d/,
                       /\d/,
-                      '-',
+                      "-",
                       /\d/,
                       /\d/,
                     ]}
@@ -822,7 +900,7 @@ export default function Sorteio({raffles, trophys}) {
                       <Input
                         ref={ref}
                         {...props}
-                        focusBorderColor="purple.400"
+                        focusBorderColor="green.500"
                         isReadOnly
                       />
                     )}
@@ -832,17 +910,17 @@ export default function Sorteio({raffles, trophys}) {
                   <FormLabel>Telefone</FormLabel>
                   <MaskedInput
                     mask={[
-                      '(',
+                      "(",
                       /[0-9]/,
                       /\d/,
-                      ')',
-                      ' ',
+                      ")",
+                      " ",
                       /\d/,
                       /\d/,
                       /\d/,
                       /\d/,
                       /\d/,
-                      '-',
+                      "-",
                       /\d/,
                       /\d/,
                       /\d/,
@@ -858,23 +936,31 @@ export default function Sorteio({raffles, trophys}) {
                           placeholder="Telefone"
                           ref={ref}
                           {...props}
-                          focusBorderColor="purple.400"
+                          focusBorderColor="green.500"
                           isReadOnly
                         />
                       </InputGroup>
                     )}
                   />
                 </FormControl>
+                <Text mt={4} fontSize="xs">
+                  * Caso seus dados não esteja corretos, vá até{" "}
+                  <Link href={`/meusdados/${client.identify}`} passHref>
+                    <ChakraLink fontWeight="bold">MEUS DADOS</ChakraLink>
+                  </Link>{" "}
+                  para corrigi-los
+                </Text>
                 <Checkbox
                   defaultIsChecked
                   colorScheme="green"
                   mt={3}
                   isChecked={concordo}
-                  onChange={e => setConcordo(e.target.checked)}>
+                  onChange={(e) => setConcordo(e.target.checked)}
+                >
                   Reservando seu(s) número(s), você declara que leu e concorda
-                  com nossos{' '}
+                  com nossos{" "}
                   <Link href="/condicoesdeuso" passHref>
-                    <a target="_blank" style={{textDecoration: 'underline'}}>
+                    <a target="_blank" style={{ textDecoration: "underline" }}>
                       Termos de uso
                     </a>
                   </Link>
@@ -890,7 +976,8 @@ export default function Sorteio({raffles, trophys}) {
               ml={3}
               onClick={() => storeNumbers()}
               isDisabled={!concordo}
-              isLoading={loading}>
+              isLoading={loading}
+            >
               Concluir
             </Button>
           </ModalFooter>
@@ -900,7 +987,8 @@ export default function Sorteio({raffles, trophys}) {
       <Modal
         isOpen={modalPayment}
         onClose={() => setModalPayment(false)}
-        size="2xl">
+        size="2xl"
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
@@ -913,13 +1001,14 @@ export default function Sorteio({raffles, trophys}) {
           <ModalBody pb={4}>
             <Grid
               templateColumns={[
-                '1fr',
-                '1fr 1fr',
-                '1fr 1fr',
-                '1fr 1fr',
-                '1fr 1fr',
+                "1fr",
+                "1fr 1fr",
+                "1fr 1fr",
+                "1fr 1fr",
+                "1fr 1fr",
               ]}
-              gap="15px">
+              gap="15px"
+            >
               <Box borderWidth="1px" rounded="lg">
                 <Box p={3}>
                   <Image
@@ -934,17 +1023,18 @@ export default function Sorteio({raffles, trophys}) {
                   <Text>Chave:</Text>
                   {raffle.pix_keys ? (
                     <>
-                      {raffle.pix_keys.map(pi => (
+                      {raffle.pix_keys.map((pi) => (
                         <CopyToClipboard
                           key={pi.pix}
                           text={pi.pix}
                           onCopy={() =>
                             showToast(
                               `Valor: ${pi.pix} copiado para área de transferência.`,
-                              'info',
-                              'Informação',
+                              "info",
+                              "Informação"
                             )
-                          }>
+                          }
+                        >
                           <HStack spacing="10px">
                             <Text mt={2}>
                               {pi.type}: <strong>{pi.pix}</strong>
@@ -959,7 +1049,7 @@ export default function Sorteio({raffles, trophys}) {
                       ))}
                     </>
                   ) : (
-                    ''
+                    ""
                   )}
                 </Box>
               </Box>
@@ -975,29 +1065,29 @@ export default function Sorteio({raffles, trophys}) {
                 <Divider />
                 <Box p={3} fontSize="sm">
                   {raffle.bank_transfer
-                    ? raffle.bank_transfer.map(bnk => (
+                    ? raffle.bank_transfer.map((bnk) => (
                         <Box key={bnk.cc}>
-                          {bnk.bank !== '' && (
+                          {bnk.bank !== "" && (
                             <Text>
                               Banco: <strong>{bnk.bank}</strong>
                             </Text>
                           )}
-                          {bnk.ag !== '' && (
+                          {bnk.ag !== "" && (
                             <Text>
                               Agencia: <strong>{bnk.ag}</strong>
                             </Text>
                           )}
-                          {bnk.cc !== '' && (
+                          {bnk.cc !== "" && (
                             <Text>
                               {bnk.type}: <strong>{bnk.cc}</strong>
                             </Text>
                           )}
-                          {bnk.op !== '' && (
+                          {bnk.op !== "" && (
                             <Text>
                               Operação: <strong>{bnk.op}</strong>
                             </Text>
                           )}
-                          {bnk.vr !== '' && (
+                          {bnk.vr !== "" && (
                             <Text>
                               Variação: <strong>{bnk.vr}</strong>
                             </Text>
@@ -1005,7 +1095,7 @@ export default function Sorteio({raffles, trophys}) {
                           <Divider mt={2} mb={2} />
                         </Box>
                       ))
-                    : ''}
+                    : ""}
                 </Box>
               </Box>
             </Grid>
@@ -1020,14 +1110,15 @@ export default function Sorteio({raffles, trophys}) {
                 raffle.phone_client
                   ? `https://wa.me/+55${raffle.phone_client.replace(
                       /([\u0300-\u036f]|[^0-9a-zA-Z])/g,
-                      '',
+                      ""
                     )}`
-                  : ''
+                  : ""
               }
-              passHref>
-              <a target={'_blank'}>
+              passHref
+            >
+              <a target={"_blank"}>
                 <Button colorScheme="green" leftIcon={<FaWhatsapp />} mt={3}>
-                  {raffle.phone_client ? raffle.phone_client : ''}
+                  {raffle.phone_client ? raffle.phone_client : ""}
                 </Button>
               </a>
             </Link>
@@ -1041,8 +1132,8 @@ export default function Sorteio({raffles, trophys}) {
 export const getStaticPaths = async () => {
   const response = await fetch(`${configGloba.url}/findRaffle`);
   const data = await response.json();
-  const paths = await data.map(raf => {
-    return {params: {sorteio: raf.identify}};
+  const paths = await data.map((raf) => {
+    return { params: { sorteio: raf.identify } };
   });
   return {
     paths: paths,
@@ -1050,16 +1141,18 @@ export const getStaticPaths = async () => {
   };
 };
 
-export const getStaticProps = async ({params}) => {
+export const getStaticProps = async ({ params }) => {
   const raff = params.sorteio;
   const response = await fetch(`${configGloba.url}/findRaffleById/${raff}`);
   const data = await response.json();
   let raffles = !data.raffle ? null : data.raffle;
   let trophys = !data.trophys ? null : data.trophys;
+  let numbersRaffle = !data.numbers ? null : data.numbers;
   return {
     props: {
       raffles,
       trophys,
+      numbersRaffle,
     },
     revalidate: 10,
   };
