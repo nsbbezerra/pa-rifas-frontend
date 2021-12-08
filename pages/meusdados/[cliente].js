@@ -69,7 +69,6 @@ export default function MeusDados({ information }) {
   }
 
   const toast = useToast();
-  const [page, setPage] = useState("data");
   const [validators, setValidators] = useState([]);
 
   const [name, setName] = useState("");
@@ -97,6 +96,13 @@ export default function MeusDados({ information }) {
     }
   }, [information]);
 
+  async function findClientLocal() {
+    const myclient = await localStorage.getItem("client");
+    if (myclient) {
+      setClient(JSON.parse(myclient));
+    }
+  }
+
   useEffect(() => {
     if (JSON.stringify(client) !== "{}") {
       setName(client.name);
@@ -110,6 +116,8 @@ export default function MeusDados({ information }) {
       setCep(client.cep);
       setCity(client.city);
       setState(client.state);
+    } else {
+      findClientLocal();
     }
   }, [client]);
 
@@ -669,12 +677,10 @@ export default function MeusDados({ information }) {
                 </TabList>
                 <TabPanels>
                   <TabPanel>
-                    {tabIndex === 0 && (
-                      <Admin info={query.cliente} url={url} configs={configs} />
-                    )}
+                    <Admin info={query.cliente} url={url} configs={configs} />
                   </TabPanel>
                   <TabPanel>
-                    {tabIndex === 1 && <Client info={query.cliente} />}
+                    <Client info={query.cliente} />
                   </TabPanel>
                 </TabPanels>
               </Tabs>

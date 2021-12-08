@@ -88,6 +88,17 @@ function HeaderApp() {
 
   const [drawerMenu, setDrawerMenu] = useState(false);
 
+  async function findClientLocal() {
+    const myClient = await localStorage.getItem("client");
+    if (myClient) {
+      setClient(JSON.parse(myClient));
+    }
+  }
+
+  useEffect(() => {
+    findClientLocal();
+  }, []);
+
   function clear() {
     setName("");
     setCpf("");
@@ -974,6 +985,17 @@ function HeaderApp() {
             </Flex>
 
             <Stack spacing={3} mt={10}>
+              <Link href="/" passHref>
+                <a>
+                  <Button
+                    colorScheme="green"
+                    _focus={{ outline: "none" }}
+                    isFullWidth
+                  >
+                    INÍCIO
+                  </Button>
+                </a>
+              </Link>
               <Link href="/rifas" passHref>
                 <a>
                   <Button

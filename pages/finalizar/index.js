@@ -9,6 +9,7 @@ import errorAnimation from "../../assets/error.json";
 import Lottie from "../../components/lottie";
 import api from "../../configs/axios";
 import { useEffect, useState } from "react";
+import { Spinner } from "@chakra-ui/react";
 
 export default function Finalize() {
   const { query, push } = useRouter();
@@ -25,11 +26,10 @@ export default function Finalize() {
         payment_id,
         status,
       });
-      console.log(response);
       setLoading(false);
+      push("/");
     } catch (error) {
       setLoading(false);
-      console.log(error);
     }
   }
 
@@ -49,17 +49,8 @@ export default function Finalize() {
       <Heading textAlign="center">
         PAGAMENTO {status === "approved" ? "APROVADO" : "REJEITADO"}
       </Heading>
-      <Flex justify="center" align="center">
-        <Button
-          leftIcon={<AiOutlineHome />}
-          mt={3}
-          size="lg"
-          colorScheme="green"
-          onClick={() => push("/")}
-          isLoading={loading}
-        >
-          Ir para o Início
-        </Button>
+      <Flex justify="center" align="center" mt={3}>
+        <Spinner size="xl" colorScheme="green" />
       </Flex>
       <Footer />
     </>

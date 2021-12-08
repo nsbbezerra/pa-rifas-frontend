@@ -2,7 +2,7 @@ import { Flex, Heading } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import useFetch from "../hooks/useFetch";
 
-import ShowRaffles from "../components/raffles";
+import ShowRaffles from "../components/rafflesAdmin";
 
 export default function Client({ info }) {
   const { data } = useFetch(`/findRafflesClient/${info}`);

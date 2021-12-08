@@ -60,7 +60,6 @@ import { useClient } from "../../context/Clients";
 import { useLoginModal } from "../../context/ModalLogin";
 import { useRegisterModal } from "../../context/ModalRegister";
 import api from "../../configs/axios";
-import { CopyToClipboard } from "react-copy-to-clipboard";
 import useFetch from "../../hooks/useFetch";
 import FooterApp from "../../components/footer";
 import {
@@ -116,7 +115,7 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
   }
 
   const toast = useToast();
-  const { client } = useClient();
+  const { client, setClient } = useClient();
   const { setOpenRegister } = useRegisterModal();
   const { setOpenLogin } = useLoginModal();
   const { data, error } = useFetch(`/numbers/${query.sorteio}`);
@@ -129,11 +128,21 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
     }
   }, [data]);
 
+  async function findClientLocal() {
+    const myClient = await localStorage.getItem("client");
+    if (myClient) {
+      setClient(JSON.parse(myClient));
+    }
+  }
+
+  useEffect(() => {
+    findClientLocal();
+  }, []);
+
   const [mynumbers, setMynumbers] = useState([]);
   const [amount, setAmount] = useState(0);
 
   const [modalSend, setModalSent] = useState(false);
-  const [modalPayment, setModalPayment] = useState(false);
 
   const [raffle] = useState(raffles);
   const [trophy] = useState(trophys);
@@ -219,7 +228,6 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
         numbers: mynumbers,
         orderValue: amount,
       });
-      setModalPayment(true);
       setAmount(0);
       setMynumbers([]);
       setConcordo(false);
@@ -983,148 +991,6 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
           </ModalFooter>
         </ModalContent>
       </Modal>
-
-      <Modal
-        isOpen={modalPayment}
-        onClose={() => setModalPayment(false)}
-        size="2xl"
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>
-            <Flex align="center">
-              <Icon as={AiFillBank} />
-              <Text ml={3}>Forma de Pagamento</Text>
-            </Flex>
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={4}>
-            <Grid
-              templateColumns={[
-                "1fr",
-                "1fr 1fr",
-                "1fr 1fr",
-                "1fr 1fr",
-                "1fr 1fr",
-              ]}
-              gap="15px"
-            >
-              <Box borderWidth="1px" rounded="lg">
-                <Box p={3}>
-                  <Image
-                    src="/img/pix.svg"
-                    width={150}
-                    height={30}
-                    layout="responsive"
-                  />
-                </Box>
-                <Divider />
-                <Box p={3} fontSize="sm">
-                  <Text>Chave:</Text>
-                  {raffle.pix_keys ? (
-                    <>
-                      {raffle.pix_keys.map((pi) => (
-                        <CopyToClipboard
-                          key={pi.pix}
-                          text={pi.pix}
-                          onCopy={() =>
-                            showToast(
-                              `Valor: ${pi.pix} copiado para área de transferência.`,
-                              "info",
-                              "Informação"
-                            )
-                          }
-                        >
-                          <HStack spacing="10px">
-                            <Text mt={2}>
-                              {pi.type}: <strong>{pi.pix}</strong>
-                            </Text>
-                            <IconButton
-                              icon={<FaCopy />}
-                              size="xs"
-                              colorScheme="purple"
-                            />
-                          </HStack>
-                        </CopyToClipboard>
-                      ))}
-                    </>
-                  ) : (
-                    ""
-                  )}
-                </Box>
-              </Box>
-              <Box borderWidth="1px" rounded="lg">
-                <Box p={3}>
-                  <Image
-                    src="/img/transferencia.svg"
-                    width={150}
-                    height={30}
-                    layout="responsive"
-                  />
-                </Box>
-                <Divider />
-                <Box p={3} fontSize="sm">
-                  {raffle.bank_transfer
-                    ? raffle.bank_transfer.map((bnk) => (
-                        <Box key={bnk.cc}>
-                          {bnk.bank !== "" && (
-                            <Text>
-                              Banco: <strong>{bnk.bank}</strong>
-                            </Text>
-                          )}
-                          {bnk.ag !== "" && (
-                            <Text>
-                              Agencia: <strong>{bnk.ag}</strong>
-                            </Text>
-                          )}
-                          {bnk.cc !== "" && (
-                            <Text>
-                              {bnk.type}: <strong>{bnk.cc}</strong>
-                            </Text>
-                          )}
-                          {bnk.op !== "" && (
-                            <Text>
-                              Operação: <strong>{bnk.op}</strong>
-                            </Text>
-                          )}
-                          {bnk.vr !== "" && (
-                            <Text>
-                              Variação: <strong>{bnk.vr}</strong>
-                            </Text>
-                          )}
-                          <Divider mt={2} mb={2} />
-                        </Box>
-                      ))
-                    : ""}
-                </Box>
-              </Box>
-            </Grid>
-            <Text mt={3}>
-              Escolha uma das opções de pagamento acima depois entre em contato
-              com o administrador da rifa através do botão verde abaixo para
-              confirmar o pagamento, seus números e as informações deste sorteio
-              estão disponível na sessão MEUS DADOS.
-            </Text>
-            <Link
-              href={
-                raffle.phone_client
-                  ? `https://wa.me/+55${raffle.phone_client.replace(
-                      /([\u0300-\u036f]|[^0-9a-zA-Z])/g,
-                      ""
-                    )}`
-                  : ""
-              }
-              passHref
-            >
-              <a target={"_blank"}>
-                <Button colorScheme="green" leftIcon={<FaWhatsapp />} mt={3}>
-                  {raffle.phone_client ? raffle.phone_client : ""}
-                </Button>
-              </a>
-            </Link>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
     </>
   );
 }
@@ -1154,6 +1020,6 @@ export const getStaticProps = async ({ params }) => {
       trophys,
       numbersRaffle,
     },
-    revalidate: 10,
+    revalidate: 60,
   };
 };
