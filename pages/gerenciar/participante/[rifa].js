@@ -47,6 +47,51 @@ export default function GerenciarPartitipante({
         return "orange.200";
       }
     }
+    if (color === "red") {
+      if (colorMode === "light") {
+        return "red.500";
+      } else {
+        return "red.200";
+      }
+    }
+    if (color === "blue") {
+      if (colorMode === "light") {
+        return "blue.500";
+      } else {
+        return "blue.200";
+      }
+    }
+    if (color === "gray") {
+      if (colorMode === "light") {
+        return "gray.900";
+      } else {
+        return "gray.900";
+      }
+    }
+    if (color === "yellow") {
+      if (colorMode === "light") {
+        return "yellow.500";
+      } else {
+        return "yellow.200";
+      }
+    }
+  }
+
+  function handleStatus(status) {
+    switch (status) {
+      case "open":
+        return { title: "RIFA LIBERADA", bg: handleColor("green") };
+      case "cancel":
+        return { title: "RIFA CANCELADA", bg: handleColor("red") };
+      case "drawn":
+        return { title: "RIFA FINALIZADA", bg: handleColor("blue") };
+      case "waiting":
+        return { title: "RIFA EM ESPERA", bg: handleColor("yellow") };
+      case "refused":
+        return { title: "RIFA BLOQUEADA", bg: handleColor("gray") };
+      default:
+        return { title: "RIFA EM ESPERA", bg: handleColor("yellow") };
+    }
   }
 
   return (
@@ -57,6 +102,18 @@ export default function GerenciarPartitipante({
         <Tag colorScheme="green" size="lg" fontWeight="bold" mb={10}>
           RIFA Nº {raffle.id}
         </Tag>
+
+        <Box
+          rounded="xl"
+          p={2}
+          textAlign="center"
+          fontSize="large"
+          bg={handleStatus(raffle.status).bg}
+          color={useColorModeValue("gray.100", "gray.800")}
+          mb={10}
+        >
+          {handleStatus(raffle.status).title}
+        </Box>
 
         <Grid
           templateColumns={[

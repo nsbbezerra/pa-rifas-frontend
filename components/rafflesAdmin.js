@@ -63,7 +63,7 @@ export default function ShowRaffles({ raffle, destination }) {
                   align="center"
                   color={useColorModeValue("white", "gray.700")}
                   pos="absolute"
-                  zIndex={1000}
+                  zIndex={800}
                   transform="rotate(-40deg)"
                   w="250px"
                   left="-70px"
@@ -83,7 +83,7 @@ export default function ShowRaffles({ raffle, destination }) {
                   align="center"
                   color={useColorModeValue("white", "gray.700")}
                   pos="absolute"
-                  zIndex={1000}
+                  zIndex={800}
                   transform="rotate(-40deg)"
                   w="250px"
                   left="-70px"
