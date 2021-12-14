@@ -27,7 +27,7 @@ export default function ShowRaffles({ raffle, destination }) {
     <>
       {raffle.length === 0 || !raffle ? (
         <Flex direction="column" justify="center" align="center">
-          <Lottie animation={EmptyAnimation} width="50%" />
+          <Lottie animation={EmptyAnimation} width="40%" />
           <Text
             textAlign="center"
             fontSize="2xl"

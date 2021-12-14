@@ -22,10 +22,16 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  Spinner,
   ModalBody,
   ModalCloseButton,
   useToast,
+  Stack,
+  ModalFooter,
+  FormControl,
+  FormLabel,
+  Input,
+  Avatar,
+  Spinner,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import { useColorMode, useColorModeValue } from "@chakra-ui/color-mode";
@@ -33,7 +39,14 @@ import { Stat, StatLabel, StatNumber, StatHelpText } from "@chakra-ui/stat";
 import { Button } from "@chakra-ui/button";
 import { GiCardRandom } from "react-icons/gi";
 import Icon from "@chakra-ui/icon";
-import { AiOutlineTrophy, AiOutlineWhatsApp } from "react-icons/ai";
+import {
+  AiOutlineTrophy,
+  AiOutlineWhatsApp,
+  AiOutlineZoomIn,
+  AiOutlineUser,
+  AiOutlineClose,
+  AiFillMail,
+} from "react-icons/ai";
 import { FaRegEdit } from "react-icons/fa";
 import { ImCancelCircle } from "react-icons/im";
 import { Tag } from "@chakra-ui/tag";
@@ -43,7 +56,7 @@ import pt_br from "date-fns/locale/pt-BR";
 import { useState } from "react";
 import api from "../../../configs/axios";
 
-export default function AdminRaffles({ raffle, trophys, orders, numbers }) {
+export default function AdminRaffles({ raffle, trophys, orders }) {
   const { colorMode } = useColorMode();
   const toast = useToast();
 
@@ -54,6 +67,10 @@ export default function AdminRaffles({ raffle, trophys, orders, numbers }) {
   const [idDrawn, setIdDrawn] = useState(0);
   const [loading, setLoading] = useState(false);
   const [trofeus, setTrofeus] = useState(trophys || []);
+  const [number, setNumber] = useState("0");
+  const [modalWinner, setModalWinner] = useState(false);
+  const [trophy, setTrophy] = useState({});
+  const [client, setClient] = useState({});
 
   function showToast(message, status, title) {
     toast({
@@ -65,10 +82,17 @@ export default function AdminRaffles({ raffle, trophys, orders, numbers }) {
   }
 
   async function Drawn() {
+    setLoading(true);
     try {
-      const response = await api.put(`/drawn/${raffle.id}/${idDrawn}`);
+      const response = await api.put(
+        `/drawn/${raffle.id}/${idDrawn}/${number}`
+      );
       setTrofeus(response.data.newTrophys);
+      setClient(response.data.client);
+      setTrophy(response.data.myTrophy);
+      setModal(false);
       setLoading(false);
+      setModalWinner(true);
     } catch (error) {
       setLoading(false);
       if (error.message === "Network Error") {
@@ -80,15 +104,18 @@ export default function AdminRaffles({ raffle, trophys, orders, numbers }) {
       let mess = !error.response.data
         ? "Erro no cadastro do cliente"
         : error.response.data.message;
-      showToast(mess, "error", "Erro");
+      showToast(mess, "error", "Sorteio não Realizado");
     }
   }
 
   function handleDrawn(id) {
     setIdDrawn(id);
-    setLoading(true);
+    setModal(true);
+  }
 
-    Drawn();
+  function handleCloseModal() {
+    setNumber("0");
+    setModal(false);
   }
 
   function handleColor(color) {
@@ -172,6 +199,29 @@ export default function AdminRaffles({ raffle, trophys, orders, numbers }) {
     }
   }
 
+  async function FindWinner(id) {
+    setLoading(true);
+    setModalWinner(true);
+    try {
+      const response = await api.get(`/trophy/${id}`);
+      setTrophy(response.data.trophy);
+      setClient(response.data.client);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      if (error.message === "Network Error") {
+        alert(
+          "Sem conexão com o servidor, verifique sua conexão com a internet."
+        );
+        return false;
+      }
+      let mess = !error.response.data
+        ? "Erro no cadastro do cliente"
+        : error.response.data.message;
+      showToast(mess, "error", "Erro");
+    }
+  }
+
   return (
     <>
       <Header />
@@ -179,18 +229,6 @@ export default function AdminRaffles({ raffle, trophys, orders, numbers }) {
         <Tag colorScheme="green" size="lg" fontWeight="bold" mb={10}>
           RIFA Nº {raffle.id}
         </Tag>
-
-        <Box
-          rounded="xl"
-          p={2}
-          textAlign="center"
-          fontSize="large"
-          bg={handleStatus(raffle.status).bg}
-          color={useColorModeValue("gray.100", "gray.800")}
-          mb={10}
-        >
-          {handleStatus(raffle.status).title}
-        </Box>
 
         <Grid
           templateColumns={[
@@ -204,7 +242,7 @@ export default function AdminRaffles({ raffle, trophys, orders, numbers }) {
           justifyContent="center"
           justifyItems={"center"}
         >
-          <Box
+          <LinkBox
             rounded="xl"
             overflow="hidden"
             borderWidth="1px"
@@ -221,7 +259,24 @@ export default function AdminRaffles({ raffle, trophys, orders, numbers }) {
                 alt="PA Rifas, rifas online"
               />
             </Box>
-
+            <Flex
+              bg={handleStatus(raffle.status).bg}
+              p={2}
+              justify="center"
+              align="center"
+              color={useColorModeValue("white", "gray.700")}
+              pos="absolute"
+              zIndex={800}
+              transform="rotate(-40deg)"
+              w="250px"
+              left="-50px"
+              top="40px"
+              shadow="lg"
+              fontWeight="bold"
+              fontSize="lg"
+            >
+              {handleStatus(raffle.status).title}
+            </Flex>
             <Box p={4}>
               <Heading
                 fontSize="2xl"
@@ -254,7 +309,7 @@ export default function AdminRaffles({ raffle, trophys, orders, numbers }) {
                 </Stat>
               </HStack>
             </Box>
-          </Box>
+          </LinkBox>
 
           <Box w="100%">
             <Grid
@@ -345,75 +400,58 @@ export default function AdminRaffles({ raffle, trophys, orders, numbers }) {
               mt={1}
             />
 
-            <Grid
-              templateColumns={[
-                "repeat(2, 1fr)",
-                "repeat(2, 1fr)",
-                "repeat(3, 1fr)",
-                "repeat(3, 1fr)",
-                "repeat(3, 1fr)",
-              ]}
-              gap={5}
-              mt={5}
-              justifyContent="center"
-            >
+            <Stack mt={5} spacing={5}>
               {trofeus.map((tro) => (
-                <Flex
-                  rounded="xl"
-                  shadow="lg"
-                  borderWidth="1px"
-                  direction="column"
-                  justify="center"
-                  align="center"
-                  h="min-content"
+                <Grid
+                  templateColumns={"60px 1fr 150px"}
+                  gap={5}
+                  rounded={"xl"}
+                  overflow={"hidden"}
+                  borderWidth={"1px"}
+                  justifyItems={"center"}
+                  alignItems={"center"}
                   key={tro.id}
                 >
-                  <Flex align="center">
-                    <Icon as={AiOutlineTrophy} />
-                    <Heading fontSize="sm" textAlign="center" p={2} w="100%">
-                      {tro.title}º PRÊMIO
-                    </Heading>
+                  <Flex
+                    justify={"center"}
+                    align={"center"}
+                    p={5}
+                    bg={useColorModeValue("green.500", "green.200")}
+                    color={useColorModeValue("gray.100", "gray.800")}
+                    h="60px"
+                    w="60px"
+                  >
+                    <Icon as={AiOutlineTrophy} fontSize={"3xl"} />
                   </Flex>
-                  <Divider />
-                  <Text fontSize="sm" p={2}>
-                    {tro.description}
-                  </Text>
+                  <Text p={2}>{tro.description}</Text>
 
-                  {!tro.name_client ||
-                  tro.name_client === null ||
-                  tro.name_client === "NULL" ? (
-                    ""
+                  {raffle.status === "open" && tro.status === "waiting" ? (
+                    <Button
+                      leftIcon={<GiCardRandom />}
+                      colorScheme={"orange"}
+                      isFullWidth
+                      mr={5}
+                      onClick={() => handleDrawn(tro.id)}
+                    >
+                      Sortear
+                    </Button>
                   ) : (
-                    <>
-                      <Divider />
-
-                      <Box w="100%" p={2}>
-                        <Text fontSize="xs">
-                          Número Sorteado: <strong>{tro.number}</strong>
-                        </Text>
-                        <Text fontSize="xs">
-                          Nome do Ganhador:{" "}
-                          <strong>{tro.name_client.name}</strong>
-                        </Text>
-                        <Text fontSize="xs">
-                          Telefone do Ganhador:{" "}
-                          <strong>{tro.name_client.phone}</strong>
-                        </Text>
-                        <Text fontSize="xs">
-                          Endereço do Ganhador:{" "}
-                          <strong>
-                            {tro.name_client.street}, {tro.name_client.number},{" "}
-                            {tro.name_client.district} - CEP:{" "}
-                            {tro.name_client.cep}, {tro.name_client.city} -{" "}
-                            {tro.name_client.state}
-                          </strong>
-                        </Text>
-                      </Box>
-                    </>
+                    ""
                   )}
-                </Flex>
+                  {tro.status === "drawn" && (
+                    <Button
+                      leftIcon={<AiOutlineZoomIn />}
+                      colorScheme={"green"}
+                      isFullWidth
+                      mr={5}
+                      onClick={() => FindWinner(tro.id)}
+                    >
+                      Ver Ganhador
+                    </Button>
+                  )}
+                </Grid>
               ))}
-            </Grid>
+            </Stack>
 
             <Heading
               fontSize="2xl"
@@ -439,8 +477,8 @@ export default function AdminRaffles({ raffle, trophys, orders, numbers }) {
                 "repeat(2, 1fr)",
                 "repeat(2, 1fr)",
                 "repeat(3, 1fr)",
-                "repeat(4, 1fr)",
-                "repeat(4, 1fr)",
+                "repeat(3, 1fr)",
+                "repeat(3, 1fr)",
               ]}
               gap={5}
             >
@@ -470,18 +508,6 @@ export default function AdminRaffles({ raffle, trophys, orders, numbers }) {
                 >
                   <Icon as={ImCancelCircle} fontSize="5xl" />
                   <Text mt={2}>Cancelar Rifa</Text>
-                </Flex>
-              </Button>
-              <Button
-                size="md"
-                rounded="xl"
-                h="90px"
-                colorScheme="green"
-                onClick={() => setModal(true)}
-              >
-                <Flex justify="center" align="center" direction="column">
-                  <Icon as={GiCardRandom} fontSize="5xl" />
-                  <Text mt={2}>Realizar Sorteio</Text>
                 </Flex>
               </Button>
               <Button size="md" rounded="xl" h="90px" colorScheme="whatsapp">
@@ -546,112 +572,97 @@ export default function AdminRaffles({ raffle, trophys, orders, numbers }) {
         </AlertDialogOverlay>
       </AlertDialog>
 
-      <Modal isOpen={modal} onClose={() => setModal(false)} size="6xl">
+      <Modal isOpen={modal} onClose={() => handleCloseModal()} size={"sm"}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Sorteio</ModalHeader>
           <ModalCloseButton />
-          <ModalBody pb={5}>
-            <Grid
-              templateColumns={[
-                "repeat(2, 1fr)",
-                "repeat(2, 1fr)",
-                "repeat(3, 1fr)",
-                "repeat(3, 1fr)",
-                "repeat(3, 1fr)",
-              ]}
-              gap={5}
-              justifyContent="center"
+          <ModalBody>
+            <FormControl>
+              <FormLabel>Insira o Número</FormLabel>
+              <Input
+                focusBorderColor="green.500"
+                placeholder="Insira o Número"
+                type="number"
+                value={number}
+                onChange={(e) => setNumber(e.target.value)}
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              leftIcon={<GiCardRandom />}
+              colorScheme={"green"}
+              isLoading={loading}
+              onClick={() => Drawn()}
             >
-              {trofeus.map((tro) => (
-                <LinkBox
-                  key={tro.id}
-                  rounded="xl"
-                  shadow="lg"
-                  borderWidth="1px"
-                  overflow="hidden"
-                >
-                  {idDrawn === tro.id && loading === true ? (
-                    <Flex
-                      w="100%"
-                      h="100%"
-                      position="absolute"
-                      bg={useColorModeValue("whiteAlpha.700", "blackAlpha.700")}
-                      justify="center"
-                      align="center"
-                      zIndex={100}
+              Realizar Sorteio
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={modalWinner}
+        onClose={() => setModalWinner(false)}
+        size={"sm"}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Ganhador</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={5}>
+            {loading === true ? (
+              <Flex justify={"center"} align={"center"} h="300px">
+                <Spinner size={"xl"} />
+              </Flex>
+            ) : (
+              <>
+                {JSON.stringify(client) !== "{}" && (
+                  <>
+                    <Flex align={"center"} justify={"center"}>
+                      <Avatar
+                        icon={<AiOutlineUser />}
+                        bg={useColorModeValue(
+                          "blackAlpha.100",
+                          "whiteAlpha.200"
+                        )}
+                        size={"xl"}
+                        color={useColorModeValue("gray.800", "gray.100")}
+                      />
+                    </Flex>
+
+                    <Text
+                      fontSize={"lg"}
+                      textAlign={"center"}
+                      fontWeight={"bold"}
+                      mt={5}
                     >
-                      <Spinner size="xl" />
-                    </Flex>
-                  ) : (
-                    ""
-                  )}
-                  <Flex
-                    direction="column"
-                    justify="center"
-                    align="center"
-                    h="min-content"
-                  >
-                    <Flex align="center">
-                      <Icon as={AiOutlineTrophy} />
-                      <Heading fontSize="sm" textAlign="center" p={2} w="100%">
-                        {tro.title}º PRÊMIO
-                      </Heading>
-                    </Flex>
-                    <Divider />
-                    <Text fontSize="sm" p={2}>
-                      {tro.description}
+                      {client.name}
                     </Text>
-                    <Divider />
-                    {!tro.name_client ||
-                    tro.name_client === null ||
-                    tro.name_client === "NULL" ? (
-                      ""
-                    ) : (
-                      <>
-                        <Divider />
-
-                        <Box w="100%" p={2}>
-                          <Text fontSize="xs">
-                            Número Sorteado: <strong>{tro.number}</strong>
-                          </Text>
-                          <Text fontSize="xs">
-                            Nome do Ganhador:{" "}
-                            <strong>{tro.name_client.name}</strong>
-                          </Text>
-                          <Text fontSize="xs">
-                            Telefone do Ganhador:{" "}
-                            <strong>{tro.name_client.phone}</strong>
-                          </Text>
-                          <Text fontSize="xs">
-                            Endereço do Ganhador:{" "}
-                            <strong>
-                              {tro.name_client.street}, {tro.name_client.number}
-                              , {tro.name_client.district} - CEP:{" "}
-                              {tro.name_client.cep}, {tro.name_client.city} -{" "}
-                              {tro.name_client.state}
-                            </strong>
-                          </Text>
-                        </Box>
-                      </>
-                    )}
-
-                    <Divider mb={2} />
-
-                    <Box pr={2} pl={2} w="100%" pb={2}>
-                      <Button
-                        leftIcon={<GiCardRandom />}
-                        isFullWidth
-                        colorScheme="green"
-                        onClick={() => handleDrawn(tro.id)}
-                      >
-                        Sortear
-                      </Button>
-                    </Box>
-                  </Flex>
-                </LinkBox>
-              ))}
-            </Grid>
+                    <Text textAlign={"center"}>
+                      {`${client.street}, ${client.number}, ${client.district}, ${client.comp}`}
+                    </Text>
+                    <Text textAlign={"center"}>CEP: {client.cep}</Text>
+                    <Text textAlign={"center"}>
+                      {`${client.city} - ${client.state}`}
+                    </Text>
+                    <Flex justify={"center"} align={"center"}>
+                      <Icon as={AiOutlineWhatsApp} mr={2} />
+                      <Text>{client.phone}</Text>
+                    </Flex>
+                    <Flex justify={"center"} align={"center"}>
+                      <Icon as={AiFillMail} mr={2} />
+                      <Text>{client.email}</Text>
+                    </Flex>
+                    <Text mt={5} textAlign={"center"}>
+                      NÚMERO SORTEADO:
+                    </Text>
+                    <Heading textAlign={"center"}>{trophy.number}</Heading>
+                  </>
+                )}
+              </>
+            )}
           </ModalBody>
         </ModalContent>
       </Modal>

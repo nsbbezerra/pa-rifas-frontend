@@ -5,13 +5,11 @@ import {
   Grid,
   Heading,
   LinkBox,
-  LinkOverlay,
   Text,
   HStack,
 } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 import Image from "next/image";
-import Link from "next/link";
 import { format } from "date-fns";
 import pt_br from "date-fns/locale/pt-BR";
 import Icon from "@chakra-ui/icon";
@@ -28,6 +26,8 @@ import { Tag } from "@chakra-ui/tag";
 import Lottie from "./lottie";
 import EmptyAnimation from "../assets/empty.json";
 import { useRouter } from "next/router";
+import { GiArcheryTarget } from "react-icons/gi";
+import { Tooltip } from "@chakra-ui/tooltip";
 
 export default function ShowRaffles({ raffle, destination, numbers }) {
   const { colorMode } = useColorMode();
@@ -47,7 +47,7 @@ export default function ShowRaffles({ raffle, destination, numbers }) {
     <>
       {raffle.length === 0 || !raffle ? (
         <Flex direction="column" justify="center" align="center">
-          <Lottie animation={EmptyAnimation} width="50%" />
+          <Lottie animation={EmptyAnimation} width="40%" />
           <Text
             textAlign="center"
             fontSize="2xl"
@@ -215,16 +215,25 @@ export default function ShowRaffles({ raffle, destination, numbers }) {
                   {raf.description}
                 </Text>
 
-                <Text fontSize="xs" mt={2} noOfLines={1}>
-                  Sorteio:{" "}
-                  <strong>
-                    {format(
-                      new Date(raf.draw_date),
-                      "dd 'de' MMMM', às ' HH:mm'h'",
-                      { locale: pt_br }
-                    )}
-                  </strong>{" "}
-                </Text>
+                <Flex align="center" justify="space-between" mt={2}>
+                  <Text fontSize="xs" noOfLines={1}>
+                    Sorteio:{" "}
+                    <strong>
+                      {format(
+                        new Date(raf.draw_date),
+                        "dd 'de' MMMM', às ' HH:mm'h'",
+                        { locale: pt_br }
+                      )}
+                    </strong>{" "}
+                  </Text>
+
+                  <Tooltip hasArrow label="Meta">
+                    <HStack spacing={0.5}>
+                      <Icon as={GiArcheryTarget} />
+                      <Text fontSize={"sm"}>{raf.goal}%</Text>
+                    </HStack>
+                  </Tooltip>
+                </Flex>
 
                 <Flex
                   align="center"

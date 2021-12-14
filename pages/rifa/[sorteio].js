@@ -34,6 +34,12 @@ import {
   useColorMode,
   useColorModeValue,
   Link as ChakraLink,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  Stack,
 } from "@chakra-ui/react";
 import {
   Breadcrumb,
@@ -515,244 +521,262 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
           </>
         )}
 
-        <Grid
-          templateColumns={[
-            "repeat(2, 1fr)",
-            "repeat(3, 1fr)",
-            "repeat(3, 1fr)",
-            "repeat(5, 1fr)",
-            "repeat(5, 1fr)",
-          ]}
-          gap={5}
-          mt={10}
-          justifyContent="center"
-        >
-          {trophy.map((tro) => (
-            <Flex
-              rounded="xl"
-              shadow="lg"
-              borderWidth="1px"
-              direction="column"
-              justify="center"
-              align="center"
-              h="min-content"
-              key={tro.id}
-            >
-              <Flex align="center">
-                <Icon as={AiOutlineTrophy} />
-                <Heading fontSize="sm" textAlign="center" p={2} w="100%">
-                  {tro.title}º PRÊMIO
-                </Heading>
-              </Flex>
-              <Divider />
-              <Text fontSize="sm" p={2}>
-                {tro.description}
-              </Text>
-            </Flex>
-          ))}
-        </Grid>
+        <Tabs mt={10} colorScheme={"green"} variant={"enclosed-colored"}>
+          <TabList>
+            <Tab roundedTop={"md"}>Números</Tab>
+            <Tab roundedTop={"md"}>Prêmios</Tab>
+          </TabList>
 
-        <Grid
-          templateColumns={[
-            "repeat(2, 140px)",
-            "repeat(3, 180px)",
-            "repeat(4, 180px)",
-            "repeat(4, 180px)",
-            "repeat(4, 180px)",
-          ]}
-          gap="15px"
-          mt={10}
-        >
-          <Box
-            rounded="3xl"
-            pt={1}
-            pb={1}
-            pr={3}
-            pl={3}
-            bg="black"
-            color="white"
-            textAlign="center"
-            fontSize={["xs", "md", "md", "md", "md"]}
-          >
-            Livres (
-            {nums.length > 0 && JSON.stringify(raffle) !== "{}"
-              ? raffle.qtd_numbers -
-                nums.filter((obj) => obj.status === "reserved").length -
-                nums.filter((obj) => obj.status === "paid_out").length
-              : raffle.qtd_numbers}
-            )
-          </Box>
-          <Box
-            rounded="3xl"
-            pt={1}
-            pb={1}
-            pr={3}
-            pl={3}
-            bg="orange.400"
-            color="white"
-            textAlign="center"
-            fontSize={["xs", "md", "md", "md", "md"]}
-          >
-            Reservado (
-            {nums.length > 0
-              ? nums.filter((obj) => obj.status === "reserved").length
-              : 0}
-            )
-          </Box>
-          <Box
-            rounded="3xl"
-            pt={1}
-            pb={1}
-            pr={3}
-            pl={3}
-            bg="green.400"
-            color="white"
-            textAlign="center"
-            fontSize={["xs", "md", "md", "md", "md"]}
-          >
-            Pago (
-            {nums.length > 0
-              ? nums.filter((obj) => obj.status === "paid_out").length
-              : 0}
-            )
-          </Box>
-          <Box
-            rounded="3xl"
-            pt={1}
-            pb={1}
-            pr={3}
-            pl={3}
-            bg="red.600"
-            color="white"
-            textAlign="center"
-            fontSize={["xs", "md", "md", "md", "md"]}
-          >
-            Meus Números (
-            {JSON.stringify(client) !== "{}"
-              ? nums.filter((obj) => obj.id_client === client.id).length
-              : 0}
-            )
-          </Box>
-        </Grid>
-
-        <Box
-          rounded="xl"
-          p={4}
-          shadow="lg"
-          bg={colorMode === "light" ? "rgba(0,0,0,0.02)" : "whiteAlpha.300"}
-          borderWidth="1px"
-          mt={5}
-        >
-          <Grid
-            templateColumns="repeat(auto-fit, minmax(75px, 75px))"
-            gap="5px"
-            justifyContent="center"
-            h="400px"
-            overflow="auto"
-          >
-            {generate.map((num) => (
-              <Button
-                w="75px"
-                colorScheme="blackAlpha"
-                isDisabled={
-                  nums.find((obj) => obj.number === parseInt(num.num))
-                    ? true
-                    : false
-                }
-                bg={
-                  mynumbers.find((obj) => obj === num.num)
-                    ? "blue.500"
-                    : "black"
-                }
-                _focus={{
-                  outline: "none",
-                  bg: mynumbers.find((obj) => obj === num.num)
-                    ? "blue.500"
-                    : "gray.800",
-                }}
-                _active={{
-                  bg: mynumbers.find((obj) => obj === num.num)
-                    ? "blue.500"
-                    : "gray.800",
-                }}
-                _hover={{
-                  bg: mynumbers.find((obj) => obj === num.num)
-                    ? "blue.500"
-                    : "gray.800",
-                }}
-                key={num.num}
-                onClick={() => handleNumbers(num.num)}
-                color="gray.100"
-                _disabled={{
-                  bg: handleBG(
-                    nums.find((obj) => obj.number === parseInt(num.num))
-                  ),
-                  _hover: {
-                    bg: handleBG(
-                      nums.find((obj) => obj.number === parseInt(num.num))
-                    ),
-                  },
-                  _active: {
-                    bg: handleBG(
-                      nums.find((obj) => obj.number === parseInt(num.num))
-                    ),
-                  },
-                  _focus: {
-                    bg: handleBG(
-                      nums.find((obj) => obj.number === parseInt(num.num))
-                    ),
-                  },
-                }}
+          <TabPanels>
+            <TabPanel p={0}>
+              <Grid
+                templateColumns={[
+                  "repeat(2, 140px)",
+                  "repeat(3, 180px)",
+                  "repeat(4, 180px)",
+                  "repeat(4, 180px)",
+                  "repeat(4, 180px)",
+                ]}
+                gap="15px"
+                mt={10}
               >
-                {num.num}
-              </Button>
-            ))}
-          </Grid>
+                <Box
+                  rounded="3xl"
+                  pt={1}
+                  pb={1}
+                  pr={3}
+                  pl={3}
+                  bg="black"
+                  color="white"
+                  textAlign="center"
+                  fontSize={["xs", "md", "md", "md", "md"]}
+                >
+                  Livres (
+                  {nums.length > 0 && JSON.stringify(raffle) !== "{}"
+                    ? raffle.qtd_numbers -
+                      nums.filter((obj) => obj.status === "reserved").length -
+                      nums.filter((obj) => obj.status === "paid_out").length
+                    : raffle.qtd_numbers}
+                  )
+                </Box>
+                <Box
+                  rounded="3xl"
+                  pt={1}
+                  pb={1}
+                  pr={3}
+                  pl={3}
+                  bg="orange.400"
+                  color="white"
+                  textAlign="center"
+                  fontSize={["xs", "md", "md", "md", "md"]}
+                >
+                  Reservado (
+                  {nums.length > 0
+                    ? nums.filter((obj) => obj.status === "reserved").length
+                    : 0}
+                  )
+                </Box>
+                <Box
+                  rounded="3xl"
+                  pt={1}
+                  pb={1}
+                  pr={3}
+                  pl={3}
+                  bg="green.400"
+                  color="white"
+                  textAlign="center"
+                  fontSize={["xs", "md", "md", "md", "md"]}
+                >
+                  Pago (
+                  {nums.length > 0
+                    ? nums.filter((obj) => obj.status === "paid_out").length
+                    : 0}
+                  )
+                </Box>
+                <Box
+                  rounded="3xl"
+                  pt={1}
+                  pb={1}
+                  pr={3}
+                  pl={3}
+                  bg="red.600"
+                  color="white"
+                  textAlign="center"
+                  fontSize={["xs", "md", "md", "md", "md"]}
+                >
+                  Meus Números (
+                  {JSON.stringify(client) !== "{}"
+                    ? nums.filter((obj) => obj.id_client === client.id).length
+                    : 0}
+                  )
+                </Box>
+              </Grid>
 
-          <Button
-            leftIcon={<FaTrash />}
-            colorScheme="red"
-            onClick={() => clearNumbers()}
-            mt={5}
-          >
-            Limpar Números
-          </Button>
-        </Box>
+              <Box
+                rounded="xl"
+                p={4}
+                shadow="lg"
+                bg={
+                  colorMode === "light" ? "rgba(0,0,0,0.02)" : "whiteAlpha.300"
+                }
+                borderWidth="1px"
+                mt={5}
+              >
+                <Grid
+                  templateColumns="repeat(auto-fit, minmax(75px, 75px))"
+                  gap="5px"
+                  justifyContent="center"
+                  h="400px"
+                  overflow="auto"
+                >
+                  {generate.map((num) => (
+                    <Button
+                      w="75px"
+                      colorScheme="blackAlpha"
+                      isDisabled={
+                        nums.find((obj) => obj.number === parseInt(num.num))
+                          ? true
+                          : false
+                      }
+                      bg={
+                        mynumbers.find((obj) => obj === num.num)
+                          ? "blue.500"
+                          : "black"
+                      }
+                      _focus={{
+                        outline: "none",
+                        bg: mynumbers.find((obj) => obj === num.num)
+                          ? "blue.500"
+                          : "gray.800",
+                      }}
+                      _active={{
+                        bg: mynumbers.find((obj) => obj === num.num)
+                          ? "blue.500"
+                          : "gray.800",
+                      }}
+                      _hover={{
+                        bg: mynumbers.find((obj) => obj === num.num)
+                          ? "blue.500"
+                          : "gray.800",
+                      }}
+                      key={num.num}
+                      onClick={() => handleNumbers(num.num)}
+                      color="gray.100"
+                      _disabled={{
+                        bg: handleBG(
+                          nums.find((obj) => obj.number === parseInt(num.num))
+                        ),
+                        _hover: {
+                          bg: handleBG(
+                            nums.find((obj) => obj.number === parseInt(num.num))
+                          ),
+                        },
+                        _active: {
+                          bg: handleBG(
+                            nums.find((obj) => obj.number === parseInt(num.num))
+                          ),
+                        },
+                        _focus: {
+                          bg: handleBG(
+                            nums.find((obj) => obj.number === parseInt(num.num))
+                          ),
+                        },
+                      }}
+                    >
+                      {num.num}
+                    </Button>
+                  ))}
+                </Grid>
 
-        <Grid
-          rounded="xl"
-          shadow="lg"
-          borderWidth="1px"
-          p={5}
-          h="min-content"
-          templateColumns={["1fr", "1fr 1fr", "1fr 1fr", "2fr 1fr", "2fr 1fr"]}
-          gap={5}
-          mt={10}
-          alignItems="center"
-          justifyItems={["center", "initial", "initial", "initial", "initial"]}
-        >
-          <Stat>
-            <StatLabel>Total a Pagar</StatLabel>
-            <StatNumber>
-              {parseFloat(amount).toLocaleString("pt-br", {
-                style: "currency",
-                currency: "BRL",
-              })}
-            </StatNumber>
-          </Stat>
+                <Button
+                  leftIcon={<FaTrash />}
+                  colorScheme="red"
+                  onClick={() => clearNumbers()}
+                  mt={5}
+                >
+                  Limpar Números
+                </Button>
+              </Box>
 
-          <Grid templateColumns={"1fr"} gap={[2, 5, 5, 5, 5]} w="100%">
-            <Button
-              leftIcon={<FaCheck />}
-              colorScheme="green"
-              size="lg"
-              onClick={() => setModalSent(true)}
-              isFullWidth
-            >
-              Finalizar Compra
-            </Button>
-          </Grid>
-        </Grid>
+              <Grid
+                rounded="xl"
+                shadow="lg"
+                borderWidth="1px"
+                p={5}
+                h="min-content"
+                templateColumns={[
+                  "1fr",
+                  "1fr 1fr",
+                  "1fr 1fr",
+                  "2fr 1fr",
+                  "2fr 1fr",
+                ]}
+                gap={5}
+                mt={10}
+                alignItems="center"
+                justifyItems={[
+                  "center",
+                  "initial",
+                  "initial",
+                  "initial",
+                  "initial",
+                ]}
+              >
+                <Stat>
+                  <StatLabel>Total a Pagar</StatLabel>
+                  <StatNumber>
+                    {parseFloat(amount).toLocaleString("pt-br", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </StatNumber>
+                </Stat>
+
+                <Grid templateColumns={"1fr"} gap={[2, 5, 5, 5, 5]} w="100%">
+                  <Button
+                    leftIcon={<FaCheck />}
+                    colorScheme="green"
+                    size="lg"
+                    onClick={() => setModalSent(true)}
+                    isFullWidth
+                  >
+                    Finalizar Compra
+                  </Button>
+                </Grid>
+              </Grid>
+            </TabPanel>
+
+            <TabPanel p={0}>
+              <Stack mt={10} spacing={5}>
+                {trophy.map((tro) => (
+                  <Grid
+                    templateColumns={"60px 1fr"}
+                    gap={5}
+                    rounded={"xl"}
+                    overflow={"hidden"}
+                    borderWidth={"1px"}
+                    justifyItems={"center"}
+                    alignItems={"center"}
+                    key={tro.id}
+                  >
+                    <Flex
+                      justify={"center"}
+                      align={"center"}
+                      p={5}
+                      bg={useColorModeValue("green.500", "green.200")}
+                      color={useColorModeValue("gray.100", "gray.800")}
+                      h="60px"
+                      w="60px"
+                    >
+                      <Icon as={AiOutlineTrophy} fontSize={"3xl"} />
+                    </Flex>
+                    <Text p={2}>{tro.description}</Text>
+                  </Grid>
+                ))}
+              </Stack>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       </Container>
 
       <FooterApp />

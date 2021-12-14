@@ -15,14 +15,17 @@ import {
   Tag,
   useColorModeValue,
   Icon,
-  Divider,
   Center,
+  LinkBox,
+  Stack,
+  Badge,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import { AiOutlineTrophy } from "react-icons/ai";
 import configs from "../../../configs/index";
 import { format } from "date-fns";
 import pt_br from "date-fns/locale/pt-BR";
+import { useClient } from "../../../context/Clients";
 
 export default function GerenciarPartitipante({
   raffle,
@@ -31,6 +34,7 @@ export default function GerenciarPartitipante({
   numbers,
 }) {
   const { colorMode } = useColorMode();
+  const { client } = useClient();
 
   function handleColor(color) {
     if (color === "green") {
@@ -103,18 +107,6 @@ export default function GerenciarPartitipante({
           RIFA Nº {raffle.id}
         </Tag>
 
-        <Box
-          rounded="xl"
-          p={2}
-          textAlign="center"
-          fontSize="large"
-          bg={handleStatus(raffle.status).bg}
-          color={useColorModeValue("gray.100", "gray.800")}
-          mb={10}
-        >
-          {handleStatus(raffle.status).title}
-        </Box>
-
         <Grid
           templateColumns={[
             "1fr",
@@ -125,7 +117,7 @@ export default function GerenciarPartitipante({
           ]}
           gap={"10"}
         >
-          <Box
+          <LinkBox
             rounded="xl"
             overflow="hidden"
             borderWidth="1px"
@@ -142,7 +134,24 @@ export default function GerenciarPartitipante({
                 alt="PA Rifas, rifas online"
               />
             </Box>
-
+            <Flex
+              bg={handleStatus(raffle.status).bg}
+              p={2}
+              justify="center"
+              align="center"
+              color={useColorModeValue("white", "gray.700")}
+              pos="absolute"
+              zIndex={800}
+              transform="rotate(-40deg)"
+              w="250px"
+              left="-50px"
+              top="40px"
+              shadow="lg"
+              fontWeight="bold"
+              fontSize="lg"
+            >
+              {handleStatus(raffle.status).title}
+            </Flex>
             <Box p={4}>
               <Heading
                 fontSize="2xl"
@@ -175,7 +184,7 @@ export default function GerenciarPartitipante({
                 </Stat>
               </HStack>
             </Box>
-          </Box>
+          </LinkBox>
 
           <Box>
             <Heading
@@ -195,42 +204,56 @@ export default function GerenciarPartitipante({
               mt={1}
             />
 
-            <Grid
-              templateColumns={[
-                "repeat(2, 1fr)",
-                "repeat(3, 1fr)",
-                "repeat(3, 1fr)",
-                "repeat(4, 1fr)",
-                "repeat(5, 1fr)",
-              ]}
-              gap={5}
-              mt={5}
-              justifyContent="center"
-            >
+            <Stack mt={5}>
               {trophys.map((tro) => (
-                <Flex
-                  rounded="xl"
-                  shadow="lg"
-                  borderWidth="1px"
-                  direction="column"
-                  justify="center"
-                  align="center"
-                  h="min-content"
+                <Grid
+                  templateColumns={"60px 1fr 130px"}
+                  gap={5}
+                  rounded={"xl"}
+                  overflow={"hidden"}
+                  borderWidth={"1px"}
+                  justifyItems={"center"}
+                  alignItems={"center"}
                   key={tro.id}
                 >
-                  <Flex align="center">
-                    <Icon as={AiOutlineTrophy} />
-                    <Heading fontSize="sm" textAlign="center" p={2} w="100%">
-                      {tro.title}º PRÊMIO
-                    </Heading>
+                  <Flex
+                    justify={"center"}
+                    align={"center"}
+                    p={5}
+                    bg={useColorModeValue("green.500", "green.200")}
+                    color={useColorModeValue("gray.100", "gray.800")}
+                    h="60px"
+                    w="60px"
+                  >
+                    <Icon as={AiOutlineTrophy} fontSize={"3xl"} />
                   </Flex>
-                  <Divider />
-                  <Text fontSize="sm" p={2}>
-                    {tro.description}
-                  </Text>
-                </Flex>
+                  <Text p={2}>{tro.description}</Text>
+                  {tro.status === "waiting" ? (
+                    <Badge colorScheme={"orange"} fontSize="0.8em">
+                      AGUARDANDO
+                    </Badge>
+                  ) : (
+                    ""
+                  )}
+                  {tro.client_identify === client.identify &&
+                  tro.status === "drawn" ? (
+                    <Badge colorScheme={"green"} fontSize="0.8em">
+                      VOCÊ GANHOU
+                    </Badge>
+                  ) : (
+                    ""
+                  )}
+                  {tro.client_identify !== client.identify &&
+                  tro.status === "drawn" ? (
+                    <Badge colorScheme={"blue"} fontSize="0.8em">
+                      PRÊMIO SORTEADO
+                    </Badge>
+                  ) : (
+                    ""
+                  )}
+                </Grid>
               ))}
-            </Grid>
+            </Stack>
 
             <Heading
               fontSize="2xl"
@@ -288,74 +311,79 @@ export default function GerenciarPartitipante({
               mt={5}
               justifyContent="center"
             >
-              {orders.map((ord) => {
-                return (
-                  <Box
-                    rounded="xl"
-                    shadow="lg"
-                    borderWidth="1px"
-                    bg={
-                      ord.status === "paid_out"
-                        ? handleColor("green")
-                        : handleColor("orange")
-                    }
-                    key={ord.id}
-                    h="min-content"
-                  >
-                    <Center p={2}>
-                      <Text color={useColorModeValue("gray.100", "gray.800")}>
-                        COMPRA NÚMERO: <strong>{ord.id}</strong>
-                      </Text>
-                    </Center>
-                    <Box pr={2} pl={2} pb={2}>
-                      <Grid
-                        bg={useColorModeValue("white", "gray.800")}
-                        rounded="xl"
-                        p={3}
-                        templateColumns="repeat(3, 1fr)"
-                        gap={2}
-                      >
-                        {numbers
-                          .filter((obj) => obj.order_id === ord.id)
-                          .map((ord) => (
-                            <Flex
-                              w="100%"
-                              h="40px"
-                              rounded="xl"
-                              justify="center"
-                              align="center"
-                              bg={useColorModeValue(
-                                "blackAlpha.100",
-                                "whiteAlpha.300"
-                              )}
-                              color={useColorModeValue("gray.800", "gray.100")}
-                              fontWeight="700"
-                              key={ord.id}
-                            >
-                              {ord.number}
-                            </Flex>
-                          ))}
-                      </Grid>
-                    </Box>
-                    <Flex
-                      justify="space-between"
-                      align="center"
-                      pr={3}
-                      pl={3}
-                      pb={2}
-                      color={useColorModeValue("gray.100", "gray.800")}
+              {orders
+                .filter((obj) => obj.client_id === client.id)
+                .map((ord) => {
+                  return (
+                    <Box
+                      rounded="xl"
+                      shadow="lg"
+                      borderWidth="1px"
+                      bg={
+                        ord.status === "paid_out"
+                          ? handleColor("green")
+                          : handleColor("orange")
+                      }
+                      key={ord.id}
+                      h="min-content"
                     >
-                      <Text>Valor da Compra</Text>
-                      <Text fontWeight="bold">
-                        R${" "}
-                        {parseFloat(ord.value).toLocaleString("pt-br", {
-                          minimumFractionDigits: 2,
-                        })}
-                      </Text>
-                    </Flex>
-                  </Box>
-                );
-              })}
+                      <Center p={2}>
+                        <Text color={useColorModeValue("gray.100", "gray.800")}>
+                          COMPRA NÚMERO: <strong>{ord.id}</strong>
+                        </Text>
+                      </Center>
+                      <Box pr={2} pl={2} pb={2}>
+                        <Grid
+                          bg={useColorModeValue("white", "gray.800")}
+                          rounded="xl"
+                          p={3}
+                          templateColumns="repeat(3, 1fr)"
+                          gap={2}
+                        >
+                          {numbers
+                            .filter((obj) => obj.order_id === ord.id)
+                            .map((ord) => (
+                              <Flex
+                                w="100%"
+                                h="40px"
+                                rounded="xl"
+                                justify="center"
+                                align="center"
+                                bg={useColorModeValue(
+                                  "blackAlpha.100",
+                                  "whiteAlpha.300"
+                                )}
+                                color={useColorModeValue(
+                                  "gray.800",
+                                  "gray.100"
+                                )}
+                                fontWeight="700"
+                                key={ord.id}
+                              >
+                                {ord.number}
+                              </Flex>
+                            ))}
+                        </Grid>
+                      </Box>
+                      <Flex
+                        justify="space-between"
+                        align="center"
+                        pr={3}
+                        pl={3}
+                        pb={2}
+                        color={useColorModeValue("gray.100", "gray.800")}
+                      >
+                        <Text>Valor da Compra</Text>
+                        <Text fontWeight="bold">
+                          R${" "}
+                          {parseFloat(ord.value).toLocaleString("pt-br", {
+                            minimumFractionDigits: 2,
+                          })}
+                        </Text>
+                      </Flex>
+                    </Box>
+                  );
+                })}
             </Grid>
           </Box>
         </Grid>

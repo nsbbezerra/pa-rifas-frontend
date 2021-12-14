@@ -54,6 +54,9 @@ import {
   Tooltip,
   Center,
   InputLeftAddon,
+  List,
+  ListItem,
+  ListIcon,
 } from "@chakra-ui/react";
 import {
   Breadcrumb,
@@ -149,10 +152,6 @@ export default function NovoSorteio({ config }) {
   }
 
   function handleTrophy() {
-    if (trophyOrder === "") {
-      showToast("Escolha uma posição para o prêmio", "warning", "Atenção");
-      return false;
-    }
     if (trophyDescription === "") {
       showToast("Insira uma descrição para o Prêmio", "warning", "Atenção");
       return false;
@@ -162,7 +161,7 @@ export default function NovoSorteio({ config }) {
       showToast("Já existe um prêmio nesta posição", "warning", "Atenção");
       return false;
     }
-    const info = { order: trophyOrder, desc: trophyDescription };
+    const info = { order: Math.random(), desc: trophyDescription };
     setTrophys([...trophys, info]);
     setTrophyOrder("");
     setTrophyDescription("");
@@ -287,7 +286,6 @@ export default function NovoSorteio({ config }) {
       showToast(response.data.message, "success", "Sucesso");
       setLoadingSave(false);
       clear();
-      setModalPayment(true);
     } catch (error) {
       setLoadingSave(false);
       if (error.message === "Network Error") {
@@ -800,25 +798,13 @@ export default function NovoSorteio({ config }) {
                     <Grid
                       templateColumns={[
                         "1fr",
-                        "1fr 3fr 1fr",
-                        "1fr 3fr 1fr",
-                        "1fr 3fr 1fr",
-                        "1fr 3fr 1fr",
+                        "3fr 1fr",
+                        "3fr 1fr",
+                        "3fr 1fr",
+                        "3fr 1fr",
                       ]}
                       gap={5}
                     >
-                      <Select
-                        focusBorderColor="green.500"
-                        placeholder="Selecione uma opção"
-                        value={trophyOrder}
-                        onChange={(e) => setTrophyOrder(e.target.value)}
-                      >
-                        <option value="1">1º Prêmio</option>
-                        <option value="2">2º Prêmio</option>
-                        <option value="3">3º Prêmio</option>
-                        <option value="4">4º Prêmio</option>
-                        <option value="5">5º Prêmio</option>
-                      </Select>
                       <Input
                         placeholder="Descrição do Prêmio"
                         focusBorderColor="green.500"
@@ -837,42 +823,42 @@ export default function NovoSorteio({ config }) {
                     </Grid>
                   </FormControl>
 
-                  <Grid
-                    templateColumns={[
-                      "repeat(1, 1fr)",
-                      "repeat(2, 1fr)",
-                      "repeat(3, 1fr)",
-                      "repeat(3, 1fr)",
-                      "repeat(3, 1fr)",
-                    ]}
-                    gap={5}
-                    mt={5}
-                  >
+                  <Stack mt={5}>
                     {trophys.map((tro) => (
-                      <Box
-                        rounded="xl"
-                        borderWidth="1px"
-                        h="min-content"
+                      <Grid
+                        templateColumns={"60px 1fr 80px"}
+                        gap={5}
+                        rounded={"xl"}
+                        overflow={"hidden"}
+                        borderWidth={"1px"}
+                        justifyItems={"center"}
+                        alignItems={"center"}
                         key={tro.order}
                       >
+                        <Flex
+                          justify={"center"}
+                          align={"center"}
+                          p={5}
+                          bg={useColorModeValue("green.500", "green.200")}
+                          color={useColorModeValue("gray.100", "gray.800")}
+                          h="60px"
+                          w="60px"
+                        >
+                          <Icon as={FaTrophy} fontSize={"3xl"} />
+                        </Flex>
+                        <Text p={2}>{tro.desc}</Text>
                         <IconButton
                           icon={<FaTrash />}
-                          size="xs"
+                          size="lg"
                           colorScheme="red"
-                          position="absolute"
-                          mt={1}
-                          ml={2}
+                          position={"relative"}
+                          w="40px"
+                          h="40px"
                           onClick={() => handleDelTrophy(tro.order)}
                         />
-                        <Flex justify="center" align="center" p={1}>
-                          <Icon as={FaTrophy} mr={3} />
-                          <Text fontWeight="bold">{tro.order}º Prêmio</Text>
-                        </Flex>
-                        <Divider />
-                        <Text p={2}>{tro.desc}</Text>
-                      </Box>
+                      </Grid>
                     ))}
-                  </Grid>
+                  </Stack>
 
                   <Divider mt={5} mb={5} />
 
@@ -974,8 +960,8 @@ export default function NovoSorteio({ config }) {
                           isChecked={checkTwo}
                           onChange={(e) => setCheckTwo(e.target.checked)}
                         >
-                          Não haverá reembolso caso haja o cancelamento desta
-                          rifa.
+                          Não haverá pagamento do arrecadado caso haja o
+                          cancelamento ou abandono desta rifa.
                         </Checkbox>
                         <Checkbox
                           colorScheme="green"

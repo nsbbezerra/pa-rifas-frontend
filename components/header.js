@@ -579,7 +579,7 @@ function HeaderApp() {
         size="lg"
       >
         <DrawerOverlay />
-        <DrawerContent roundedLeft="xl">
+        <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader>Cadastro</DrawerHeader>
 
@@ -964,7 +964,7 @@ function HeaderApp() {
         size="xs"
       >
         <DrawerOverlay />
-        <DrawerContent roundedRight="xl">
+        <DrawerContent>
           <DrawerCloseButton />
 
           <DrawerBody>

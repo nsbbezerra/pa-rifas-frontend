@@ -43,7 +43,7 @@ const customtheme = extendTheme({
 
   components: {
     Button: {
-      baseStyle: { _focus: { boxShadow: "none" }, rounded: "full" },
+      baseStyle: { _focus: { boxShadow: "none" } },
     },
     Tabs: {
       baseStyle: { tab: { _focus: { boxShadow: "none" } } },
@@ -74,11 +74,6 @@ const customtheme = extendTheme({
     Popover: {
       baseStyle: {
         content: { boxShadow: "lg" },
-      },
-    },
-    Modal: {
-      baseStyle: {
-        dialog: { rounded: "xl" },
       },
     },
   },

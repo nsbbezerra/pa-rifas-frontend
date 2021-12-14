@@ -153,9 +153,8 @@ export default function Home({ config, raffles, numbers }) {
                 Realize o Sorteio
               </Heading>
               <Text textAlign="center" mt={2}>
-                Dê confiança e credibilidade a sua campanha, realizando o
-                sorteio de forma eletrônica e sem fraudes na nossa plataforma,
-                transmita o sorteio ao vivo nas suas redes sociais.
+                Dê confiança e credibilidade a sua campanha, o sorteio será
+                realizado com base na Loteria Federal.
               </Text>
             </Flex>
             <Flex justify="center" align="center" direction="column">
