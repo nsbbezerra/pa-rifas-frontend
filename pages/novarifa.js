@@ -57,6 +57,7 @@ import {
   List,
   ListItem,
   ListIcon,
+  HStack,
 } from "@chakra-ui/react";
 import {
   Breadcrumb,
@@ -104,6 +105,10 @@ export default function NovoSorteio({ config }) {
   const [raffle, setRaffle] = useState("");
   const [qtdNumbers, setQtdNumbers] = useState("0");
   const [raffleValue, setRaffleValue] = useState(config.raffle_value || 0);
+  const [raffleValueCompare, setRaffleValueCompare] = useState(
+    config.raffle_value || 0
+  );
+  const [isDiscounted, setIsDiscounted] = useState(false);
   const [raffleTotal, setRaffleTotal] = useState(0);
   const [goal, setGoal] = useState(100);
 
@@ -134,6 +139,10 @@ export default function NovoSorteio({ config }) {
   const [pixPreviousValue, setPixPreviousValue] = useState(0);
   const [pixDiscountValue, setPixDiscountValue] = useState(0);
 
+  const [coupon, setCoupon] = useState("");
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponIdentify, setCouponIdentify] = useState("");
+
   function clear() {
     setRaffle("");
     setQtdNumbers("0");
@@ -149,6 +158,9 @@ export default function NovoSorteio({ config }) {
     setTrophys([]);
     setGoal(100);
     setRaffleTotal(0);
+    setCoupon("");
+    setIsDiscounted(false);
+    setRaffleValueCompare(config.raffle_value || 0);
   }
 
   function handleTrophy() {
@@ -281,6 +293,9 @@ export default function NovoSorteio({ config }) {
       data.append("raffle_value", raffleTotal);
       data.append("trophys", JSON.stringify(trophys));
       data.append("goal", goal);
+      data.append("tax_value", raffleValue);
+      data.append("isDiscounted", isDiscounted === true ? "yes" : "no");
+      data.append("coupon", couponIdentify);
 
       const response = await api.post("/raffle", data);
       showToast(response.data.message, "success", "Sucesso");
@@ -351,6 +366,29 @@ export default function NovoSorteio({ config }) {
     setRaffleDiscountValue(0);
     setRaffleDiscountTotal(0);
   }, [raffleValue, pixTax, cardTax]);
+
+  async function FindCoupon() {
+    try {
+      setCouponLoading(true);
+      const response = await api.get(`/coupon/${coupon}`);
+      setCouponIdentify(response.data.identify);
+      setRaffleValue(parseFloat(response.data.coupon_value));
+      setIsDiscounted(true);
+      setCouponLoading(false);
+    } catch (error) {
+      setCouponLoading(false);
+      if (error.message === "Network Error") {
+        alert(
+          "Sem conexão com o servidor, verifique sua conexão com a internet."
+        );
+        return false;
+      }
+      let mess = !error.response.data
+        ? "Erro no cupom"
+        : error.response.data.message;
+      showToast(mess, "error", "Erro");
+    }
+  }
 
   return (
     <>
@@ -922,7 +960,21 @@ export default function NovoSorteio({ config }) {
                 >
                   <Stat size="md">
                     <StatLabel>Total a Pagar</StatLabel>
-                    <StatNumber>{`${parseFloat(raffleValue)}%`}</StatNumber>
+                    <StatNumber>
+                      {isDiscounted ? (
+                        <HStack>
+                          <Text
+                            fontWeight={"light"}
+                            textDecor={"line-through"}
+                            color={"gray.600"}
+                            fontSize={"18px"}
+                          >{`${parseFloat(raffleValueCompare)}%`}</Text>
+                          <Text>{`${parseFloat(raffleValue)}%`}</Text>
+                        </HStack>
+                      ) : (
+                        `${parseFloat(raffleValueCompare)}%`
+                      )}
+                    </StatNumber>
                     <StatHelpText
                       color={useColorModeValue("red.500", "red.200")}
                     >
@@ -990,6 +1042,10 @@ export default function NovoSorteio({ config }) {
                       <Input
                         focusBorderColor="green.500"
                         placeholder="Cupom de Desconto"
+                        value={coupon}
+                        onChange={(e) =>
+                          setCoupon(e.target.value.toUpperCase())
+                        }
                       />
                       <Tooltip hasArrow label="Aplicar Desconto">
                         <IconButton
@@ -999,6 +1055,8 @@ export default function NovoSorteio({ config }) {
                           w="min-content"
                           ml={2}
                           rounded="xl"
+                          isLoading={couponLoading}
+                          onClick={() => FindCoupon()}
                         />
                       </Tooltip>
                     </Flex>

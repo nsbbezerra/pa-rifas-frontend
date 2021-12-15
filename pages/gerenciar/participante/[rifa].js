@@ -229,25 +229,19 @@ export default function GerenciarPartitipante({
                   </Flex>
                   <Text p={2}>{tro.description}</Text>
                   {tro.status === "waiting" ? (
-                    <Badge colorScheme={"orange"} fontSize="0.8em">
-                      AGUARDANDO
-                    </Badge>
+                    <Tag colorScheme={"orange"}>AGUARDANDO</Tag>
                   ) : (
                     ""
                   )}
                   {tro.client_identify === client.identify &&
                   tro.status === "drawn" ? (
-                    <Badge colorScheme={"green"} fontSize="0.8em">
-                      VOCÊ GANHOU
-                    </Badge>
+                    <Tag colorScheme={"green"}>VOCÊ GANHOU</Tag>
                   ) : (
                     ""
                   )}
                   {tro.client_identify !== client.identify &&
                   tro.status === "drawn" ? (
-                    <Badge colorScheme={"blue"} fontSize="0.8em">
-                      PRÊMIO SORTEADO
-                    </Badge>
+                    <Tag colorScheme={"blue"}>SORTEADO</Tag>
                   ) : (
                     ""
                   )}

@@ -32,6 +32,7 @@ import {
   Input,
   Avatar,
   Spinner,
+  Tooltip,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import { useColorMode, useColorModeValue } from "@chakra-ui/color-mode";
@@ -44,7 +45,6 @@ import {
   AiOutlineWhatsApp,
   AiOutlineZoomIn,
   AiOutlineUser,
-  AiOutlineClose,
   AiFillMail,
 } from "react-icons/ai";
 import { FaRegEdit } from "react-icons/fa";
@@ -199,6 +199,31 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
     }
   }
 
+  function calcPay() {
+    let soma = orders.reduce(function (total, numero) {
+      return total + parseFloat(numero.discounted_value);
+    }, 0);
+    let tax = parseFloat(raffle.tax_value);
+    let total = ((tax / 100) * soma).toFixed(2);
+    let totalParsed = parseFloat(total);
+    return `R$ ${totalParsed.toLocaleString("pt-br", {
+      minimumFractionDigits: 2,
+    })}`;
+  }
+
+  function calcRest() {
+    let soma = orders.reduce(function (total, numero) {
+      return total + parseFloat(numero.discounted_value);
+    }, 0);
+    let tax = parseFloat(raffle.tax_value);
+    let total = ((tax / 100) * soma).toFixed(2);
+    let totalParsed = parseFloat(total);
+    let rest = soma - totalParsed;
+    return `R$ ${rest.toLocaleString("pt-br", {
+      minimumFractionDigits: 2,
+    })}`;
+  }
+
   async function FindWinner(id) {
     setLoading(true);
     setModalWinner(true);
@@ -316,9 +341,9 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
               templateColumns={[
                 "repeat(2, 1fr)",
                 "repeat(2, 1fr)",
-                "repeat(3, 1fr)",
-                "repeat(4, 1fr)",
-                "repeat(4, 1fr)",
+                "repeat(2, 1fr)",
+                "repeat(2, 1fr)",
+                "repeat(2, 1fr)",
               ]}
               gap={5}
               justifyContent="center"
@@ -331,9 +356,9 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
                 bg={useColorModeValue("orange.500", "orange.200")}
               >
                 <Stat color={useColorModeValue("gray.100", "gray.800")}>
-                  <StatLabel>Taxa Administrativa</StatLabel>
+                  <StatLabel>Taxa Pagamentos</StatLabel>
                   <StatNumber>{soma("tax")}</StatNumber>
-                  <StatHelpText>* Taxa da PA Rifas</StatHelpText>
+                  <StatHelpText>* Taxa Cartões e PIX</StatHelpText>
                 </Stat>
               </Box>
               <Box
@@ -346,7 +371,9 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
                 <Stat color={useColorModeValue("gray.100", "gray.800")}>
                   <StatLabel>Total Arrecadado</StatLabel>
                   <StatNumber>{soma("total")}</StatNumber>
-                  <StatHelpText>* Já descontado a taxa</StatHelpText>
+                  <StatHelpText>
+                    * Já descontado a taxa de Pagamentos
+                  </StatHelpText>
                 </Stat>
               </Box>
               <Box
@@ -357,11 +384,13 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
                 bg={useColorModeValue("red.500", "red.200")}
               >
                 <Stat color={useColorModeValue("gray.100", "gray.800")}>
-                  <StatLabel>Total Bloqueado</StatLabel>
+                  <StatLabel>Total a Bloqueado</StatLabel>
                   <StatNumber>
-                    {raffle.status !== "drawn" ? soma("total") : "R$ 0,00"}
+                    {raffle.status !== "drawn" ? calcRest() : "R$ 0,00"}
                   </StatNumber>
-                  <StatHelpText>* Aguardando sorteio</StatHelpText>
+                  <StatHelpText>
+                    * Descontado {calcPay()} da PA Rifas
+                  </StatHelpText>
                 </Stat>
               </Box>
               <Box
@@ -374,9 +403,37 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
                 <Stat color={useColorModeValue("gray.100", "gray.800")}>
                   <StatLabel>Total Liberado</StatLabel>
                   <StatNumber>
-                    {raffle.status === "drawn" ? soma("total") : "R$ 0,00"}
+                    {raffle.status === "drawn" ? calcRest() : "R$ 0,00"}
                   </StatNumber>
-                  <StatHelpText>* Liberado após o sorteio</StatHelpText>
+                  <StatHelpText>
+                    * Descontado {calcPay()} da PA Rifas
+                  </StatHelpText>
+                </Stat>
+              </Box>
+              <Box
+                rounded="xl"
+                shadow="lg"
+                pt={2}
+                pl={4}
+                bg={useColorModeValue("blackAlpha.100", "whiteAlpha.200")}
+              >
+                <Stat>
+                  <StatLabel>Taxa Administrativa</StatLabel>
+                  <StatNumber>{parseFloat(raffle.tax_value)}%</StatNumber>
+                  <StatHelpText>* Porcentagem PA Rifas</StatHelpText>
+                </Stat>
+              </Box>
+              <Box
+                rounded="xl"
+                shadow="lg"
+                pt={2}
+                pl={4}
+                bg={useColorModeValue("blackAlpha.100", "whiteAlpha.200")}
+              >
+                <Stat>
+                  <StatLabel>Total a Pagar</StatLabel>
+                  <StatNumber>{calcPay()}</StatNumber>
+                  <StatHelpText>* Total devido à PA Rifas</StatHelpText>
                 </Stat>
               </Box>
             </Grid>
@@ -432,6 +489,9 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
                       isFullWidth
                       mr={5}
                       onClick={() => handleDrawn(tro.id)}
+                      isDisabled={
+                        new Date(raffle.draw_date) <= new Date() ? false : true
+                      }
                     >
                       Sortear
                     </Button>
@@ -452,6 +512,13 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
                 </Grid>
               ))}
             </Stack>
+            <Text
+              color={useColorModeValue("red.400", "red.200")}
+              fontSize={"xs"}
+              mt={3}
+            >
+              * Você deve aguardar a data definida para o sorteio.
+            </Text>
 
             <Heading
               fontSize="2xl"

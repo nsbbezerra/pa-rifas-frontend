@@ -623,7 +623,7 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
                 mt={5}
               >
                 <Grid
-                  templateColumns="repeat(auto-fit, minmax(75px, 75px))"
+                  templateColumns="repeat(auto-fit, minmax(78px, 78px))"
                   gap="5px"
                   justifyContent="center"
                   h="400px"
