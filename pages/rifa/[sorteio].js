@@ -126,6 +126,9 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
   const { setOpenLogin } = useLoginModal();
   const { data, error } = useFetch(`/numbers/${query.sorteio}`);
 
+  const [paymentModal, setPaymentModal] = useState(false);
+  const [urlModal, setUrlModal] = useState("");
+
   useEffect(() => {
     if (data !== undefined) {
       setNums(data.numbers);
@@ -147,6 +150,7 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
 
   const [mynumbers, setMynumbers] = useState([]);
   const [amount, setAmount] = useState(0);
+  const [amountCompare, setAmountCompare] = useState(0);
 
   const [modalSend, setModalSent] = useState(false);
 
@@ -157,6 +161,10 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
   const [concordo, setConcordo] = useState(0);
 
   const [loading, setLoading] = useState(false);
+
+  const [loadingCoupon, setLoadingCoupon] = useState(false);
+  const [nameCoupon, setNameCoupon] = useState("");
+  const [isDiscounted, setIsDiscounted] = useState(false);
 
   function showToast(message, status, title) {
     toast({
@@ -198,6 +206,7 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
   useEffect(() => {
     if (mynumbers.length > 0) {
       setAmount(mynumbers.length * parseFloat(raffle.raffle_value));
+      setAmountCompare(mynumbers.length * parseFloat(raffle.raffle_value));
     }
   }, [mynumbers]);
 
@@ -223,6 +232,8 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
   function clearNumbers() {
     setMynumbers([]);
     setAmount(0);
+    setAmountCompare(0);
+    setIsDiscounted(false);
   }
 
   async function storeNumbers() {
@@ -239,8 +250,11 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
       setConcordo(false);
       setModalSent(false);
       setLoading(false);
+      setIsDiscounted(false);
+      setNameCoupon("");
       showToast(response.data.message, "success", "Sucesso");
       push(response.data.url);
+      setPaymentModal(true);
     } catch (error) {
       setLoading(false);
       if (error.message === "Network Error") {
@@ -286,6 +300,40 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
     let firstCalc = 100 * numberSale;
     let finalCalc = firstCalc / totalNumbers;
     return finalCalc;
+  }
+
+  function calcDiscountCupom(value) {
+    let calc = parseFloat(amount) * (parseFloat(value) / 100);
+    let rest = parseFloat(amount) - calc;
+    setAmount(rest);
+  }
+
+  async function findCoupon() {
+    setLoadingCoupon(true);
+
+    try {
+      const response = await api.get(`/couponRaffleHash/${nameCoupon}`);
+      if (mynumbers.length < response.data.min_numbers) {
+        showToast(
+          `Quantidade de números insuficiente para aplicar o desconto, a quantidade pedida é: ${response.data.min_numbers}`,
+          "warning",
+          "Atenção"
+        );
+      } else {
+        setIsDiscounted(true);
+        calcDiscountCupom(response.data.coupon_value);
+      }
+      setLoadingCoupon(false);
+    } catch (error) {
+      setLoadingCoupon(false);
+      if (error.message === "Network Error") {
+        alert(
+          "Sem conexão com o servidor, verifique sua conexão com a internet."
+        );
+        return false;
+      }
+      showToast("Erro ao buscar o cupom", "error", "Erro");
+    }
   }
 
   return (
@@ -706,10 +754,10 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
                 h="min-content"
                 templateColumns={[
                   "1fr",
-                  "1fr 1fr",
-                  "1fr 1fr",
-                  "2fr 1fr",
-                  "2fr 1fr",
+                  "1fr 1fr 1fr",
+                  "1fr 1fr 1fr",
+                  "1fr 1fr 1fr",
+                  "1fr 1fr 1fr",
                 ]}
                 gap={5}
                 mt={10}
@@ -725,12 +773,51 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
                 <Stat>
                   <StatLabel>Total a Pagar</StatLabel>
                   <StatNumber>
-                    {parseFloat(amount).toLocaleString("pt-br", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
+                    {isDiscounted === true ? (
+                      <HStack>
+                        <Text
+                          textDecor={"line-through"}
+                          color="gray.600"
+                          fontWeight={"light"}
+                        >
+                          {parseFloat(amountCompare).toLocaleString("pt-br", {
+                            style: "currency",
+                            currency: "BRL",
+                          })}
+                        </Text>
+                        <Text>
+                          {parseFloat(amount).toLocaleString("pt-br", {
+                            style: "currency",
+                            currency: "BRL",
+                          })}
+                        </Text>
+                      </HStack>
+                    ) : (
+                      parseFloat(amount).toLocaleString("pt-br", {
+                        style: "currency",
+                        currency: "BRL",
+                      })
+                    )}
                   </StatNumber>
                 </Stat>
+
+                <HStack>
+                  <Input
+                    value={nameCoupon}
+                    onChange={(e) =>
+                      setNameCoupon(e.target.value.toUpperCase())
+                    }
+                    placeholder="Insira o Cupom"
+                    focusBorderColor="green.500"
+                  />
+                  <IconButton
+                    icon={<FaCheck />}
+                    variant="outline"
+                    colorScheme={"green"}
+                    isLoading={loadingCoupon}
+                    onClick={() => findCoupon()}
+                  />
+                </HStack>
 
                 <Grid templateColumns={"1fr"} gap={[2, 5, 5, 5, 5]} w="100%">
                   <Button

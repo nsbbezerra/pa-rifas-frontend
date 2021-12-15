@@ -32,7 +32,14 @@ import {
   Input,
   Avatar,
   Spinner,
-  Tooltip,
+  Table,
+  Th,
+  Td,
+  Tr,
+  Tbody,
+  Thead,
+  FormHelperText,
+  Switch,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import { useColorMode, useColorModeValue } from "@chakra-ui/color-mode";
@@ -46,19 +53,23 @@ import {
   AiOutlineZoomIn,
   AiOutlineUser,
   AiFillMail,
+  AiFillSave,
 } from "react-icons/ai";
-import { FaRegEdit } from "react-icons/fa";
+import { FaReceipt, FaRegEdit } from "react-icons/fa";
 import { ImCancelCircle } from "react-icons/im";
 import { Tag } from "@chakra-ui/tag";
 import configs from "../../../configs/index";
 import { format } from "date-fns";
 import pt_br from "date-fns/locale/pt-BR";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../../../configs/axios";
+import { useRouter } from "next/router";
 
 export default function AdminRaffles({ raffle, trophys, orders }) {
   const { colorMode } = useColorMode();
   const toast = useToast();
+  const { query } = useRouter();
+  const { rifa } = query;
 
   const [dialogEdit, setDialogEdit] = useState(false);
   const [dialogCancel, setDialogCancel] = useState(false);
@@ -71,6 +82,14 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
   const [modalWinner, setModalWinner] = useState(false);
   const [trophy, setTrophy] = useState({});
   const [client, setClient] = useState({});
+
+  const [modalCupom, setModalCupom] = useState(false);
+  const [nameCupom, setNameCupom] = useState("");
+  const [descCupom, setDescCupom] = useState(0);
+  const [minCupom, setMinCupom] = useState(0);
+
+  const [modalShowCupom, setModalShowCupom] = useState(false);
+  const [coupons, setCoupons] = useState([]);
 
   function showToast(message, status, title) {
     toast({
@@ -116,6 +135,13 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
   function handleCloseModal() {
     setNumber("0");
     setModal(false);
+  }
+
+  function handleCloseCupom() {
+    setMinCupom(0);
+    setNameCupom("");
+    setDescCupom(0);
+    setModalCupom(false);
   }
 
   function handleColor(color) {
@@ -244,6 +270,81 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
         ? "Erro no cadastro do cliente"
         : error.response.data.message;
       showToast(mess, "error", "Erro");
+    }
+  }
+
+  async function saveCupom() {
+    setLoading(true);
+
+    try {
+      const response = await api.post("/couponRaffle", {
+        coupon_hash: nameCupom,
+        coupon_value: descCupom,
+        min_numbers: minCupom,
+        raffle: rifa,
+      });
+      showToast(response.data.message, "success", "Sucesso");
+      handleCloseCupom();
+    } catch (error) {
+      setLoading(false);
+      if (error.message === "Network Error") {
+        alert(
+          "Sem conexão com o servidor, verifique sua conexão com a internet."
+        );
+        return false;
+      }
+      let mess = !error.response.data
+        ? "Erro no cadastro do cliente"
+        : error.response.data.message;
+      showToast(mess, "error", "Sorteio não Realizado");
+    }
+  }
+
+  async function findCoupons() {
+    setLoading(true);
+
+    try {
+      const response = await api.get(`/findCouponRaffle/${rifa}`);
+      setCoupons(response.data);
+      setLoading(false);
+      setModalShowCupom(true);
+    } catch (error) {
+      setLoading(false);
+      if (error.message === "Network Error") {
+        alert(
+          "Sem conexão com o servidor, verifique sua conexão com a internet."
+        );
+        return false;
+      }
+      let mess = !error.response.data
+        ? "Erro no cadastro do cliente"
+        : error.response.data.message;
+      showToast(mess, "error", "Sorteio não Realizado");
+    }
+  }
+
+  async function activeCoupon(id, value) {
+    try {
+      const response = await api.put(`/couponRaffle/${id}`, { active: value });
+      showToast(response.data.message, "success", "Sucesso");
+      const updated = await coupons.map((coup) => {
+        if (coup.id === id) {
+          return { ...coup, active: value };
+        }
+        return coup;
+      });
+      setCoupons(updated);
+    } catch (error) {
+      if (error.message === "Network Error") {
+        alert(
+          "Sem conexão com o servidor, verifique sua conexão com a internet."
+        );
+        return false;
+      }
+      let mess = !error.response.data
+        ? "Erro no cadastro do cliente"
+        : error.response.data.message;
+      showToast(mess, "error", "Sorteio não Realizado");
     }
   }
 
@@ -538,6 +639,28 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
               mt={1}
             />
 
+            <Grid templateColumns={"1fr 1fr"} gap={5} mt={5}>
+              <Button
+                size={"lg"}
+                leftIcon={<FaReceipt />}
+                colorScheme={"green"}
+                variant={"outline"}
+                onClick={() => setModalCupom(true)}
+              >
+                Criar Cupom
+              </Button>
+              <Button
+                size={"lg"}
+                leftIcon={<FaReceipt />}
+                colorScheme={"green"}
+                variant={"outline"}
+                onClick={() => findCoupons()}
+                isLoading={loading}
+              >
+                Meus Cupons
+              </Button>
+            </Grid>
+
             <Grid
               mt={5}
               templateColumns={[
@@ -666,6 +789,100 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
               Realizar Sorteio
             </Button>
           </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={modalCupom} onClose={() => handleCloseCupom()} size={"sm"}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Criar Cupom</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              <FormLabel>Insira o Nome do Cupom</FormLabel>
+              <Input
+                focusBorderColor="green.500"
+                placeholder="Insira o Nome do Cupom"
+                value={nameCupom}
+                onChange={(e) => setNameCupom(e.target.value.toUpperCase())}
+              />
+            </FormControl>
+            <FormControl mt={3}>
+              <FormLabel>Desconto do Cupom (%)</FormLabel>
+              <Input
+                focusBorderColor="green.500"
+                placeholder="Valor do Cupom"
+                value={descCupom}
+                type="number"
+                onChange={(e) => setDescCupom(e.target.value)}
+              />
+            </FormControl>
+            <FormControl mt={3}>
+              <FormLabel>Cota Mínima</FormLabel>
+              <Input
+                focusBorderColor="green.500"
+                placeholder="Cota Mínima"
+                value={minCupom}
+                type="number"
+                onChange={(e) => setMinCupom(e.target.value)}
+              />
+              <FormHelperText>
+                Mínimo de Números para aplicar o desconto
+              </FormHelperText>
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              leftIcon={<AiFillSave />}
+              colorScheme={"green"}
+              isLoading={loading}
+              onClick={() => saveCupom()}
+            >
+              Salvar Cupom
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={modalShowCupom}
+        onClose={() => setModalShowCupom()}
+        size={"2xl"}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Meus Cupons</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={5}>
+            <Table>
+              <Thead>
+                <Tr>
+                  <Th w="7%">ATIVO?</Th>
+                  <Th w="70%">CUPOM</Th>
+                  <Th isNumeric>DESCONTO</Th>
+                  <Th isNumeric>COTA</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {coupons.map((coup) => (
+                  <Tr key={coup.id}>
+                    <Td w="7%">
+                      <Switch
+                        colorScheme={"green"}
+                        defaultChecked={coup.active}
+                        onChange={(e) =>
+                          activeCoupon(coup.id, e.target.checked)
+                        }
+                      />
+                    </Td>
+                    <Td w="70%">{coup.coupon_hash}</Td>
+                    <Td isNumeric>{parseFloat(coup.coupon_value)}%</Td>
+                    <Td isNumeric>{coup.min_numbers}</Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </ModalBody>
         </ModalContent>
       </Modal>
 

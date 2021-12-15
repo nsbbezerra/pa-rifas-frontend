@@ -900,7 +900,7 @@ export default function NovoSorteio({ config }) {
 
                   <Divider mt={5} mb={5} />
 
-                  <FormControl isRequired>
+                  <FormControl>
                     <FormLabel>Opções de Pagamento dos Números:</FormLabel>
                     <Stack spacing={4} mt={3}>
                       <Flex align="center">
@@ -922,6 +922,24 @@ export default function NovoSorteio({ config }) {
                         </Text>
                       </Flex>
                       <Flex align="center">
+                        <Box w="35px" h="35px" mr={3}>
+                          <Image
+                            src="/img/credit.svg"
+                            height={50}
+                            width={50}
+                            layout="responsive"
+                            objectFit="contain"
+                            alt="PA Rifas, rifas online"
+                          />
+                        </Box>
+                        <Text
+                          fontWeight="semibold"
+                          fontSize={["sm", "md", "md", "md", "md"]}
+                        >
+                          Cartão de Débito
+                        </Text>
+                      </Flex>
+                      <Flex align="center">
                         <Box w="35px" mr={3}>
                           <Image
                             src="/img/pix.svg"
@@ -937,6 +955,24 @@ export default function NovoSorteio({ config }) {
                           fontSize={["sm", "md", "md", "md", "md"]}
                         >
                           PIX
+                        </Text>
+                      </Flex>
+                      <Flex align="center">
+                        <Box w="35px" h="35px" mr={3}>
+                          <Image
+                            src="/img/boleto.svg"
+                            height={50}
+                            width={50}
+                            layout="responsive"
+                            objectFit="contain"
+                            alt="PA Rifas, rifas online"
+                          />
+                        </Box>
+                        <Text
+                          fontWeight="semibold"
+                          fontSize={["sm", "md", "md", "md", "md"]}
+                        >
+                          Boleto
                         </Text>
                       </Flex>
                     </Stack>
@@ -981,16 +1017,6 @@ export default function NovoSorteio({ config }) {
                       * Do valor arrecadado
                     </StatHelpText>
                   </Stat>
-
-                  <Button
-                    isFullWidth
-                    size="sm"
-                    colorScheme="green"
-                    leftIcon={<FaCalculator />}
-                    onClick={() => setModalCalc(true)}
-                  >
-                    Calculadora de Custos
-                  </Button>
 
                   <Divider mt={3} mb={3} />
 
@@ -1144,8 +1170,22 @@ export default function NovoSorteio({ config }) {
               </Box>
               <Box rounded="xl" borderWidth="1px" p={3}>
                 <Stat>
+                  <StatLabel>Boleto</StatLabel>
+                  <StatNumber>{configsGlobal.boleto}</StatNumber>
+                  <StatHelpText>* Por transação</StatHelpText>
+                </Stat>
+              </Box>
+              <Box rounded="xl" borderWidth="1px" p={3}>
+                <Stat>
                   <StatLabel>Cartão de Crédito</StatLabel>
                   <StatNumber>{configsGlobal.cardTax}%</StatNumber>
+                  <StatHelpText>* Por transação</StatHelpText>
+                </Stat>
+              </Box>
+              <Box rounded="xl" borderWidth="1px" p={3}>
+                <Stat>
+                  <StatLabel>Cartão de Débito</StatLabel>
+                  <StatNumber>{configsGlobal.debitTax}%</StatNumber>
                   <StatHelpText>* Por transação</StatHelpText>
                 </Stat>
               </Box>

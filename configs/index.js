@@ -14,6 +14,8 @@ const configs = {
   key: publicKey,
   pixTax: 0.99,
   cardTax: 4.99,
+  debitTax: 3.99,
+  boleto: "R$ 3.49",
 };
 
 export default configs;
