@@ -128,23 +128,6 @@ export default function FooterApp() {
                     objectFit="contain"
                   />
                 </Box>
-                <Box
-                  w="40px"
-                  h="40px"
-                  rounded="full"
-                  overflow="hidden"
-                  ml={3}
-                  p={2}
-                  bg="white"
-                >
-                  <Image
-                    src="/img/boleto.svg"
-                    width={250}
-                    height={250}
-                    layout="responsive"
-                    objectFit="contain"
-                  />
-                </Box>
               </Flex>
 
               <Button

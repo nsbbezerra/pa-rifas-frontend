@@ -957,24 +957,6 @@ export default function NovoSorteio({ config }) {
                           PIX
                         </Text>
                       </Flex>
-                      <Flex align="center">
-                        <Box w="35px" h="35px" mr={3}>
-                          <Image
-                            src="/img/boleto.svg"
-                            height={50}
-                            width={50}
-                            layout="responsive"
-                            objectFit="contain"
-                            alt="PA Rifas, rifas online"
-                          />
-                        </Box>
-                        <Text
-                          fontWeight="semibold"
-                          fontSize={["sm", "md", "md", "md", "md"]}
-                        >
-                          Boleto
-                        </Text>
-                      </Flex>
                     </Stack>
                   </FormControl>
                   <Button
@@ -1165,13 +1147,6 @@ export default function NovoSorteio({ config }) {
                 <Stat>
                   <StatLabel>PIX</StatLabel>
                   <StatNumber>{configsGlobal.pixTax}%</StatNumber>
-                  <StatHelpText>* Por transação</StatHelpText>
-                </Stat>
-              </Box>
-              <Box rounded="xl" borderWidth="1px" p={3}>
-                <Stat>
-                  <StatLabel>Boleto</StatLabel>
-                  <StatNumber>{configsGlobal.boleto}</StatNumber>
                   <StatHelpText>* Por transação</StatHelpText>
                 </Stat>
               </Box>

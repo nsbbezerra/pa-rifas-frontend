@@ -16,15 +16,7 @@ export default function Client({ info }) {
 
   return (
     <>
-      {raffles.length === 0 ? (
-        <Flex align="center" justify="center">
-          <Heading fontSize="md" textAlign="center">
-            Nenhum sorteio para mostrar
-          </Heading>
-        </Flex>
-      ) : (
-        <ShowRaffles raffle={raffles} destination="gerenciar/participante" />
-      )}
+      <ShowRaffles raffle={raffles} destination="gerenciar/participante" />
     </>
   );
 }

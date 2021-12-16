@@ -8,7 +8,7 @@ import waitingAnimation from "../../assets/waiting.json";
 import Lottie from "../../components/lottie";
 import api from "../../configs/axios";
 import { useEffect, useState } from "react";
-import { Button, Spinner } from "@chakra-ui/react";
+import { Spinner } from "@chakra-ui/react";
 
 export default function Finalize() {
   const { query, push } = useRouter();
@@ -26,15 +26,14 @@ export default function Finalize() {
         status,
       });
       setLoading(false);
+      push("/");
     } catch (error) {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    if (status === "approved") {
-      payOrder();
-    }
+    payOrder();
   }, [payment_id]);
 
   return (
@@ -61,15 +60,6 @@ export default function Finalize() {
           <Spinner size="xl" colorScheme="green" />
         </Flex>
       )}
-      <Flex justify="center" align="center" mt={5} direction={"column"}>
-        <Text textAlign={"center"}>Boleto: Aprovação em até 3 dias</Text>
-        <Text textAlign={"center"}>
-          Pix, Cartão de Crédito e Débito: Aprovação imediata
-        </Text>
-        <Button onClick={() => push("/")} mt={5}>
-          Ir ao Início
-        </Button>
-      </Flex>
       <Footer />
     </>
   );

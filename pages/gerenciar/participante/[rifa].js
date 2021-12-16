@@ -18,14 +18,28 @@ import {
   Center,
   LinkBox,
   Stack,
-  Badge,
+  Skeleton,
+  Button,
+  useToast,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  ButtonGroup,
 } from "@chakra-ui/react";
 import Image from "next/image";
-import { AiOutlineTrophy } from "react-icons/ai";
+import { AiOutlineTrophy, AiOutlineDollar } from "react-icons/ai";
 import configs from "../../../configs/index";
 import { format } from "date-fns";
 import pt_br from "date-fns/locale/pt-BR";
 import { useClient } from "../../../context/Clients";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import api from "../../../configs/axios";
 
 export default function GerenciarPartitipante({
   raffle,
@@ -35,6 +49,47 @@ export default function GerenciarPartitipante({
 }) {
   const { colorMode } = useColorMode();
   const { client } = useClient();
+  const toast = useToast();
+
+  const { isFallback, push } = useRouter();
+
+  if (isFallback) {
+    return (
+      <>
+        <Header />
+        <Container maxW={"5xl"} mt={10}>
+          <Grid
+            templateColumns={[
+              "1fr",
+              "1fr",
+              "300px 1fr",
+              "300px 1fr",
+              "300px 1fr",
+            ]}
+            gap={10}
+          >
+            <Skeleton h={"300px"} />
+            <Box>
+              <Grid templateColumns={"1fr 1fr"} gap={5}>
+                <Skeleton h={"100px"} />
+                <Skeleton h={"100px"} />
+                <Skeleton h={"100px"} />
+                <Skeleton h={"100px"} />
+              </Grid>
+              <Stack mt={5}>
+                <Skeleton h={"50px"} />
+                <Skeleton h={"50px"} />
+                <Skeleton h={"50px"} />
+              </Stack>
+            </Box>
+          </Grid>
+        </Container>
+        <Footer />
+      </>
+    );
+  }
+
+  const [loading, setLoading] = useState(false);
 
   function handleColor(color) {
     if (color === "green") {
@@ -95,6 +150,37 @@ export default function GerenciarPartitipante({
         return { title: "RIFA BLOQUEADA", bg: handleColor("gray") };
       default:
         return { title: "RIFA EM ESPERA", bg: handleColor("yellow") };
+    }
+  }
+
+  function showToast(message, status, title) {
+    toast({
+      title: title,
+      description: message,
+      status: status,
+      position: "bottom-right",
+    });
+  }
+
+  async function payById(id) {
+    setLoading(true);
+
+    try {
+      const response = await api.post(`/rafflePaymentById/${id}`);
+      push(response.data.url);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      if (error.message === "Network Error") {
+        alert(
+          "Sem conexão com o servidor, verifique sua conexão com a internet."
+        );
+        return false;
+      }
+      let mess = !error.response.data
+        ? "Erro no pagamento"
+        : error.response.data.message;
+      showToast(mess, "error", "Erro");
     }
   }
 
@@ -375,6 +461,46 @@ export default function GerenciarPartitipante({
                           })}
                         </Text>
                       </Flex>
+
+                      {ord.status !== "paid_out" && (
+                        <Box pl={2} pr={2} pb={2}>
+                          <Popover placement="top">
+                            <PopoverTrigger>
+                              <Button
+                                size="sm"
+                                colorScheme={"green"}
+                                leftIcon={<AiOutlineDollar />}
+                              >
+                                Pagar Agora
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent _focus={{ outline: "none" }}>
+                              <PopoverHeader fontWeight="semibold">
+                                Confirmação
+                              </PopoverHeader>
+                              <PopoverArrow />
+                              <PopoverCloseButton />
+                              <PopoverBody>
+                                Se você fez o pagamento utilizando boleto
+                                aguarde até 3 dias para a confirmação do
+                                pagamento, caso houve um erro no pagamento
+                                clique no botão abaixo para fazer o pagamento.
+                              </PopoverBody>
+                              <PopoverFooter d="flex" justifyContent="flex-end">
+                                <ButtonGroup size="sm">
+                                  <Button
+                                    colorScheme="green"
+                                    isLoading={loading}
+                                    onClick={() => payById(ord.id)}
+                                  >
+                                    Confirmar
+                                  </Button>
+                                </ButtonGroup>
+                              </PopoverFooter>
+                            </PopoverContent>
+                          </Popover>
+                        </Box>
+                      )}
                     </Box>
                   );
                 })}
@@ -416,6 +542,6 @@ export const getStaticProps = async ({ params }) => {
       orders,
       numbers,
     },
-    revalidate: 60,
+    revalidate: 5,
   };
 };

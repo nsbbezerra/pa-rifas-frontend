@@ -40,6 +40,7 @@ import {
   Thead,
   FormHelperText,
   Switch,
+  Skeleton,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import { useColorMode, useColorModeValue } from "@chakra-ui/color-mode";
@@ -61,15 +62,51 @@ import { Tag } from "@chakra-ui/tag";
 import configs from "../../../configs/index";
 import { format } from "date-fns";
 import pt_br from "date-fns/locale/pt-BR";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import api from "../../../configs/axios";
 import { useRouter } from "next/router";
 
 export default function AdminRaffles({ raffle, trophys, orders }) {
   const { colorMode } = useColorMode();
   const toast = useToast();
-  const { query } = useRouter();
+  const { query, isFallback } = useRouter();
   const { rifa } = query;
+
+  if (isFallback) {
+    return (
+      <>
+        <Header />
+        <Container maxW={"5xl"} mt={10}>
+          <Grid
+            templateColumns={[
+              "1fr",
+              "1fr",
+              "300px 1fr",
+              "300px 1fr",
+              "300px 1fr",
+            ]}
+            gap={10}
+          >
+            <Skeleton h={"300px"} />
+            <Box>
+              <Grid templateColumns={"1fr 1fr"} gap={5}>
+                <Skeleton h={"100px"} />
+                <Skeleton h={"100px"} />
+                <Skeleton h={"100px"} />
+                <Skeleton h={"100px"} />
+              </Grid>
+              <Stack mt={5}>
+                <Skeleton h={"50px"} />
+                <Skeleton h={"50px"} />
+                <Skeleton h={"50px"} />
+              </Stack>
+            </Box>
+          </Grid>
+        </Container>
+        <Footer />
+      </>
+    );
+  }
 
   const [dialogEdit, setDialogEdit] = useState(false);
   const [dialogCancel, setDialogCancel] = useState(false);
@@ -459,7 +496,7 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
                 <Stat color={useColorModeValue("gray.100", "gray.800")}>
                   <StatLabel>Taxa Pagamentos</StatLabel>
                   <StatNumber>{soma("tax")}</StatNumber>
-                  <StatHelpText>* Taxa Cartões e PIX</StatHelpText>
+                  <StatHelpText>* Taxa Cartões, PIX e Boletos</StatHelpText>
                 </Stat>
               </Box>
               <Box
@@ -473,7 +510,7 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
                   <StatLabel>Total Arrecadado</StatLabel>
                   <StatNumber>{soma("total")}</StatNumber>
                   <StatHelpText>
-                    * Já descontado a taxa de Pagamentos
+                    * Descontado {soma("tax")} de taxas de Pagamentos
                   </StatHelpText>
                 </Stat>
               </Box>
@@ -847,17 +884,17 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
       <Modal
         isOpen={modalShowCupom}
         onClose={() => setModalShowCupom()}
-        size={"2xl"}
+        size={"xl"}
       >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Meus Cupons</ModalHeader>
           <ModalCloseButton />
-          <ModalBody pb={5}>
-            <Table>
+          <ModalBody pb={5} overflow={"hidden"}>
+            <Table size={"sm"}>
               <Thead>
                 <Tr>
-                  <Th w="7%">ATIVO?</Th>
+                  <Th w="5%">ATIVO?</Th>
                   <Th w="70%">CUPOM</Th>
                   <Th isNumeric>DESCONTO</Th>
                   <Th isNumeric>COTA</Th>
@@ -866,13 +903,14 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
               <Tbody>
                 {coupons.map((coup) => (
                   <Tr key={coup.id}>
-                    <Td w="7%">
+                    <Td w="5%">
                       <Switch
                         colorScheme={"green"}
                         defaultChecked={coup.active}
                         onChange={(e) =>
                           activeCoupon(coup.id, e.target.checked)
                         }
+                        size={"sm"}
                       />
                     </Td>
                     <Td w="70%">{coup.coupon_hash}</Td>
@@ -962,7 +1000,7 @@ export const getStaticPaths = async () => {
   });
   return {
     paths: paths,
-    fallback: false,
+    fallback: true,
   };
 };
 
@@ -982,6 +1020,6 @@ export const getStaticProps = async ({ params }) => {
       orders,
       numbers,
     },
-    revalidate: 60,
+    revalidate: 5,
   };
 };

@@ -668,12 +668,12 @@ export default function MeusDados({ information }) {
                 onChange={(index) => setTabIndex(index)}
                 defaultIndex={0}
                 mt={10}
-                variant="enclosed-colored"
-                isFitted
+                variant={"soft-rounded"}
+                size={"sm"}
               >
                 <TabList>
-                  <Tab roundedTop="md">ADMINISTRADOR</Tab>
-                  <Tab roundedTop="md">PARTICIPANTE</Tab>
+                  <Tab>ADMINISTRADOR</Tab>
+                  <Tab>PARTICIPANTE</Tab>
                 </TabList>
                 <TabPanels>
                   <TabPanel>
