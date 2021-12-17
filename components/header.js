@@ -43,8 +43,18 @@ import {
   DrawerContent,
   DrawerCloseButton,
   useColorModeValue,
+  Icon,
+  Avatar,
 } from "@chakra-ui/react";
-import { FaWhatsapp, FaUserAlt, FaSave, FaMoon, FaSun } from "react-icons/fa";
+import {
+  FaWhatsapp,
+  FaUserAlt,
+  FaSave,
+  FaMoon,
+  FaSun,
+  FaIdCard,
+  FaReceipt,
+} from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
 import MaskedInput from "react-text-mask";
@@ -53,6 +63,7 @@ import {
   AiOutlineLogin,
   AiOutlineLogout,
   AiOutlineMenu,
+  AiOutlineUser,
 } from "react-icons/ai";
 import { useRegisterModal } from "../context/ModalRegister";
 import { useLoginModal } from "../context/ModalLogin";
@@ -317,28 +328,59 @@ function HeaderApp() {
       />
       <Menu placement="bottom-end">
         <MenuButton
-          as={IconButton}
-          icon={<FaUserAlt />}
+          as={Button}
+          leftIcon={<FaUserAlt />}
           colorScheme="green"
           variant="outline"
-        />
+        >
+          Área do Cliente
+        </MenuButton>
         <MenuList shadow="lg">
           {JSON.stringify(client) === "{}" ? (
             <>
-              <MenuItem onClick={() => setOpenRegister(true)}>
+              <MenuItem
+                icon={<FaSave />}
+                onClick={() => setOpenRegister(true)}
+                fontSize={"sm"}
+              >
                 CADASTRE-SE
               </MenuItem>
-              <MenuItem onClick={() => setOpenLogin(true)}>FAÇA LOGIN</MenuItem>
+              <MenuItem
+                icon={<AiOutlineLogin />}
+                onClick={() => setOpenLogin(true)}
+                fontSize={"sm"}
+              >
+                FAÇA LOGIN
+              </MenuItem>
             </>
           ) : (
             <>
+              <Flex justify={"center"} align={"center"} direction={"column"}>
+                <Avatar icon={<AiOutlineUser />} size={"sm"} />
+                <Text fontWeight={"bold"} fontSize={"x-small"} mt={2}>
+                  {client.name}
+                </Text>
+              </Flex>
+              <MenuDivider />
               <Link href={`/meusdados/${client.identify}`} passHref>
                 <a>
-                  <MenuItem>MEUS DADOS</MenuItem>
+                  <MenuItem icon={<FaIdCard />} fontSize={"sm"}>
+                    MEUS DADOS
+                  </MenuItem>
                 </a>
               </Link>
-              <MenuDivider />
-              <MenuItem icon={<AiOutlineLogout />} onClick={() => logout()}>
+              <Link href={`/minhasrifas/${client.identify}`} passHref>
+                <a>
+                  <MenuItem icon={<FaReceipt />} fontSize={"sm"}>
+                    MINHAS RIFAS
+                  </MenuItem>
+                </a>
+              </Link>
+              <MenuItem
+                icon={<AiOutlineLogout />}
+                onClick={() => logout()}
+                fontSize={"sm"}
+              >
                 SAIR
               </MenuItem>
             </>
@@ -384,6 +426,7 @@ function HeaderApp() {
         bg={useColorModeValue("orange.500", "orange.800")}
         zIndex={1000}
         shadow="lg"
+        d={["none", "none", "block", "block", "block"]}
       >
         <Container maxW="6xl">
           <Flex h="55px" justify="space-between" align="center">
@@ -413,7 +456,7 @@ function HeaderApp() {
         }
         pt={10}
         pb={10}
-        mt="55px"
+        mt={["0px", "0px", "55px", "55px", "55px"]}
       >
         <IconButton
           icon={colorMode === "light" ? <FaMoon /> : <FaSun />}
@@ -991,6 +1034,7 @@ function HeaderApp() {
                     colorScheme="green"
                     _focus={{ outline: "none" }}
                     isFullWidth
+                    variant="outline"
                   >
                     INÍCIO
                   </Button>
@@ -1002,6 +1046,7 @@ function HeaderApp() {
                     colorScheme="green"
                     _focus={{ outline: "none" }}
                     isFullWidth
+                    variant="outline"
                   >
                     RIFAS
                   </Button>
@@ -1013,6 +1058,7 @@ function HeaderApp() {
                     colorScheme="green"
                     isFullWidth
                     _focus={{ outline: "none" }}
+                    variant="outline"
                   >
                     FALE CONOSCO
                   </Button>
@@ -1024,6 +1070,7 @@ function HeaderApp() {
                     colorScheme="green"
                     isFullWidth
                     _focus={{ outline: "none" }}
+                    variant="outline"
                   >
                     CRIAR RIFA
                   </Button>
@@ -1035,6 +1082,7 @@ function HeaderApp() {
                     colorScheme="green"
                     isFullWidth
                     _focus={{ outline: "none" }}
+                    variant="outline"
                   >
                     CONDIÇÔES DE USO
                   </Button>
@@ -1049,30 +1097,58 @@ function HeaderApp() {
                 as={Button}
                 leftIcon={<FaUserAlt />}
                 isFullWidth
-                colorScheme="orange"
+                colorScheme="green"
               >
                 Área do Cliente
               </MenuButton>
               <MenuList shadow="lg">
                 {JSON.stringify(client) === "{}" ? (
                   <>
-                    <MenuItem onClick={() => setOpenRegister(true)}>
+                    <MenuItem
+                      icon={<FaSave />}
+                      onClick={() => setOpenRegister(true)}
+                      fontSize={"sm"}
+                    >
                       CADASTRE-SE
                     </MenuItem>
-                    <MenuItem onClick={() => setOpenLogin(true)}>
+                    <MenuItem
+                      icon={<AiOutlineLogin />}
+                      onClick={() => setOpenLogin(true)}
+                      fontSize={"sm"}
+                    >
                       FAÇA LOGIN
                     </MenuItem>
                   </>
                 ) : (
                   <>
+                    <Flex
+                      justify={"center"}
+                      align={"center"}
+                      direction={"column"}
+                    >
+                      <Avatar icon={<AiOutlineUser />} size={"sm"} />
+                      <Text fontWeight={"bold"} fontSize={"x-small"} mt={2}>
+                        {client.name}
+                      </Text>
+                    </Flex>
+                    <MenuDivider />
                     <Link href={`/meusdados/${client.identify}`} passHref>
                       <a>
-                        <MenuItem>MEUS DADOS</MenuItem>
+                        <MenuItem icon={<FaIdCard />} fontSize={"sm"}>
+                          MEUS DADOS
+                        </MenuItem>
                       </a>
                     </Link>
-                    <MenuDivider />
+                    <Link href={`/minhasrifas/${client.identify}`} passHref>
+                      <a>
+                        <MenuItem icon={<FaReceipt />} fontSize={"sm"}>
+                          MINHAS RIFAS
+                        </MenuItem>
+                      </a>
+                    </Link>
                     <MenuItem
                       icon={<AiOutlineLogout />}
+                      fontSize={"sm"}
                       onClick={() => logout()}
                     >
                       SAIR

@@ -461,6 +461,29 @@ export default function GerenciarPartitipante({
                           })}
                         </Text>
                       </Flex>
+                      {ord.transaction_id === "" ||
+                      ord.transaction_id === null ||
+                      !ord.transaction_id ? (
+                        ""
+                      ) : (
+                        <Flex
+                          justify="space-between"
+                          align="center"
+                          pr={3}
+                          pl={3}
+                          pb={2}
+                          color={useColorModeValue("gray.100", "gray.800")}
+                        >
+                          <Text>ID Pagamento:</Text>
+                          <Button
+                            variant={"link"}
+                            colorScheme={"whiteAlpha"}
+                            color={useColorModeValue("gray.100", "gray.800")}
+                          >
+                            {ord.transaction_id}
+                          </Button>
+                        </Flex>
+                      )}
 
                       {ord.status !== "paid_out" && (
                         <Box pl={2} pr={2} pb={2}>

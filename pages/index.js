@@ -8,22 +8,17 @@ import {
   Text,
   useColorMode,
   Button,
-  FormControl,
-  FormLabel,
-  Input,
-  Textarea,
-  Select,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import HeaderApp from "../components/header";
 import Image from "next/image";
 import { IoMdArrowForward } from "react-icons/io";
-import { RiMailSendLine } from "react-icons/ri";
 import configsGlobal from "../configs/index";
 import FooterApp from "../components/footer";
 import { useConfigs } from "../context/Configs";
 
 import ShowRaffles from "../components/raffles";
+import Messages from "../components/messages";
 
 export default function Home({ config, raffles, numbers }) {
   const { setConfigs } = useConfigs();
@@ -200,47 +195,8 @@ export default function Home({ config, raffles, numbers }) {
             nossos serviços.
           </Text>
         </Flex>
-        <Grid
-          mt={10}
-          templateColumns={["1fr", "1fr 3fr", "1fr 3fr", "1fr 3fr", "1fr 3fr"]}
-          gap={5}
-        >
-          <FormControl>
-            <FormLabel>Selecione uma Opção</FormLabel>
-            <Select
-              focusBorderColor="green.500"
-              placeholder="Selecione uma Opção"
-            >
-              <option value="1">Sugestão</option>
-              <option value="2">Crítica</option>
-              <option value="3">Elogio</option>
-            </Select>
-          </FormControl>
-          <FormControl>
-            <FormLabel>Insira seu Nome</FormLabel>
-            <Input focusBorderColor="green.500" placeholder="Insira seu Nome" />
-          </FormControl>
-        </Grid>
-        <FormControl mt={5}>
-          <FormLabel>Insira uma Mensagem</FormLabel>
-          <Textarea
-            focusBorderColor="green.500"
-            placeholder="Insira uma Mensagem"
-            rows={5}
-            resize="none"
-          />
-        </FormControl>
-
-        <Button
-          leftIcon={<RiMailSendLine />}
-          colorScheme="green"
-          size="lg"
-          mt={5}
-        >
-          Enviar Mensagem
-        </Button>
+        <Messages />
       </Container>
-
       <FooterApp />
     </>
   );

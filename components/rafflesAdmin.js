@@ -26,11 +26,11 @@ export default function ShowRaffles({ raffle, destination }) {
   return (
     <>
       {raffle.length === 0 || !raffle ? (
-        <Flex direction="column" justify="center" align="center">
+        <Flex direction="column" justify="center" align="center" mt={10}>
           <Lottie animation={EmptyAnimation} width="40%" />
           <Text
             textAlign="center"
-            fontSize="2xl"
+            fontSize="lg"
             color={useColorModeValue("gray.700", "gray.200")}
             mt={5}
           >

@@ -496,7 +496,7 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
                 <Stat color={useColorModeValue("gray.100", "gray.800")}>
                   <StatLabel>Taxa Pagamentos</StatLabel>
                   <StatNumber>{soma("tax")}</StatNumber>
-                  <StatHelpText>* Taxa Cartões, PIX e Boletos</StatHelpText>
+                  <StatHelpText>* Taxa Cartões e PIX</StatHelpText>
                 </Stat>
               </Box>
               <Box

@@ -1,6 +1,6 @@
-import {useEffect, useState} from 'react';
-import HeaderApp from '../components/header';
-import FooterApp from '../components/footer';
+import { useMemo, useState } from "react";
+import HeaderApp from "../components/header";
+import FooterApp from "../components/footer";
 import {
   Container,
   Center,
@@ -21,49 +21,58 @@ import {
   ModalBody,
   ModalCloseButton,
   IconButton,
-} from '@chakra-ui/react';
+} from "@chakra-ui/react";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
-} from '../components/sliders';
-import Link from 'next/link';
-import {FaArrowLeft, FaArrowRight, FaSearch} from 'react-icons/fa';
-import configsGlobal from '../configs/index';
+} from "../components/sliders";
+import Link from "next/link";
+import { FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
+import configsGlobal from "../configs/index";
 
-import ShowRaffles from '../components/raffles';
+import ShowRaffles from "../components/raffles";
 
-export default function Sorteios({raffles, numbers}) {
+export default function Sorteios({ raffles, numbers }) {
   const [raffle, setRaffle] = useState(raffles);
-  const [search, setSearch] = useState('all');
-  const [text, setText] = useState('');
+  const [search, setSearch] = useState("all");
+  const [text, setText] = useState("");
   const [modal, setModal] = useState(false);
   const [number] = useState(numbers);
 
   async function finderBySource() {
-    if (search === 'all') {
+    if (search === "all") {
       await setRaffle(raffles);
-      setText('');
+      setText("");
     }
-    if (search === 'user') {
-      let termos = await text.split(' ');
-      let frasesFiltradas = await raffles.filter(frase => {
+    if (search === "user") {
+      let termos = await text.split(" ");
+      let frasesFiltradas = await raffles.filter((frase) => {
         return termos.reduce((resultadoAnterior, termoBuscado) => {
           return resultadoAnterior && frase.name_client.includes(termoBuscado);
         }, true);
       });
       await setRaffle(frasesFiltradas);
-      setText('');
+      setText("");
     }
-    if (search === 'title') {
-      let termos = await text.split(' ');
-      let frasesFiltradas = await raffles.filter(frase => {
+    if (search === "title") {
+      let termos = await text.split(" ");
+      let frasesFiltradas = await raffles.filter((frase) => {
         return termos.reduce((resultadoAnterior, termoBuscado) => {
           return resultadoAnterior && frase.name.includes(termoBuscado);
         }, true);
       });
       await setRaffle(frasesFiltradas);
-      setText('');
+      setText("");
+    }
+
+    if (search === "number") {
+      let id = parseInt(text);
+      const result = await raffles.filter((obj) => obj.id === id);
+      if (result.length !== 0) {
+        await setRaffle(result);
+      }
+      setText("");
     }
   }
 
@@ -75,20 +84,23 @@ export default function Sorteios({raffles, numbers}) {
           placeholder="Selecione uma opção"
           focusBorderColor="green.500"
           value={search}
-          onChange={e => setSearch(e.target.value)}>
-          <option value="all">Todos os Sorteios</option>
-          <option value="user">Nome do usuário</option>
-          <option value="title">Título do Sorteio</option>
+          onChange={(e) => setSearch(e.target.value)}
+        >
+          <option value="all">Todas as Rifas</option>
+          <option value="user">Nome do Usuário</option>
+          <option value="title">Título da Rifa</option>
+          <option value="number">Número da Rifa</option>
         </Select>
       </FormControl>
+
       <FormControl mt={5}>
-        <FormLabel>Digite para buscar</FormLabel>
+        <FormLabel>Digite para Buscar</FormLabel>
         <Input
           focusBorderColor="green.500"
-          placeholder="Digite para buscar"
+          placeholder="Digite para Buscar"
           value={text}
-          onChange={e => setText(e.target.value.toUpperCase())}
-          isDisabled={search === 'all' ? true : false}
+          onChange={(e) => setText(e.target.value.toUpperCase())}
+          isDisabled={search === "all" ? true : false}
         />
       </FormControl>
       <Button
@@ -96,7 +108,8 @@ export default function Sorteios({raffles, numbers}) {
         isFullWidth
         leftIcon={<FaSearch />}
         colorScheme="green"
-        onClick={() => finderBySource()}>
+        onClick={() => finderBySource()}
+      >
         Buscar
       </Button>
     </>
@@ -107,7 +120,7 @@ export default function Sorteios({raffles, numbers}) {
       <HeaderApp />
 
       <Container maxW="6xl" mt={10}>
-        <Breadcrumb fontSize={['xx-small', 'md', 'md', 'md', 'md']} mb={10}>
+        <Breadcrumb fontSize={["xx-small", "md", "md", "md", "md"]} mb={10}>
           <BreadcrumbItem>
             <Link href="/" passHref>
               <a>
@@ -135,27 +148,62 @@ export default function Sorteios({raffles, numbers}) {
           fontSize="2xl"
           shadow="lg"
           colorScheme="orange"
-          d={['flex', 'flex', 'none', 'none', 'none']}
+          d={["flex", "flex", "none", "none", "none"]}
           onClick={() => setModal(true)}
         />
 
         <Grid
           templateColumns={[
-            '1fr',
-            '1fr',
-            '270px 1fr',
-            '270px 1fr',
-            '270px 1fr',
+            "1fr",
+            "1fr",
+            "270px 1fr",
+            "270px 1fr",
+            "270px 1fr",
           ]}
-          gap={7}>
+          gap={7}
+        >
           <Box
             rounded="xl"
             borderWidth="1px"
             p={3}
             shadow="lg"
             h="min-content"
-            d={['none', 'none', 'block', 'block', 'block']}>
-            <SearchCustom />
+            d={["none", "none", "block", "block", "block"]}
+          >
+            <FormControl>
+              <FormLabel>Selecione uma opção:</FormLabel>
+              <Select
+                placeholder="Selecione uma opção"
+                focusBorderColor="green.500"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              >
+                <option value="all">Todas as Rifas</option>
+                <option value="user">Nome do Usuário</option>
+                <option value="title">Título da Rifa</option>
+                <option value="number">Número da Rifa</option>
+              </Select>
+            </FormControl>
+
+            <FormControl mt={5}>
+              <FormLabel>Digite para Buscar</FormLabel>
+              <Input
+                focusBorderColor="green.500"
+                placeholder="Digite para Buscar"
+                value={text}
+                onChange={(e) => setText(e.target.value.toUpperCase())}
+                isDisabled={search === "all" ? true : false}
+              />
+            </FormControl>
+            <Button
+              mt={8}
+              isFullWidth
+              leftIcon={<FaSearch />}
+              colorScheme="green"
+              onClick={() => finderBySource()}
+            >
+              Buscar
+            </Button>
           </Box>
 
           <Box w="100%">
@@ -171,12 +219,13 @@ export default function Sorteios({raffles, numbers}) {
               />
             )}
 
-            <Center mt={10}>
+            <Center mt={10} d="none">
               <Flex
                 rounded="full"
                 borderWidth="1px"
                 overflow="hidden"
-                shadow="md">
+                shadow="md"
+              >
                 <Tooltip label="Página Anterior" hasArrow>
                   <IconButton icon={<FaArrowLeft />} rounded="none" />
                 </Tooltip>
@@ -185,7 +234,8 @@ export default function Sorteios({raffles, numbers}) {
                   fontWeight="bold"
                   w="100px"
                   justify="center"
-                  align="center">
+                  align="center"
+                >
                   1 / 2
                 </Flex>
                 <Tooltip label="Próxima Página" hasArrow>
@@ -205,7 +255,40 @@ export default function Sorteios({raffles, numbers}) {
           <ModalHeader>Buscar</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={5}>
-            <SearchCustom />
+            <FormControl>
+              <FormLabel>Selecione uma opção:</FormLabel>
+              <Select
+                placeholder="Selecione uma opção"
+                focusBorderColor="green.500"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              >
+                <option value="all">Todas as Rifas</option>
+                <option value="user">Nome do Usuário</option>
+                <option value="title">Título da Rifa</option>
+                <option value="number">Número da Rifa</option>
+              </Select>
+            </FormControl>
+
+            <FormControl mt={5}>
+              <FormLabel>Digite para Buscar</FormLabel>
+              <Input
+                focusBorderColor="green.500"
+                placeholder="Digite para Buscar"
+                value={text}
+                onChange={(e) => setText(e.target.value.toUpperCase())}
+                isDisabled={search === "all" ? true : false}
+              />
+            </FormControl>
+            <Button
+              mt={8}
+              isFullWidth
+              leftIcon={<FaSearch />}
+              colorScheme="green"
+              onClick={() => finderBySource()}
+            >
+              Buscar
+            </Button>
           </ModalBody>
         </ModalContent>
       </Modal>

@@ -7,10 +7,6 @@ import {
   Grid,
   Divider,
   Button,
-  Flex,
-  Icon,
-  Heading,
-  Text,
   useToast,
   FormErrorMessage,
   FormControl,
@@ -20,11 +16,6 @@ import {
   InputLeftElement,
   Select,
   Skeleton,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
 } from "@chakra-ui/react";
 import {
   Breadcrumb,
@@ -32,15 +23,12 @@ import {
   BreadcrumbItem,
 } from "../../components/sliders";
 import Link from "next/link";
-import { FaBars, FaWhatsapp, FaSave } from "react-icons/fa";
+import { FaWhatsapp, FaSave } from "react-icons/fa";
 import configGlobal from "../../configs/index";
 import MaskedInput from "react-text-mask";
-import Admin from "../../components/admin";
-import Client from "../../components/client";
 import { useClient } from "../../context/Clients";
 import api from "../../configs/axios";
 import { useRouter } from "next/router";
-import FooterAppTot from "../../components/footerTotal";
 
 export default function MeusDados({ information }) {
   const { query, isFallback } = useRouter();
@@ -63,7 +51,7 @@ export default function MeusDados({ information }) {
             </Box>
           </Grid>
         </Container>
-        <FooterAppTot />
+        <FooterApp />
       </>
     );
   }
@@ -241,7 +229,7 @@ export default function MeusDados({ information }) {
           </BreadcrumbItem>
 
           <BreadcrumbItem isCurrentPage>
-            <Link passHref href="/meusdados">
+            <Link passHref href={`/meusdados/${client.identify}`}>
               <a>
                 <BreadcrumbLink>Meus Dados</BreadcrumbLink>
               </a>
@@ -249,444 +237,360 @@ export default function MeusDados({ information }) {
           </BreadcrumbItem>
         </Breadcrumb>
 
-        <Tabs
-          mt={10}
-          variant="enclosed-colored"
-          colorScheme="green"
-          onChange={(index) => setTabIndex(index)}
+        <Grid templateColumns="1fr" gap="15px">
+          <FormControl
+            isRequired
+            isInvalid={
+              validators.find((obj) => obj.path === "name") ? true : false
+            }
+          >
+            <FormLabel>Nome Completo</FormLabel>
+            <Input
+              id="name"
+              focusBorderColor="green.500"
+              placeholder="Nome Completo"
+              value={name}
+              onChange={(e) => setName(e.target.value.toUpperCase())}
+            />
+            <FormErrorMessage>
+              {validators.find((obj) => obj.path === "name")
+                ? validators.find((obj) => obj.path === "name").message
+                : ""}
+            </FormErrorMessage>
+          </FormControl>
+        </Grid>
+        <Grid
+          mt={3}
+          templateColumns={[
+            "1fr",
+            "repeat(2, 1fr)",
+            "repeat(2, 1fr)",
+            "repeat(2, 1fr)",
+            "repeat(2, 1fr)",
+          ]}
+          gap="15px"
         >
-          <TabList>
-            <Tab roundedTop="md">Meus Dados</Tab>
-            <Tab roundedTop="md">Minhas Rifas</Tab>
-          </TabList>
+          <FormControl
+            isRequired
+            isInvalid={
+              validators.find((obj) => obj.path === "cpf") ? true : false
+            }
+          >
+            <FormLabel>CPF</FormLabel>
+            <MaskedInput
+              mask={[
+                /[0-9]/,
+                /\d/,
+                /\d/,
+                ".",
+                /\d/,
+                /\d/,
+                /\d/,
+                ".",
+                /\d/,
+                /\d/,
+                /\d/,
+                "-",
+                /\d/,
+                /\d/,
+              ]}
+              id="cpf"
+              value={cpf}
+              onChange={(e) => setCpf(e.target.value)}
+              placeholder="CPF"
+              render={(ref, props) => (
+                <Input
+                  ref={ref}
+                  {...props}
+                  focusBorderColor="green.500"
+                  isReadOnly
+                />
+              )}
+            />
+            <FormErrorMessage>
+              {validators.find((obj) => obj.path === "cpf")
+                ? validators.find((obj) => obj.path === "cpf").message
+                : ""}
+            </FormErrorMessage>
+          </FormControl>
+          <FormControl
+            isRequired
+            isInvalid={
+              validators.find((obj) => obj.path === "phone") ? true : false
+            }
+          >
+            <FormLabel>Telefone</FormLabel>
+            <MaskedInput
+              mask={[
+                "(",
+                /[0-9]/,
+                /\d/,
+                ")",
+                " ",
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+                "-",
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+              ]}
+              placeholder="Telefone"
+              id="phone"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              render={(ref, props) => (
+                <InputGroup>
+                  <InputLeftElement children={<FaWhatsapp />} />
+                  <Input
+                    placeholder="Telefone"
+                    ref={ref}
+                    {...props}
+                    focusBorderColor="green.500"
+                  />
+                </InputGroup>
+              )}
+            />
+            <FormErrorMessage>
+              {validators.find((obj) => obj.path === "phone")
+                ? validators.find((obj) => obj.path === "phone").message
+                : ""}
+            </FormErrorMessage>
+          </FormControl>
+        </Grid>
+        <Grid templateColumns="1fr" mt={3}>
+          <FormControl
+            mb={3}
+            isRequired
+            isInvalid={
+              validators.find((obj) => obj.path === "email") ? true : false
+            }
+          >
+            <FormLabel>Email</FormLabel>
+            <Input
+              focusBorderColor="green.500"
+              placeholder="Email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value.toLowerCase())}
+            />
+            <FormErrorMessage>
+              {validators.find((obj) => obj.path === "email")
+                ? validators.find((obj) => obj.path === "email").message
+                : ""}
+            </FormErrorMessage>
+          </FormControl>
+        </Grid>
+        <Divider mt={7} mb={4} />
+        <Grid
+          templateColumns={["1fr", "3fr 1fr", "3fr 1fr", "3fr 1fr", "3fr 1fr"]}
+          gap="15px"
+        >
+          <FormControl
+            isRequired
+            isInvalid={
+              validators.find((obj) => obj.path === "street") ? true : false
+            }
+          >
+            <FormLabel>Logradouro - Rua, Avenida, Alameda, etc...</FormLabel>
+            <Input
+              focusBorderColor="green.500"
+              placeholder="Logradouro - Rua, Avenida, Alameda, etc..."
+              value={street}
+              onChange={(e) => setStreet(e.target.value.toUpperCase())}
+              id="street"
+            />
+            <FormErrorMessage>
+              {validators.find((obj) => obj.path === "street")
+                ? validators.find((obj) => obj.path === "street").message
+                : ""}
+            </FormErrorMessage>
+          </FormControl>
+          <FormControl
+            isRequired
+            isInvalid={
+              validators.find((obj) => obj.path === "number") ? true : false
+            }
+          >
+            <FormLabel>Número</FormLabel>
+            <Input
+              focusBorderColor="green.500"
+              placeholder="Número"
+              value={number}
+              onChange={(e) => setNumber(e.target.value.toUpperCase())}
+              id="number"
+            />
+            <FormErrorMessage>
+              {validators.find((obj) => obj.path === "number")
+                ? validators.find((obj) => obj.path === "number").message
+                : ""}
+            </FormErrorMessage>
+          </FormControl>
+        </Grid>
+        <Grid
+          templateColumns={["1fr", "1fr 1fr", "1fr 1fr", "1fr 1fr", "1fr 1fr"]}
+          mt={3}
+          gap="15px"
+        >
+          <FormControl>
+            <FormLabel>Ponto de Referência</FormLabel>
+            <Input
+              focusBorderColor="green.500"
+              placeholder="Ponto de Referência"
+              value={comp}
+              onChange={(e) => setComp(e.target.value.toUpperCase())}
+            />
+          </FormControl>
+          <FormControl
+            isInvalid={
+              validators.find((obj) => obj.path === "district") ? true : false
+            }
+            isRequired
+          >
+            <FormLabel>Bairro / Distrito</FormLabel>
+            <Input
+              focusBorderColor="green.500"
+              placeholder="Bairro / Distrito"
+              value={district}
+              onChange={(e) => setDistrict(e.target.value.toUpperCase())}
+              id="district"
+            />
+            <FormErrorMessage>
+              {validators.find((obj) => obj.path === "district")
+                ? validators.find((obj) => obj.path === "district").message
+                : ""}
+            </FormErrorMessage>
+          </FormControl>
+        </Grid>
+        <Grid
+          templateColumns={[
+            "1fr",
+            "1fr 2fr 1fr",
+            "1fr 2fr 1fr",
+            "1fr 2fr 1fr",
+            "1fr 2fr 1fr",
+          ]}
+          mt={3}
+          gap="15px"
+        >
+          <FormControl
+            isRequired
+            isInvalid={
+              validators.find((obj) => obj.path === "cep") ? true : false
+            }
+          >
+            <FormLabel>CEP</FormLabel>
+            <MaskedInput
+              mask={[
+                /[0-9]/,
+                /\d/,
+                ".",
+                /\d/,
+                /\d/,
+                /\d/,
+                "-",
+                /\d/,
+                /\d/,
+                /\d/,
+              ]}
+              id="cep"
+              value={cep}
+              onChange={(e) => setCep(e.target.value)}
+              placeholder="CEP"
+              render={(ref, props) => (
+                <Input ref={ref} {...props} focusBorderColor={"green.500"} />
+              )}
+            />
+            <FormErrorMessage>
+              {validators.find((obj) => obj.path === "cep")
+                ? validators.find((obj) => obj.path === "cep").message
+                : ""}
+            </FormErrorMessage>
+          </FormControl>
+          <FormControl
+            isInvalid={
+              validators.find((obj) => obj.path === "city") ? true : false
+            }
+            isRequired
+          >
+            <FormLabel>Cidade</FormLabel>
+            <Input
+              focusBorderColor="green.500"
+              placeholder="Cidade"
+              value={city}
+              onChange={(e) => setCity(e.target.value.toUpperCase())}
+              id="city"
+            />
+            <FormErrorMessage>
+              {validators.find((obj) => obj.path === "city")
+                ? validators.find((obj) => obj.path === "city").message
+                : ""}
+            </FormErrorMessage>
+          </FormControl>
+          <FormControl
+            isInvalid={
+              validators.find((obj) => obj.path === "state") ? true : false
+            }
+            isRequired
+          >
+            <FormLabel>UF</FormLabel>
+            <Select
+              placeholder="Selecione"
+              variant="outline"
+              focusBorderColor={"green.500"}
+              id="state"
+              value={state}
+              onChange={(e) => setState(e.target.value)}
+            >
+              <option value="AC">AC</option>
+              <option value="AL">AL</option>
+              <option value="AP">AP</option>
+              <option value="AM">AM</option>
+              <option value="BA">BA</option>
+              <option value="CE">CE</option>
+              <option value="DF">DF</option>
+              <option value="ES">ES</option>
+              <option value="GO">GO</option>
+              <option value="MA">MA</option>
+              <option value="MT">MT</option>
+              <option value="MS">MS</option>
+              <option value="MG">MG</option>
+              <option value="PA">PA</option>
+              <option value="PB">PB</option>
+              <option value="PR">PR</option>
+              <option value="PE">PE</option>
+              <option value="PI">PI</option>
+              <option value="RJ">RJ</option>
+              <option value="RN">RN</option>
+              <option value="RS">RS</option>
+              <option value="RO">RO</option>
+              <option value="RR">RR</option>
+              <option value="SC">SC</option>
+              <option value="SP">SP</option>
+              <option value="SE">SE</option>
+              <option value="TO">TO</option>
+            </Select>
+            <FormErrorMessage>
+              {validators.find((obj) => obj.path === "state")
+                ? validators.find((obj) => obj.path === "state").message
+                : ""}
+            </FormErrorMessage>
+          </FormControl>
+        </Grid>
+        <Divider mt={5} mb={5} />
 
-          <TabPanels>
-            <TabPanel>
-              <>
-                <Grid templateColumns="1fr" gap="15px">
-                  <FormControl
-                    isRequired
-                    isInvalid={
-                      validators.find((obj) => obj.path === "name")
-                        ? true
-                        : false
-                    }
-                  >
-                    <FormLabel>Nome Completo</FormLabel>
-                    <Input
-                      id="name"
-                      focusBorderColor="green.500"
-                      placeholder="Nome Completo"
-                      value={name}
-                      onChange={(e) => setName(e.target.value.toUpperCase())}
-                    />
-                    <FormErrorMessage>
-                      {validators.find((obj) => obj.path === "name")
-                        ? validators.find((obj) => obj.path === "name").message
-                        : ""}
-                    </FormErrorMessage>
-                  </FormControl>
-                </Grid>
-                <Grid
-                  mt={3}
-                  templateColumns={[
-                    "1fr",
-                    "repeat(2, 1fr)",
-                    "repeat(2, 1fr)",
-                    "repeat(2, 1fr)",
-                    "repeat(2, 1fr)",
-                  ]}
-                  gap="15px"
-                >
-                  <FormControl
-                    isRequired
-                    isInvalid={
-                      validators.find((obj) => obj.path === "cpf")
-                        ? true
-                        : false
-                    }
-                  >
-                    <FormLabel>CPF</FormLabel>
-                    <MaskedInput
-                      mask={[
-                        /[0-9]/,
-                        /\d/,
-                        /\d/,
-                        ".",
-                        /\d/,
-                        /\d/,
-                        /\d/,
-                        ".",
-                        /\d/,
-                        /\d/,
-                        /\d/,
-                        "-",
-                        /\d/,
-                        /\d/,
-                      ]}
-                      id="cpf"
-                      value={cpf}
-                      onChange={(e) => setCpf(e.target.value)}
-                      placeholder="CPF"
-                      render={(ref, props) => (
-                        <Input
-                          ref={ref}
-                          {...props}
-                          focusBorderColor="green.500"
-                          isReadOnly
-                        />
-                      )}
-                    />
-                    <FormErrorMessage>
-                      {validators.find((obj) => obj.path === "cpf")
-                        ? validators.find((obj) => obj.path === "cpf").message
-                        : ""}
-                    </FormErrorMessage>
-                  </FormControl>
-                  <FormControl
-                    isRequired
-                    isInvalid={
-                      validators.find((obj) => obj.path === "phone")
-                        ? true
-                        : false
-                    }
-                  >
-                    <FormLabel>Telefone</FormLabel>
-                    <MaskedInput
-                      mask={[
-                        "(",
-                        /[0-9]/,
-                        /\d/,
-                        ")",
-                        " ",
-                        /\d/,
-                        /\d/,
-                        /\d/,
-                        /\d/,
-                        /\d/,
-                        "-",
-                        /\d/,
-                        /\d/,
-                        /\d/,
-                        /\d/,
-                      ]}
-                      placeholder="Telefone"
-                      id="phone"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      render={(ref, props) => (
-                        <InputGroup>
-                          <InputLeftElement children={<FaWhatsapp />} />
-                          <Input
-                            placeholder="Telefone"
-                            ref={ref}
-                            {...props}
-                            focusBorderColor="green.500"
-                          />
-                        </InputGroup>
-                      )}
-                    />
-                    <FormErrorMessage>
-                      {validators.find((obj) => obj.path === "phone")
-                        ? validators.find((obj) => obj.path === "phone").message
-                        : ""}
-                    </FormErrorMessage>
-                  </FormControl>
-                </Grid>
-                <Grid templateColumns="1fr" mt={3}>
-                  <FormControl
-                    mb={3}
-                    isRequired
-                    isInvalid={
-                      validators.find((obj) => obj.path === "email")
-                        ? true
-                        : false
-                    }
-                  >
-                    <FormLabel>Email</FormLabel>
-                    <Input
-                      focusBorderColor="green.500"
-                      placeholder="Email"
-                      id="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value.toLowerCase())}
-                    />
-                    <FormErrorMessage>
-                      {validators.find((obj) => obj.path === "email")
-                        ? validators.find((obj) => obj.path === "email").message
-                        : ""}
-                    </FormErrorMessage>
-                  </FormControl>
-                </Grid>
-                <Divider mt={7} mb={4} />
-                <Grid
-                  templateColumns={[
-                    "1fr",
-                    "3fr 1fr",
-                    "3fr 1fr",
-                    "3fr 1fr",
-                    "3fr 1fr",
-                  ]}
-                  gap="15px"
-                >
-                  <FormControl
-                    isRequired
-                    isInvalid={
-                      validators.find((obj) => obj.path === "street")
-                        ? true
-                        : false
-                    }
-                  >
-                    <FormLabel>
-                      Logradouro - Rua, Avenida, Alameda, etc...
-                    </FormLabel>
-                    <Input
-                      focusBorderColor="green.500"
-                      placeholder="Logradouro - Rua, Avenida, Alameda, etc..."
-                      value={street}
-                      onChange={(e) => setStreet(e.target.value.toUpperCase())}
-                      id="street"
-                    />
-                    <FormErrorMessage>
-                      {validators.find((obj) => obj.path === "street")
-                        ? validators.find((obj) => obj.path === "street")
-                            .message
-                        : ""}
-                    </FormErrorMessage>
-                  </FormControl>
-                  <FormControl
-                    isRequired
-                    isInvalid={
-                      validators.find((obj) => obj.path === "number")
-                        ? true
-                        : false
-                    }
-                  >
-                    <FormLabel>Número</FormLabel>
-                    <Input
-                      focusBorderColor="green.500"
-                      placeholder="Número"
-                      value={number}
-                      onChange={(e) => setNumber(e.target.value.toUpperCase())}
-                      id="number"
-                    />
-                    <FormErrorMessage>
-                      {validators.find((obj) => obj.path === "number")
-                        ? validators.find((obj) => obj.path === "number")
-                            .message
-                        : ""}
-                    </FormErrorMessage>
-                  </FormControl>
-                </Grid>
-                <Grid
-                  templateColumns={[
-                    "1fr",
-                    "1fr 1fr",
-                    "1fr 1fr",
-                    "1fr 1fr",
-                    "1fr 1fr",
-                  ]}
-                  mt={3}
-                  gap="15px"
-                >
-                  <FormControl>
-                    <FormLabel>Ponto de Referência</FormLabel>
-                    <Input
-                      focusBorderColor="green.500"
-                      placeholder="Ponto de Referência"
-                      value={comp}
-                      onChange={(e) => setComp(e.target.value.toUpperCase())}
-                    />
-                  </FormControl>
-                  <FormControl
-                    isInvalid={
-                      validators.find((obj) => obj.path === "district")
-                        ? true
-                        : false
-                    }
-                    isRequired
-                  >
-                    <FormLabel>Bairro / Distrito</FormLabel>
-                    <Input
-                      focusBorderColor="green.500"
-                      placeholder="Bairro / Distrito"
-                      value={district}
-                      onChange={(e) =>
-                        setDistrict(e.target.value.toUpperCase())
-                      }
-                      id="district"
-                    />
-                    <FormErrorMessage>
-                      {validators.find((obj) => obj.path === "district")
-                        ? validators.find((obj) => obj.path === "district")
-                            .message
-                        : ""}
-                    </FormErrorMessage>
-                  </FormControl>
-                </Grid>
-                <Grid
-                  templateColumns={[
-                    "1fr",
-                    "1fr 2fr 1fr",
-                    "1fr 2fr 1fr",
-                    "1fr 2fr 1fr",
-                    "1fr 2fr 1fr",
-                  ]}
-                  mt={3}
-                  gap="15px"
-                >
-                  <FormControl
-                    isRequired
-                    isInvalid={
-                      validators.find((obj) => obj.path === "cep")
-                        ? true
-                        : false
-                    }
-                  >
-                    <FormLabel>CEP</FormLabel>
-                    <MaskedInput
-                      mask={[
-                        /[0-9]/,
-                        /\d/,
-                        ".",
-                        /\d/,
-                        /\d/,
-                        /\d/,
-                        "-",
-                        /\d/,
-                        /\d/,
-                        /\d/,
-                      ]}
-                      id="cep"
-                      value={cep}
-                      onChange={(e) => setCep(e.target.value)}
-                      placeholder="CEP"
-                      render={(ref, props) => (
-                        <Input
-                          ref={ref}
-                          {...props}
-                          focusBorderColor={"green.500"}
-                        />
-                      )}
-                    />
-                    <FormErrorMessage>
-                      {validators.find((obj) => obj.path === "cep")
-                        ? validators.find((obj) => obj.path === "cep").message
-                        : ""}
-                    </FormErrorMessage>
-                  </FormControl>
-                  <FormControl
-                    isInvalid={
-                      validators.find((obj) => obj.path === "city")
-                        ? true
-                        : false
-                    }
-                    isRequired
-                  >
-                    <FormLabel>Cidade</FormLabel>
-                    <Input
-                      focusBorderColor="green.500"
-                      placeholder="Cidade"
-                      value={city}
-                      onChange={(e) => setCity(e.target.value.toUpperCase())}
-                      id="city"
-                    />
-                    <FormErrorMessage>
-                      {validators.find((obj) => obj.path === "city")
-                        ? validators.find((obj) => obj.path === "city").message
-                        : ""}
-                    </FormErrorMessage>
-                  </FormControl>
-                  <FormControl
-                    isInvalid={
-                      validators.find((obj) => obj.path === "state")
-                        ? true
-                        : false
-                    }
-                    isRequired
-                  >
-                    <FormLabel>UF</FormLabel>
-                    <Select
-                      placeholder="Selecione"
-                      variant="outline"
-                      focusBorderColor={"green.500"}
-                      id="state"
-                      value={state}
-                      onChange={(e) => setState(e.target.value)}
-                    >
-                      <option value="AC">AC</option>
-                      <option value="AL">AL</option>
-                      <option value="AP">AP</option>
-                      <option value="AM">AM</option>
-                      <option value="BA">BA</option>
-                      <option value="CE">CE</option>
-                      <option value="DF">DF</option>
-                      <option value="ES">ES</option>
-                      <option value="GO">GO</option>
-                      <option value="MA">MA</option>
-                      <option value="MT">MT</option>
-                      <option value="MS">MS</option>
-                      <option value="MG">MG</option>
-                      <option value="PA">PA</option>
-                      <option value="PB">PB</option>
-                      <option value="PR">PR</option>
-                      <option value="PE">PE</option>
-                      <option value="PI">PI</option>
-                      <option value="RJ">RJ</option>
-                      <option value="RN">RN</option>
-                      <option value="RS">RS</option>
-                      <option value="RO">RO</option>
-                      <option value="RR">RR</option>
-                      <option value="SC">SC</option>
-                      <option value="SP">SP</option>
-                      <option value="SE">SE</option>
-                      <option value="TO">TO</option>
-                    </Select>
-                    <FormErrorMessage>
-                      {validators.find((obj) => obj.path === "state")
-                        ? validators.find((obj) => obj.path === "state").message
-                        : ""}
-                    </FormErrorMessage>
-                  </FormControl>
-                </Grid>
-                <Divider mt={5} mb={5} />
-
-                <Button
-                  size="lg"
-                  colorScheme="green"
-                  leftIcon={<FaSave />}
-                  isLoading={loading}
-                  onClick={() => update()}
-                >
-                  Salvar Alterações
-                </Button>
-              </>
-            </TabPanel>
-            <TabPanel p={0}>
-              <Tabs
-                colorScheme="green"
-                onChange={(index) => setTabIndex(index)}
-                defaultIndex={0}
-                mt={10}
-                variant={"soft-rounded"}
-                size={"sm"}
-              >
-                <TabList>
-                  <Tab>ADMINISTRADOR</Tab>
-                  <Tab>PARTICIPANTE</Tab>
-                </TabList>
-                <TabPanels>
-                  <TabPanel>
-                    <Admin info={query.cliente} url={url} configs={configs} />
-                  </TabPanel>
-                  <TabPanel>
-                    <Client info={query.cliente} />
-                  </TabPanel>
-                </TabPanels>
-              </Tabs>
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
+        <Button
+          size="lg"
+          colorScheme="green"
+          leftIcon={<FaSave />}
+          isLoading={loading}
+          onClick={() => update()}
+        >
+          Salvar Alterações
+        </Button>
       </Container>
       <FooterApp />
     </>
