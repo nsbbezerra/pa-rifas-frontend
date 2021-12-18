@@ -133,6 +133,7 @@ export default function AdminRaffles({
 
   const [modalShowCupom, setModalShowCupom] = useState(false);
   const [coupons, setCoupons] = useState([]);
+  const [loadingCupom, setLoadingCupom] = useState(false);
 
   function showToast(message, status, title) {
     toast({
@@ -317,7 +318,7 @@ export default function AdminRaffles({
   }
 
   async function saveCupom() {
-    setLoading(true);
+    setLoadingCupom(true);
 
     try {
       const response = await api.post("/couponRaffle", {
@@ -326,10 +327,11 @@ export default function AdminRaffles({
         min_numbers: minCupom,
         raffle: rifa,
       });
+      setLoadingCupom(false);
       showToast(response.data.message, "success", "Sucesso");
       handleCloseCupom();
     } catch (error) {
-      setLoading(false);
+      setLoadingCupom(false);
       if (error.message === "Network Error") {
         alert(
           "Sem conexão com o servidor, verifique sua conexão com a internet."
@@ -904,7 +906,7 @@ export default function AdminRaffles({
             <Button
               leftIcon={<AiFillSave />}
               colorScheme={"green"}
-              isLoading={loading}
+              isLoading={loadingCupom}
               onClick={() => saveCupom()}
             >
               Salvar Cupom

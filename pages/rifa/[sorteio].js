@@ -1131,6 +1131,6 @@ export const getStaticProps = async ({ params }) => {
       trophys,
       numbersRaffle,
     },
-    revalidate: 60,
+    revalidate: 10,
   };
 };
