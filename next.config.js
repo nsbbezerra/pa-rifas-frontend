@@ -6,7 +6,7 @@ module.exports = {
       "img.freepik.com",
       "i.pinimg.com",
       "localhost",
-      "server.rifapmw.com.br",
+      "vps36066.publiccloud.com.br",
     ],
   },
   trailingSlash: true,
