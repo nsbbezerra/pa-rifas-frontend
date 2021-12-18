@@ -66,7 +66,13 @@ import { useState } from "react";
 import api from "../../../configs/axios";
 import { useRouter } from "next/router";
 
-export default function AdminRaffles({ raffle, trophys, orders }) {
+export default function AdminRaffles({
+  raffle,
+  trophys,
+  orders,
+  numbers,
+  reserved,
+}) {
   const { colorMode } = useColorMode();
   const toast = useToast();
   const { query, isFallback } = useRouter();
@@ -490,11 +496,37 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
                 rounded="xl"
                 shadow="lg"
                 pt={2}
+                pb={1}
+                pl={4}
+                borderWidth={"1px"}
+              >
+                <Stat>
+                  <StatLabel>Números Vendidos</StatLabel>
+                  <StatNumber>{numbers}</StatNumber>
+                </Stat>
+              </Box>
+              <Box
+                rounded="xl"
+                shadow="lg"
+                pt={2}
+                pb={1}
+                pl={4}
+                borderWidth={"1px"}
+              >
+                <Stat>
+                  <StatLabel>Números Reservados</StatLabel>
+                  <StatNumber>{reserved}</StatNumber>
+                </Stat>
+              </Box>
+              <Box
+                rounded="xl"
+                shadow="lg"
+                pt={2}
                 pl={4}
                 bg={useColorModeValue("orange.500", "orange.200")}
               >
                 <Stat color={useColorModeValue("gray.100", "gray.800")}>
-                  <StatLabel>Taxa Pagamentos</StatLabel>
+                  <StatLabel>Taxa dos Pagamentos</StatLabel>
                   <StatNumber>{soma("tax")}</StatNumber>
                   <StatHelpText>* Taxa Cartões e PIX</StatHelpText>
                 </Stat>
@@ -507,7 +539,7 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
                 bg={useColorModeValue("blue.500", "blue.200")}
               >
                 <Stat color={useColorModeValue("gray.100", "gray.800")}>
-                  <StatLabel>Total Arrecadado</StatLabel>
+                  <StatLabel>Valor Arrecadado</StatLabel>
                   <StatNumber>{soma("total")}</StatNumber>
                   <StatHelpText>
                     * Descontado {soma("tax")} de taxas de Pagamentos
@@ -522,7 +554,7 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
                 bg={useColorModeValue("red.500", "red.200")}
               >
                 <Stat color={useColorModeValue("gray.100", "gray.800")}>
-                  <StatLabel>Total a Bloqueado</StatLabel>
+                  <StatLabel>Valor Bloqueado</StatLabel>
                   <StatNumber>
                     {raffle.status !== "drawn" ? calcRest() : "R$ 0,00"}
                   </StatNumber>
@@ -539,7 +571,7 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
                 bg={useColorModeValue("green.500", "green.200")}
               >
                 <Stat color={useColorModeValue("gray.100", "gray.800")}>
-                  <StatLabel>Total Liberado</StatLabel>
+                  <StatLabel>Valor Liberado</StatLabel>
                   <StatNumber>
                     {raffle.status === "drawn" ? calcRest() : "R$ 0,00"}
                   </StatNumber>
@@ -556,9 +588,9 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
                 bg={useColorModeValue("blackAlpha.100", "whiteAlpha.200")}
               >
                 <Stat>
-                  <StatLabel>Taxa Administrativa</StatLabel>
+                  <StatLabel>Porcentagem da Comissão</StatLabel>
                   <StatNumber>{parseFloat(raffle.tax_value)}%</StatNumber>
-                  <StatHelpText>* Porcentagem PA Rifas</StatHelpText>
+                  <StatHelpText>* Comissão da Plataforma</StatHelpText>
                 </Stat>
               </Box>
               <Box
@@ -569,9 +601,9 @@ export default function AdminRaffles({ raffle, trophys, orders }) {
                 bg={useColorModeValue("blackAlpha.100", "whiteAlpha.200")}
               >
                 <Stat>
-                  <StatLabel>Total a Pagar</StatLabel>
+                  <StatLabel>Valor da Comissão</StatLabel>
                   <StatNumber>{calcPay()}</StatNumber>
-                  <StatHelpText>* Total devido à PA Rifas</StatHelpText>
+                  <StatHelpText>* Comissão da Plataforma</StatHelpText>
                 </Stat>
               </Box>
             </Grid>
@@ -1012,6 +1044,7 @@ export const getStaticProps = async ({ params }) => {
   const trophys = !data.trophys ? null : data.trophys;
   const orders = !data.orders ? null : data.orders;
   const numbers = !data.numbers ? null : data.numbers;
+  const reserved = !data.reserved ? null : data.reserved;
 
   return {
     props: {
@@ -1019,6 +1052,7 @@ export const getStaticProps = async ({ params }) => {
       trophys,
       orders,
       numbers,
+      reserved,
     },
     revalidate: 5,
   };

@@ -54,9 +54,6 @@ import {
   Tooltip,
   Center,
   InputLeftAddon,
-  List,
-  ListItem,
-  ListIcon,
   HStack,
 } from "@chakra-ui/react";
 import {
@@ -136,8 +133,7 @@ export default function NovoSorteio({ config }) {
   const [cardPreviousValue, setCardPreviousValue] = useState(0);
   const [cardDiscountValue, setCardDiscountValue] = useState(0);
 
-  const [pixPreviousValue, setPixPreviousValue] = useState(0);
-  const [pixDiscountValue, setPixDiscountValue] = useState(0);
+  const [tax, setTax] = useState(configsGlobal.pixTax || 0);
 
   const [coupon, setCoupon] = useState("");
   const [couponLoading, setCouponLoading] = useState(false);
@@ -216,6 +212,10 @@ export default function NovoSorteio({ config }) {
       inpt.focus();
     }
   }
+
+  useEffect(() => {
+    calcPercent(cardPreviousValue);
+  }, [tax]);
 
   const CustomInputPicker = ({ value, onClick }) => (
     <InputGroup>
@@ -316,39 +316,28 @@ export default function NovoSorteio({ config }) {
     }
   }
 
-  function calcPercent(value, dest) {
-    if (dest === "pix") {
-      let calc = value * (pixTax / 100);
-      let rest = value - calc;
-      setPixPreviousValue(value);
-      if (!isNaN(rest)) {
-        setPixDiscountValue(parseFloat(rest.toFixed(2)));
-      }
+  function calcPercent(value) {
+    let calc = value * (parseFloat(tax) / 100);
+    let rest = value - calc;
+    setCardPreviousValue(value);
+    if (!isNaN(rest)) {
+      setCardDiscountValue(parseFloat(rest.toFixed(2)));
     }
-    if (dest === "card") {
-      let calc = value * (cardTax / 100);
-      let rest = value - calc;
-      setCardPreviousValue(value);
-      if (!isNaN(rest)) {
-        setCardDiscountValue(parseFloat(rest.toFixed(2)));
-      }
-    }
-    if (dest === "raffle") {
-      let calc = value * (raffleValue / 100);
-      let rest = value - calc;
-      setRafflePreviousValue(value);
-      if (!isNaN(rest)) {
-        setRaffleDiscountTotal(parseFloat(calc.toFixed(2)));
-        setRaffleDiscountValue(parseFloat(rest.toFixed(2)));
-      }
+  }
+
+  function calcPercentRaffle(value) {
+    let calc = value * (parseFloat(raffleValue) / 100);
+    let rest = value - calc;
+    setRafflePreviousValue(value);
+    if (!isNaN(rest)) {
+      setRaffleDiscountValue(parseFloat(rest.toFixed(2)));
+      setRaffleDiscountTotal(parseFloat(calc.toFixed(2)));
     }
   }
 
   function handleCloseModalCalc() {
     setPixTax(configsGlobal.pixTax);
     setCardTax(configsGlobal.cardTax);
-    setPixPreviousValue(0);
-    setPixDiscountValue(0);
     setCardPreviousValue(0);
     setCardDiscountValue(0);
     setRafflePreviousValue(0);
@@ -358,8 +347,6 @@ export default function NovoSorteio({ config }) {
   }
 
   useEffect(() => {
-    setPixPreviousValue(0);
-    setPixDiscountValue(0);
     setCardPreviousValue(0);
     setCardDiscountValue(0);
     setRafflePreviousValue(0);
@@ -977,7 +964,7 @@ export default function NovoSorteio({ config }) {
                   borderWidth="1px"
                 >
                   <Stat size="md">
-                    <StatLabel>Total a Pagar</StatLabel>
+                    <StatLabel>Comissão</StatLabel>
                     <StatNumber>
                       {isDiscounted ? (
                         <HStack>
@@ -999,6 +986,16 @@ export default function NovoSorteio({ config }) {
                       * Do valor arrecadado
                     </StatHelpText>
                   </Stat>
+
+                  <Button
+                    leftIcon={<FaCalculator />}
+                    colorScheme={"green"}
+                    isFullWidth
+                    size="sm"
+                    onClick={() => setModalCalc(true)}
+                  >
+                    Calcular Custos
+                  </Button>
 
                   <Divider mt={3} mb={3} />
 
@@ -1224,7 +1221,7 @@ export default function NovoSorteio({ config }) {
               p={2}
               bg={useColorModeValue("blackAlpha.100", "whiteAlpha.200")}
               fontWeight="bold"
-              rounded="full"
+              rounded="lg"
             >
               CUSTOS DE ALOCAÇÃO DA RIFA
             </Center>
@@ -1260,7 +1257,7 @@ export default function NovoSorteio({ config }) {
                     type="number"
                     value={rafflePreviousValue}
                     onChange={(e) =>
-                      calcPercent(parseFloat(e.target.value), "raffle")
+                      calcPercentRaffle(parseFloat(e.target.value))
                     }
                   />
                 </InputGroup>
@@ -1294,31 +1291,46 @@ export default function NovoSorteio({ config }) {
               p={2}
               bg={useColorModeValue("blackAlpha.100", "whiteAlpha.200")}
               fontWeight="bold"
-              rounded="full"
+              rounded="lg"
               mt={10}
             >
               CUSTOS DAS COMPRAS DOS NÚMEROS
             </Center>
-            <Text mt={5}>CARTÃO DE CRÉDITO</Text>
-            <Divider mt={1} mb={1} />
             <Grid
               templateColumns={[
                 "1fr",
-                "1fr 2fr 2fr",
-                "1fr 2fr 2fr",
-                "1fr 2fr 2fr",
-                "1fr 2fr 2fr",
+                "1fr 1fr",
+                "1fr 1fr 1fr 1fr",
+                "1fr 1fr 1fr 1fr",
+                "1fr 1fr 1fr 1fr",
               ]}
               gap={3}
+              mt={5}
             >
+              <FormControl>
+                <FormLabel mb={0}>Pagamento</FormLabel>
+                <Select
+                  focusBorderColor="green.500"
+                  value={tax}
+                  onChange={(e) => setTax(e.target.value)}
+                >
+                  <option value={configsGlobal.pixTax}>PIX</option>
+                  <option value={configsGlobal.cardTax}>
+                    Cartão de Crédito
+                  </option>
+                  <option value={configsGlobal.debitTax}>
+                    Cartão de Débito
+                  </option>
+                </Select>
+              </FormControl>
               <FormControl>
                 <FormLabel mb={0}>Taxa</FormLabel>
                 <InputGroup>
                   <InputLeftAddon children="%" />
                   <Input
                     focusBorderColor="green.500"
-                    value={cardTax}
-                    onChange={(e) => setCardTax(parseFloat(e.target.value))}
+                    value={tax}
+                    isReadOnly
                     type="number"
                   />
                 </InputGroup>
@@ -1330,9 +1342,7 @@ export default function NovoSorteio({ config }) {
                   <Input
                     focusBorderColor="green.500"
                     value={cardPreviousValue}
-                    onChange={(e) =>
-                      calcPercent(parseFloat(e.target.value), "card")
-                    }
+                    onChange={(e) => calcPercent(parseFloat(e.target.value))}
                     type="number"
                   />
                 </InputGroup>
@@ -1344,58 +1354,6 @@ export default function NovoSorteio({ config }) {
                   <Input
                     focusBorderColor="green.500"
                     value={cardDiscountValue}
-                    isReadOnly
-                  />
-                </InputGroup>
-              </FormControl>
-            </Grid>
-
-            <Text mt={5}>PIX</Text>
-            <Divider mt={1} mb={1} />
-            <Grid
-              templateColumns={[
-                "1fr",
-                "1fr 2fr 2fr",
-                "1fr 2fr 2fr",
-                "1fr 2fr 2fr",
-                "1fr 2fr 2fr",
-              ]}
-              gap={3}
-            >
-              <FormControl>
-                <FormLabel mb={0}>Taxa</FormLabel>
-                <InputGroup>
-                  <InputLeftAddon children="%" />
-                  <Input
-                    focusBorderColor="green.500"
-                    value={pixTax}
-                    onChange={(e) => setPixTax(parseFloat(e.target.value))}
-                    type="number"
-                  />
-                </InputGroup>
-              </FormControl>
-              <FormControl>
-                <FormLabel mb={0}>Valor Previsto</FormLabel>
-                <InputGroup>
-                  <InputLeftAddon children="R$" />
-                  <Input
-                    focusBorderColor="green.500"
-                    value={pixPreviousValue}
-                    onChange={(e) =>
-                      calcPercent(parseFloat(e.target.value), "pix")
-                    }
-                    type="number"
-                  />
-                </InputGroup>
-              </FormControl>
-              <FormControl>
-                <FormLabel mb={0}>Valor Final</FormLabel>
-                <InputGroup>
-                  <InputLeftAddon children="R$" />
-                  <Input
-                    focusBorderColor="green.500"
-                    value={pixDiscountValue}
-                    type="number"
                     isReadOnly
                   />
                 </InputGroup>
