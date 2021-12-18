@@ -29,6 +29,18 @@ export default function Messages() {
   }
 
   async function Save() {
+    if (option === "") {
+      showToast("Escolha uma opção", "info", "Informação");
+      return false;
+    }
+    if (name === "") {
+      showToast("Insira seu nome, ou digite: ANÔNIMO", "info", "Informação");
+      return false;
+    }
+    if (message === "") {
+      showToast("Insira uma mensagem", "info", "Informação");
+      return false;
+    }
     setLoading(true);
 
     try {

@@ -1,4 +1,11 @@
-import { Container, Box, Text, Heading } from "@chakra-ui/layout";
+import {
+  Container,
+  Box,
+  Text,
+  Heading,
+  useColorModeValue,
+  Flex,
+} from "@chakra-ui/react";
 import HeaderApp from "../components/header";
 import FooterApp from "../components/footer";
 import {
@@ -13,7 +20,7 @@ export default function TermosdeUso() {
     <>
       <HeaderApp />
 
-      <Container maxW="5xl" mt={10}>
+      <Container maxW="4xl" mt={10}>
         <Breadcrumb mb={10} fontSize={["xx-small", "md", "md", "md", "md"]}>
           <BreadcrumbItem>
             <Link href="/" passHref>
@@ -31,18 +38,21 @@ export default function TermosdeUso() {
             </Link>
           </BreadcrumbItem>
         </Breadcrumb>
-        <Box
-          bg="purple.400"
-          p={7}
-          textAlign="center"
-          color="white"
-          rounded="lg"
-        >
-          <Heading>Termos de Uso</Heading>
-          <Text>
-            Antes de utilizar a PMW Rifas, leia atentamente o Termo de Uso
-          </Text>
-        </Box>
+        <Flex justify={"center"} align={"center"} direction={"column"}>
+          <Heading fontSize={["3xl", "4xl", "4xl", "4xl", "4xl"]}>
+            Condições de Uso
+          </Heading>
+          <Box
+            bgGradient={useColorModeValue(
+              "linear(to-r, green.500, orange.500)",
+              "linear(to-r, green.200, orange.200)"
+            )}
+            w="200px"
+            h="5px"
+            mt={3}
+            mb={3}
+          />
+        </Flex>
 
         <Box p={3} mt={10}>
           <Text textAlign="justify" mb={2}>

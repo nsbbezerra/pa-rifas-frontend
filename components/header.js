@@ -430,13 +430,18 @@ function HeaderApp() {
       >
         <Container maxW="6xl">
           <Flex h="55px" justify="space-between" align="center">
-            <LinkBox overflow="hidden" p={2} h="52px" w="52px">
+            <LinkBox
+              overflow="hidden"
+              w="110px"
+              transform={"rotate(-10deg)"}
+              mt={-1}
+            >
               <Link href="/" passHref>
                 <LinkOverlay>
                   <Image
-                    src="/img/logo.svg"
-                    width={300}
-                    height={300}
+                    src="/img/pa.svg"
+                    width={446}
+                    height={250}
                     layout="responsive"
                     alt="PA Rifas, rifas online"
                   />
@@ -449,111 +454,114 @@ function HeaderApp() {
         </Container>
       </Box>
       <Box
-        bgGradient={
-          colorMode === "light"
-            ? "linear(to-r, green.500, green.400)"
-            : "linear(to-r, green.800, green.800)"
-        }
-        pt={10}
-        pb={10}
+        backgroundImage={'url("/img/background.jpg")'}
+        backgroundPosition={"center"}
+        backgroundSize={"cover"}
+        backgroundRepeat={"no-repeat"}
         mt={["0px", "0px", "55px", "55px", "55px"]}
       >
-        <IconButton
-          icon={colorMode === "light" ? <FaMoon /> : <FaSun />}
-          onClick={toggleColorMode}
-          top={5}
-          right={20}
-          size="lg"
-          pos="absolute"
-          d={["flex", "flex", "none", "none", "none"]}
-        />
-        <IconButton
-          colorScheme="orange"
-          icon={<AiOutlineMenu />}
-          fontSize="2xl"
-          d={["flex", "flex", "none", "none", "none"]}
-          onClick={() => setDrawerMenu(true)}
-          pos="absolute"
-          top={5}
-          right={5}
-          size="lg"
-        />
-        <Container maxW="6xl">
-          <Grid
-            templateColumns={[
-              "1fr",
-              "1fr",
-              "300px 1fr",
-              "300px 1fr",
-              "300px 1fr",
-            ]}
-            gap={10}
-            mt={[10, 0, 0, 0, 0]}
-            justifyItems="center"
-            alignItems="center"
-            justifyContent="center"
-          >
-            <LinkBox overflow="hidden" p={2} w="250px">
-              <Link href="/" passHref>
-                <LinkOverlay>
-                  <Image
-                    src="/img/logo.svg"
-                    width={300}
-                    height={300}
-                    layout="responsive"
-                    alt="PA Rifas, rifas online"
-                  />
-                </LinkOverlay>
-              </Link>
-            </LinkBox>
-            <Flex direction="column" justify="center" align="center">
-              <Heading
-                textAlign="center"
-                color="white"
-                fontSize={["4xl", "5xl", "5xl", "5xl", "5xl"]}
-              >
-                Sua Rifa online está aqui!
-              </Heading>
-              <Text
-                textAlign="center"
-                color="gray.100"
-                mt={5}
-                fontSize={["sm", "md", "md", "md", "md"]}
-              >
-                Crie suas rifas ou compre rifas com a melhor plataforma, de
-                forma segura, prática e fácil!
-              </Text>
+        <Box
+          pt={10}
+          pb={10}
+          bg={useColorModeValue("blackAlpha.500", "blackAlpha.700")}
+        >
+          <IconButton
+            icon={colorMode === "light" ? <FaMoon /> : <FaSun />}
+            onClick={toggleColorMode}
+            top={5}
+            right={20}
+            size="lg"
+            pos="absolute"
+            d={["flex", "flex", "none", "none", "none"]}
+          />
+          <IconButton
+            colorScheme="orange"
+            icon={<AiOutlineMenu />}
+            fontSize="2xl"
+            d={["flex", "flex", "none", "none", "none"]}
+            onClick={() => setDrawerMenu(true)}
+            pos="absolute"
+            top={5}
+            right={5}
+            size="lg"
+          />
+          <Container maxW="6xl">
+            <Grid
+              templateColumns={[
+                "1fr",
+                "1fr",
+                "300px 1fr",
+                "300px 1fr",
+                "300px 1fr",
+              ]}
+              gap={10}
+              mt={[10, 0, 0, 0, 0]}
+              justifyItems="center"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <LinkBox overflow="hidden" p={2} w="250px">
+                <Link href="/" passHref>
+                  <LinkOverlay>
+                    <Image
+                      src="/img/logo.svg"
+                      width={300}
+                      height={300}
+                      layout="responsive"
+                      alt="PA Rifas, rifas online"
+                    />
+                  </LinkOverlay>
+                </Link>
+              </LinkBox>
+              <Flex direction="column" justify="center" align="center">
+                <Heading
+                  textAlign="center"
+                  color="white"
+                  fontSize={["4xl", "5xl", "5xl", "5xl", "5xl"]}
+                >
+                  Sua Rifa online está aqui!
+                </Heading>
+                <Text
+                  textAlign="center"
+                  color="gray.100"
+                  mt={5}
+                  fontSize={["sm", "md", "md", "md", "md"]}
+                >
+                  Crie suas rifas ou compre rifas com a melhor plataforma, de
+                  forma segura, prática e fácil!
+                </Text>
 
-              <Grid
-                templateColumns={[
-                  "1fr",
-                  "1fr 1fr",
-                  "1fr 1fr",
-                  "1fr 1fr",
-                  "1fr 1fr",
-                ]}
-                gap={5}
-                mt={5}
-              >
-                <Button
-                  leftIcon={<FaSave />}
-                  onClick={() => setOpenRegister(!openRegister)}
-                  size="lg"
+                <Grid
+                  templateColumns={[
+                    "1fr",
+                    "1fr 1fr",
+                    "1fr 1fr",
+                    "1fr 1fr",
+                    "1fr 1fr",
+                  ]}
+                  gap={5}
+                  mt={5}
                 >
-                  Cadastre - se
-                </Button>
-                <Button
-                  colorScheme="orange"
-                  leftIcon={<AiOutlineLogin />}
-                  onClick={() => setOpenLogin(!openLogin)}
-                  size="lg"
-                >
-                  Faça Login
-                </Button>
-              </Grid>
-            </Flex>
-          </Grid>
-        </Container>
+                  <Button
+                    leftIcon={<FaSave />}
+                    onClick={() => setOpenRegister(!openRegister)}
+                    size="lg"
+                  >
+                    Cadastre - se
+                  </Button>
+                  <Button
+                    colorScheme="orange"
+                    leftIcon={<AiOutlineLogin />}
+                    onClick={() => setOpenLogin(!openLogin)}
+                    size="lg"
+                  >
+                    Faça Login
+                  </Button>
+                </Grid>
+              </Flex>
+            </Grid>
+          </Container>
+        </Box>
       </Box>
 
       <Modal isOpen={openLogin} onClose={() => setOpenLogin(false)} size="md">

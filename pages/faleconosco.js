@@ -2,14 +2,11 @@ import {
   Container,
   Heading,
   Box,
-  Text,
   Flex,
-  Center,
   LinkBox,
   LinkOverlay,
 } from "@chakra-ui/layout";
 import HeaderApp from "../components/header";
-import Image from "next/image";
 import Link from "next/link";
 import FooterApp from "../components/footer";
 import {
@@ -18,12 +15,15 @@ import {
   BreadcrumbLink,
 } from "../components/sliders";
 import configGlobal from "../configs/index";
+import { Button, useColorModeValue } from "@chakra-ui/react";
+import { FaWhatsapp } from "react-icons/fa";
+import Messages from "../components/messages";
 
 export default function FaleConosco({ config }) {
   return (
     <>
       <HeaderApp />
-      <Container maxW="7xl" mt={10}>
+      <Container maxW="4xl" mt={10}>
         <Breadcrumb mb={10} fontSize={["xx-small", "md", "md", "md", "md"]}>
           <BreadcrumbItem>
             <Link href="/" passHref>
@@ -41,25 +41,22 @@ export default function FaleConosco({ config }) {
             </Link>
           </BreadcrumbItem>
         </Breadcrumb>
-        <Center>
-          <Heading fontSize={["3xl", "5xl", "5xl", "5xl", "5xl"]}>
-            Tá com duvidas?
+        <Flex justify={"center"} align={"center"} direction={"column"}>
+          <Heading fontSize={["3xl", "4xl", "4xl", "4xl", "4xl"]}>
+            Entre em contato conosco pelo Whatsapp
           </Heading>
-        </Center>
-        <Center>
-          <Heading fontSize={["3xl", "5xl", "5xl", "5xl", "5xl"]}>
-            Entre em contato.
-          </Heading>
-        </Center>
-        <Center mt={5} mb={5}>
-          <Text
-            fontSize={["lg", "2xl", "2xl", "2xl", "2xl"]}
-            textAlign="center"
-          >
-            Clique no botão e fale pelo whatsapp.
-          </Text>
-        </Center>
-        <Flex justify="center" align="center">
+          <Box
+            bgGradient={useColorModeValue(
+              "linear(to-r, green.500, orange.500)",
+              "linear(to-r, green.200, orange.200)"
+            )}
+            w="200px"
+            h="5px"
+            mt={3}
+            mb={3}
+          />
+        </Flex>
+        <Flex justify="center" align="center" mt={10}>
           <LinkBox>
             <Link
               href={`https://wa.me/+55${config.admin_phone.replace(
@@ -69,19 +66,34 @@ export default function FaleConosco({ config }) {
               passHref
             >
               <LinkOverlay target="_blank">
-                <Box w="200px" h="200px">
-                  <Image
-                    width={200}
-                    height={200}
-                    layout="responsive"
-                    objectFit="cover"
-                    src="/img/whatsapp.svg"
-                  />
-                </Box>
+                <Button
+                  leftIcon={<FaWhatsapp />}
+                  size={"lg"}
+                  colorScheme={"whatsapp"}
+                >
+                  Whatsapp: {config.admin_phone}
+                </Button>
               </LinkOverlay>
             </Link>
           </LinkBox>
         </Flex>
+
+        <Flex justify={"center"} align={"center"} direction={"column"} mt={20}>
+          <Heading fontSize={["3xl", "4xl", "4xl", "4xl", "4xl"]}>
+            Ou nos envie uma Mensagem
+          </Heading>
+          <Box
+            bgGradient={useColorModeValue(
+              "linear(to-r, green.500, orange.500)",
+              "linear(to-r, green.200, orange.200)"
+            )}
+            w="200px"
+            h="5px"
+            mt={3}
+            mb={3}
+          />
+        </Flex>
+        <Messages />
       </Container>
 
       <FooterApp />
