@@ -1,4 +1,4 @@
-const production = "https://server.rifapmw.com.br";
+const production = "https://vps36066.publiccloud.com.br";
 const publicKey = "TEST-7a02dd31-1ea5-4d0b-8ba8-e9782957a6bc";
 const dev = "http://localhost:4000";
 const configs = {
@@ -10,7 +10,7 @@ const configs = {
       { width: 900, itemsToShow: 4, itemsToScroll: 4 },
     ],
   },
-  url: dev,
+  url: production,
   key: publicKey,
   pixTax: 0.99,
   cardTax: 4.99,
