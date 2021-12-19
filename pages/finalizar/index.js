@@ -1,40 +1,18 @@
 import Header from "../../components/header";
 import Footer from "../../components/footer";
 import { useRouter } from "next/router";
-import { Flex, Heading, Text } from "@chakra-ui/layout";
+import { Flex, Heading } from "@chakra-ui/layout";
 import ckeckAnimation from "../../assets/check.json";
 import errorAnimation from "../../assets/error.json";
 import waitingAnimation from "../../assets/waiting.json";
 import Lottie from "../../components/lottie";
-import api from "../../configs/axios";
-import { useEffect, useState } from "react";
-import { Spinner } from "@chakra-ui/react";
+import { Button, Grid } from "@chakra-ui/react";
+import { FaHome, FaReceipt } from "react-icons/fa";
 
 export default function Finalize() {
   const { query, push } = useRouter();
 
-  const { payment_id, status, external_reference } = query;
-
-  const [loading, setLoading] = useState(false);
-
-  async function payOrder() {
-    setLoading(true);
-
-    try {
-      await api.post(`/payOrder/${external_reference}`, {
-        payment_id,
-        status,
-      });
-      setLoading(false);
-      push("/");
-    } catch (error) {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    payOrder();
-  }, [payment_id]);
+  const { status } = query;
 
   return (
     <>
@@ -51,15 +29,37 @@ export default function Finalize() {
         )}
       </Flex>
       <Heading textAlign="center">
-        {status === "approved" && "PAGAMENTO APROVADO"}
-        {status === "pending" && "PAGAMENTO PENDENTE"}
-        {status === "rejected" && "PAGAMENTO REJEITADO"}
+        {status === "approved" && "Parabens! Seu pagamento foi aprovado."}
+        {status === "pending" && "Aguarde! Seu pagamento está em análise."}
+        {status === "rejected" && "Ops! Seu pagamento foi negado."}
       </Heading>
-      {loading && (
-        <Flex justify="center" align="center" mt={3}>
-          <Spinner size="xl" colorScheme="green" />
-        </Flex>
-      )}
+
+      <Grid
+        mt={7}
+        templateColumns={[
+          "200px",
+          "200px 200px",
+          "200px 200px",
+          "200px 200px",
+          "200px 200px",
+        ]}
+        gap={5}
+        justifyContent={"center"}
+        justifyItems={"center"}
+      >
+        <Button leftIcon={<FaReceipt />} isFullWidth>
+          Ver Comprovante
+        </Button>
+        <Button
+          leftIcon={<FaHome />}
+          colorScheme={"green"}
+          isFullWidth
+          onClick={() => push("/")}
+        >
+          Ir ao Início
+        </Button>
+      </Grid>
+
       <Footer />
     </>
   );
