@@ -525,6 +525,7 @@ export default function AdminRaffles({
                 shadow="lg"
                 pt={2}
                 pl={4}
+                pr={2}
                 bg={useColorModeValue("orange.500", "orange.200")}
               >
                 <Stat color={useColorModeValue("gray.100", "gray.800")}>
@@ -538,6 +539,7 @@ export default function AdminRaffles({
                 shadow="lg"
                 pt={2}
                 pl={4}
+                pr={2}
                 bg={useColorModeValue("blue.500", "blue.200")}
               >
                 <Stat color={useColorModeValue("gray.100", "gray.800")}>
@@ -553,6 +555,7 @@ export default function AdminRaffles({
                 shadow="lg"
                 pt={2}
                 pl={4}
+                pr={2}
                 bg={useColorModeValue("red.500", "red.200")}
               >
                 <Stat color={useColorModeValue("gray.100", "gray.800")}>
@@ -570,6 +573,7 @@ export default function AdminRaffles({
                 shadow="lg"
                 pt={2}
                 pl={4}
+                pr={2}
                 bg={useColorModeValue("green.500", "green.200")}
               >
                 <Stat color={useColorModeValue("gray.100", "gray.800")}>
@@ -587,6 +591,7 @@ export default function AdminRaffles({
                 shadow="lg"
                 pt={2}
                 pl={4}
+                pr={2}
                 bg={useColorModeValue("blackAlpha.100", "whiteAlpha.200")}
               >
                 <Stat>
@@ -600,6 +605,7 @@ export default function AdminRaffles({
                 shadow="lg"
                 pt={2}
                 pl={4}
+                pr={2}
                 bg={useColorModeValue("blackAlpha.100", "whiteAlpha.200")}
               >
                 <Stat>

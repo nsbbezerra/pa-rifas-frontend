@@ -125,14 +125,12 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
   const { client, setClient } = useClient();
   const { setOpenRegister } = useRegisterModal();
   const { setOpenLogin } = useLoginModal();
-  const { data, error } = useFetch(`/numbers/${query.sorteio}`);
-
-  const [paymentModal, setPaymentModal] = useState(false);
-  const [urlModal, setUrlModal] = useState("");
+  const { data } = useFetch(`/numbers/${query.sorteio}`);
 
   useEffect(() => {
     if (data !== undefined) {
       setNums(data.numbers);
+      console.log(data.numbers);
     } else {
       setNums([]);
     }
@@ -174,18 +172,6 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
       status: status,
       position: "bottom-right",
     });
-  }
-
-  if (error) {
-    if (error.message === "Network Error") {
-      showToast(
-        "Erro de conexão, verifique sua conexão com a internet",
-        "error",
-        "Erro"
-      );
-    } else {
-      showToast("Ocorreu um erro inesperado", "error", "Erro");
-    }
   }
 
   const generate = useMemo(() => {
@@ -255,7 +241,6 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
       setNameCoupon("");
       showToast(response.data.message, "success", "Sucesso");
       push(response.data.url);
-      setPaymentModal(true);
     } catch (error) {
       setLoading(false);
       if (error.message === "Network Error") {
@@ -1172,6 +1157,6 @@ export const getStaticProps = async ({ params }) => {
       trophys,
       numbersRaffle,
     },
-    revalidate: 10,
+    revalidate: 5,
   };
 };
