@@ -202,6 +202,8 @@ export default function GerenciarPartitipante({
             "300px 1fr",
           ]}
           gap={"10"}
+          justifyContent={"center"}
+          justifyItems={"center"}
         >
           <LinkBox
             rounded="xl"
@@ -272,7 +274,7 @@ export default function GerenciarPartitipante({
             </Box>
           </LinkBox>
 
-          <Box>
+          <Box w="100%">
             <Heading
               fontSize="2xl"
               color={useColorModeValue("green.500", "green.200")}
