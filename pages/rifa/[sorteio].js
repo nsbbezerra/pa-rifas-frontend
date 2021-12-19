@@ -47,9 +47,8 @@ import {
   BreadcrumbLink,
 } from "../../components/sliders";
 import Image from "next/image";
-import { FaCheck, FaCopy, FaTrash, FaWhatsapp } from "react-icons/fa";
+import { FaCheck, FaTrash, FaWhatsapp } from "react-icons/fa";
 import {
-  AiFillBank,
   AiOutlineFacebook,
   AiOutlineInstagram,
   AiOutlineTrophy,
@@ -74,6 +73,8 @@ import {
   SliderThumb,
   SliderTrack,
 } from "@chakra-ui/slider";
+import Lottie from "../../components/lottie";
+import emptyAnimation from "../../assets/empty.json";
 
 export default function Sorteio({ raffles, trophys, numbersRaffle }) {
   const { colorMode } = useColorMode();
@@ -309,6 +310,10 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
   }
 
   async function findCoupon() {
+    if (nameCoupon === "") {
+      showToast("Insira um cupom", "warning", "Atenção");
+      return false;
+    }
     setLoadingCoupon(true);
 
     try {
@@ -577,260 +582,296 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
 
           <TabPanels>
             <TabPanel p={0}>
-              <Grid
-                templateColumns={[
-                  "repeat(2, 140px)",
-                  "repeat(3, 180px)",
-                  "repeat(4, 180px)",
-                  "repeat(4, 180px)",
-                  "repeat(4, 180px)",
-                ]}
-                gap="15px"
-                mt={10}
-              >
-                <Box
-                  rounded="3xl"
-                  pt={1}
-                  pb={1}
-                  pr={3}
-                  pl={3}
-                  bg="black"
-                  color="white"
-                  textAlign="center"
-                  fontSize={["xs", "md", "md", "md", "md"]}
+              {new Date() >= new Date(raffle.draw_date) ? (
+                <Flex
+                  justify={"center"}
+                  align={"center"}
+                  direction={"column"}
+                  mt={10}
                 >
-                  Livres (
-                  {nums.length > 0 && JSON.stringify(raffle) !== "{}"
-                    ? raffle.qtd_numbers -
-                      nums.filter((obj) => obj.status === "reserved").length -
-                      nums.filter((obj) => obj.status === "paid_out").length
-                    : raffle.qtd_numbers}
-                  )
-                </Box>
-                <Box
-                  rounded="3xl"
-                  pt={1}
-                  pb={1}
-                  pr={3}
-                  pl={3}
-                  bg="orange.400"
-                  color="white"
-                  textAlign="center"
-                  fontSize={["xs", "md", "md", "md", "md"]}
-                >
-                  Reservado (
-                  {nums.length > 0
-                    ? nums.filter((obj) => obj.status === "reserved").length
-                    : 0}
-                  )
-                </Box>
-                <Box
-                  rounded="3xl"
-                  pt={1}
-                  pb={1}
-                  pr={3}
-                  pl={3}
-                  bg="green.400"
-                  color="white"
-                  textAlign="center"
-                  fontSize={["xs", "md", "md", "md", "md"]}
-                >
-                  Pago (
-                  {nums.length > 0
-                    ? nums.filter((obj) => obj.status === "paid_out").length
-                    : 0}
-                  )
-                </Box>
-                <Box
-                  rounded="3xl"
-                  pt={1}
-                  pb={1}
-                  pr={3}
-                  pl={3}
-                  bg="red.600"
-                  color="white"
-                  textAlign="center"
-                  fontSize={["xs", "md", "md", "md", "md"]}
-                >
-                  Meus Números (
-                  {JSON.stringify(client) !== "{}"
-                    ? nums.filter((obj) => obj.id_client === client.id).length
-                    : 0}
-                  )
-                </Box>
-              </Grid>
-
-              <Box
-                rounded="xl"
-                p={4}
-                shadow="lg"
-                bg={
-                  colorMode === "light" ? "rgba(0,0,0,0.02)" : "whiteAlpha.300"
-                }
-                borderWidth="1px"
-                mt={5}
-              >
-                <Grid
-                  templateColumns="repeat(auto-fit, minmax(78px, 78px))"
-                  gap="5px"
-                  justifyContent="center"
-                  h="400px"
-                  overflow="auto"
-                >
-                  {generate.map((num) => (
-                    <Button
-                      w="75px"
-                      colorScheme="blackAlpha"
-                      isDisabled={
-                        nums.find((obj) => obj.number === parseInt(num.num))
-                          ? true
-                          : false
-                      }
-                      bg={
-                        mynumbers.find((obj) => obj === num.num)
-                          ? "blue.500"
-                          : "black"
-                      }
-                      _focus={{
-                        outline: "none",
-                        bg: mynumbers.find((obj) => obj === num.num)
-                          ? "blue.500"
-                          : "gray.800",
-                      }}
-                      _active={{
-                        bg: mynumbers.find((obj) => obj === num.num)
-                          ? "blue.500"
-                          : "gray.800",
-                      }}
-                      _hover={{
-                        bg: mynumbers.find((obj) => obj === num.num)
-                          ? "blue.500"
-                          : "gray.800",
-                      }}
-                      key={num.num}
-                      onClick={() => handleNumbers(num.num)}
-                      color="gray.100"
-                      _disabled={{
-                        bg: handleBG(
-                          nums.find((obj) => obj.number === parseInt(num.num))
-                        ),
-                        _hover: {
-                          bg: handleBG(
-                            nums.find((obj) => obj.number === parseInt(num.num))
-                          ),
-                        },
-                        _active: {
-                          bg: handleBG(
-                            nums.find((obj) => obj.number === parseInt(num.num))
-                          ),
-                        },
-                        _focus: {
-                          bg: handleBG(
-                            nums.find((obj) => obj.number === parseInt(num.num))
-                          ),
-                        },
-                      }}
-                    >
-                      {num.num}
-                    </Button>
-                  ))}
-                </Grid>
-
-                <Button
-                  leftIcon={<FaTrash />}
-                  colorScheme="red"
-                  onClick={() => clearNumbers()}
-                  mt={5}
-                >
-                  Limpar Números
-                </Button>
-              </Box>
-
-              <Grid
-                rounded="xl"
-                shadow="lg"
-                borderWidth="1px"
-                p={5}
-                h="min-content"
-                templateColumns={[
-                  "1fr",
-                  "1fr 1fr 1fr",
-                  "1fr 1fr 1fr",
-                  "1fr 1fr 1fr",
-                  "1fr 1fr 1fr",
-                ]}
-                gap={5}
-                mt={10}
-                alignItems="center"
-                justifyItems={[
-                  "center",
-                  "initial",
-                  "initial",
-                  "initial",
-                  "initial",
-                ]}
-              >
-                <Stat>
-                  <StatLabel>Total a Pagar</StatLabel>
-                  <StatNumber>
-                    {isDiscounted === true ? (
-                      <HStack>
-                        <Text
-                          textDecor={"line-through"}
-                          color="gray.600"
-                          fontWeight={"light"}
-                        >
-                          {parseFloat(amountCompare).toLocaleString("pt-br", {
-                            style: "currency",
-                            currency: "BRL",
-                          })}
-                        </Text>
-                        <Text>
-                          {parseFloat(amount).toLocaleString("pt-br", {
-                            style: "currency",
-                            currency: "BRL",
-                          })}
-                        </Text>
-                      </HStack>
-                    ) : (
-                      parseFloat(amount).toLocaleString("pt-br", {
-                        style: "currency",
-                        currency: "BRL",
-                      })
-                    )}
-                  </StatNumber>
-                </Stat>
-
-                <HStack>
-                  <Input
-                    value={nameCoupon}
-                    onChange={(e) =>
-                      setNameCoupon(e.target.value.toUpperCase())
-                    }
-                    placeholder="Insira o Cupom"
-                    focusBorderColor="green.500"
-                  />
-                  <IconButton
-                    icon={<FaCheck />}
-                    variant="outline"
-                    colorScheme={"green"}
-                    isLoading={loadingCoupon}
-                    onClick={() => findCoupon()}
-                  />
-                </HStack>
-
-                <Grid templateColumns={"1fr"} gap={[2, 5, 5, 5, 5]} w="100%">
-                  <Button
-                    leftIcon={<FaCheck />}
-                    colorScheme="green"
-                    size="lg"
-                    onClick={() => setModalSent(true)}
-                    isFullWidth
+                  <Lottie animation={emptyAnimation} width={"30%"} />
+                  <Text textAlign={"center"} mt={5}>
+                    Nenhum número para sortear, rifa fora do período de
+                    validade.
+                  </Text>
+                </Flex>
+              ) : (
+                <>
+                  <Grid
+                    templateColumns={[
+                      "repeat(2, 140px)",
+                      "repeat(3, 180px)",
+                      "repeat(4, 180px)",
+                      "repeat(4, 180px)",
+                      "repeat(4, 180px)",
+                    ]}
+                    gap="15px"
+                    mt={10}
                   >
-                    Finalizar Compra
-                  </Button>
-                </Grid>
-              </Grid>
+                    <Box
+                      rounded="3xl"
+                      pt={1}
+                      pb={1}
+                      pr={3}
+                      pl={3}
+                      bg="black"
+                      color="white"
+                      textAlign="center"
+                      fontSize={["xs", "md", "md", "md", "md"]}
+                    >
+                      Livres (
+                      {nums.length > 0 && JSON.stringify(raffle) !== "{}"
+                        ? raffle.qtd_numbers -
+                          nums.filter((obj) => obj.status === "reserved")
+                            .length -
+                          nums.filter((obj) => obj.status === "paid_out").length
+                        : raffle.qtd_numbers}
+                      )
+                    </Box>
+                    <Box
+                      rounded="3xl"
+                      pt={1}
+                      pb={1}
+                      pr={3}
+                      pl={3}
+                      bg="orange.400"
+                      color="white"
+                      textAlign="center"
+                      fontSize={["xs", "md", "md", "md", "md"]}
+                    >
+                      Reservado (
+                      {nums.length > 0
+                        ? nums.filter((obj) => obj.status === "reserved").length
+                        : 0}
+                      )
+                    </Box>
+                    <Box
+                      rounded="3xl"
+                      pt={1}
+                      pb={1}
+                      pr={3}
+                      pl={3}
+                      bg="green.400"
+                      color="white"
+                      textAlign="center"
+                      fontSize={["xs", "md", "md", "md", "md"]}
+                    >
+                      Pago (
+                      {nums.length > 0
+                        ? nums.filter((obj) => obj.status === "paid_out").length
+                        : 0}
+                      )
+                    </Box>
+                    <Box
+                      rounded="3xl"
+                      pt={1}
+                      pb={1}
+                      pr={3}
+                      pl={3}
+                      bg="red.600"
+                      color="white"
+                      textAlign="center"
+                      fontSize={["xs", "md", "md", "md", "md"]}
+                    >
+                      Meus Números (
+                      {JSON.stringify(client) !== "{}"
+                        ? nums.filter((obj) => obj.id_client === client.id)
+                            .length
+                        : 0}
+                      )
+                    </Box>
+                  </Grid>
+
+                  <Box
+                    rounded="xl"
+                    p={4}
+                    shadow="lg"
+                    bg={
+                      colorMode === "light"
+                        ? "rgba(0,0,0,0.02)"
+                        : "whiteAlpha.300"
+                    }
+                    borderWidth="1px"
+                    mt={5}
+                  >
+                    <Grid
+                      templateColumns="repeat(auto-fit, minmax(78px, 78px))"
+                      gap="5px"
+                      justifyContent="center"
+                      h="400px"
+                      overflow="auto"
+                    >
+                      {generate.map((num) => (
+                        <Button
+                          w="75px"
+                          colorScheme="blackAlpha"
+                          isDisabled={
+                            nums.find((obj) => obj.number === parseInt(num.num))
+                              ? true
+                              : false
+                          }
+                          bg={
+                            mynumbers.find((obj) => obj === num.num)
+                              ? "blue.500"
+                              : "black"
+                          }
+                          _focus={{
+                            outline: "none",
+                            bg: mynumbers.find((obj) => obj === num.num)
+                              ? "blue.500"
+                              : "gray.800",
+                          }}
+                          _active={{
+                            bg: mynumbers.find((obj) => obj === num.num)
+                              ? "blue.500"
+                              : "gray.800",
+                          }}
+                          _hover={{
+                            bg: mynumbers.find((obj) => obj === num.num)
+                              ? "blue.500"
+                              : "gray.800",
+                          }}
+                          key={num.num}
+                          onClick={() => handleNumbers(num.num)}
+                          color="gray.100"
+                          _disabled={{
+                            bg: handleBG(
+                              nums.find(
+                                (obj) => obj.number === parseInt(num.num)
+                              )
+                            ),
+                            _hover: {
+                              bg: handleBG(
+                                nums.find(
+                                  (obj) => obj.number === parseInt(num.num)
+                                )
+                              ),
+                            },
+                            _active: {
+                              bg: handleBG(
+                                nums.find(
+                                  (obj) => obj.number === parseInt(num.num)
+                                )
+                              ),
+                            },
+                            _focus: {
+                              bg: handleBG(
+                                nums.find(
+                                  (obj) => obj.number === parseInt(num.num)
+                                )
+                              ),
+                            },
+                          }}
+                        >
+                          {num.num}
+                        </Button>
+                      ))}
+                    </Grid>
+
+                    <Button
+                      leftIcon={<FaTrash />}
+                      colorScheme="red"
+                      onClick={() => clearNumbers()}
+                      mt={5}
+                    >
+                      Limpar Números
+                    </Button>
+                  </Box>
+
+                  <Grid
+                    rounded="xl"
+                    shadow="lg"
+                    borderWidth="1px"
+                    p={5}
+                    h="min-content"
+                    templateColumns={[
+                      "1fr",
+                      "1fr 1fr 1fr",
+                      "1fr 1fr 1fr",
+                      "1fr 1fr 1fr",
+                      "1fr 1fr 1fr",
+                    ]}
+                    gap={5}
+                    mt={10}
+                    alignItems="center"
+                    justifyItems={[
+                      "center",
+                      "initial",
+                      "initial",
+                      "initial",
+                      "initial",
+                    ]}
+                  >
+                    <Stat>
+                      <StatLabel>Total a Pagar</StatLabel>
+                      <StatNumber>
+                        {isDiscounted === true ? (
+                          <HStack>
+                            <Text
+                              textDecor={"line-through"}
+                              color="gray.600"
+                              fontWeight={"light"}
+                            >
+                              {parseFloat(amountCompare).toLocaleString(
+                                "pt-br",
+                                {
+                                  style: "currency",
+                                  currency: "BRL",
+                                }
+                              )}
+                            </Text>
+                            <Text>
+                              {parseFloat(amount).toLocaleString("pt-br", {
+                                style: "currency",
+                                currency: "BRL",
+                              })}
+                            </Text>
+                          </HStack>
+                        ) : (
+                          parseFloat(amount).toLocaleString("pt-br", {
+                            style: "currency",
+                            currency: "BRL",
+                          })
+                        )}
+                      </StatNumber>
+                    </Stat>
+
+                    <HStack>
+                      <Input
+                        value={nameCoupon}
+                        onChange={(e) =>
+                          setNameCoupon(e.target.value.toUpperCase())
+                        }
+                        placeholder="Insira o Cupom"
+                        focusBorderColor="green.500"
+                      />
+                      <IconButton
+                        icon={<FaCheck />}
+                        variant="outline"
+                        colorScheme={"green"}
+                        isLoading={loadingCoupon}
+                        onClick={() => findCoupon()}
+                      />
+                    </HStack>
+
+                    <Grid
+                      templateColumns={"1fr"}
+                      gap={[2, 5, 5, 5, 5]}
+                      w="100%"
+                    >
+                      <Button
+                        leftIcon={<FaCheck />}
+                        colorScheme="green"
+                        size="lg"
+                        onClick={() => setModalSent(true)}
+                        isFullWidth
+                      >
+                        Finalizar Compra
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </>
+              )}
             </TabPanel>
 
             <TabPanel p={0}>

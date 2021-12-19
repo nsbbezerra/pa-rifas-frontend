@@ -55,6 +55,7 @@ import {
   Center,
   InputLeftAddon,
   HStack,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
 import {
   Breadcrumb,
@@ -118,6 +119,7 @@ export default function NovoSorteio({ config }) {
   const [checkOne, setCheckOne] = useState(false);
   const [checkTwo, setCheckTwo] = useState(false);
   const [checkThree, setCheckThree] = useState(false);
+  const [checkFour, setCheckFour] = useState(false);
   const [checkFive, setCheckFive] = useState(false);
 
   const [trophys, setTrophys] = useState([]);
@@ -1030,11 +1032,26 @@ export default function NovoSorteio({ config }) {
                         </Checkbox>
                         <Checkbox
                           colorScheme="green"
-                          isChecked={checkFive}
-                          onChange={(e) => setCheckFive(e.target.checked)}
+                          isChecked={checkFour}
+                          onChange={(e) => setCheckFour(e.target.checked)}
                         >
                           Verifique as taxas cobradas pelos meios de pagamento,
                           caso precise compense no valor da rifa.
+                        </Checkbox>
+                        <Checkbox
+                          colorScheme="green"
+                          isChecked={checkFive}
+                          onChange={(e) => setCheckFive(e.target.checked)}
+                        >
+                          Leia atentamente nossos{" "}
+                          <Link href={"/condicoesdeuso"} passHref>
+                            <ChakraLink
+                              target={"_blank"}
+                              textDecor={"underline"}
+                            >
+                              Termos de Uso
+                            </ChakraLink>
+                          </Link>
                         </Checkbox>
                       </Stack>
                     </CheckboxGroup>
@@ -1080,6 +1097,7 @@ export default function NovoSorteio({ config }) {
                       checkOne === true &&
                       checkTwo === true &&
                       checkThree === true &&
+                      checkFour === true &&
                       checkFive === true
                         ? false
                         : true

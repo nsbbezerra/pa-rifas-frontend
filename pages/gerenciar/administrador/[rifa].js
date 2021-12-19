@@ -75,7 +75,7 @@ export default function AdminRaffles({
 }) {
   const { colorMode } = useColorMode();
   const toast = useToast();
-  const { query, isFallback } = useRouter();
+  const { query, isFallback, push } = useRouter();
   const { rifa } = query;
 
   if (isFallback) {
@@ -717,6 +717,7 @@ export default function AdminRaffles({
                 colorScheme={"green"}
                 variant={"outline"}
                 onClick={() => setModalCupom(true)}
+                isDisabled={raffle.status === "refused" ? true : false}
               >
                 Criar Cupom
               </Button>
@@ -727,6 +728,7 @@ export default function AdminRaffles({
                 variant={"outline"}
                 onClick={() => findCoupons()}
                 isLoading={loading}
+                isDisabled={raffle.status === "refused" ? true : false}
               >
                 Meus Cupons
               </Button>
@@ -797,7 +799,11 @@ export default function AdminRaffles({
             </AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button leftIcon={<AiOutlineWhatsApp />} colorScheme="whatsapp">
+              <Button
+                leftIcon={<AiOutlineWhatsApp />}
+                colorScheme="whatsapp"
+                onClick={() => push("/faleconosco")}
+              >
                 Contato PA Rifas
               </Button>
               <Button onClick={() => setDialogEdit(false)} ml={3}>
@@ -822,7 +828,11 @@ export default function AdminRaffles({
             </AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button leftIcon={<AiOutlineWhatsApp />} colorScheme="whatsapp">
+              <Button
+                leftIcon={<AiOutlineWhatsApp />}
+                colorScheme="whatsapp"
+                onClick={() => push("/faleconosco")}
+              >
                 Contato PA Rifas
               </Button>
               <Button onClick={() => setDialogCancel(false)} ml={3}>

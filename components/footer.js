@@ -15,9 +15,11 @@ import {
   AiOutlineFacebook,
 } from "react-icons/ai";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 export default function FooterApp() {
   const { colorMode } = useColorMode();
+  const { push } = useRouter();
   return (
     <Box mt={20}>
       <Box
@@ -137,6 +139,7 @@ export default function FooterApp() {
                 size="lg"
                 mt={10}
                 variant="outline"
+                onClick={() => push("/faleconosco")}
               >
                 FALE CONOSCO
               </Button>
@@ -159,6 +162,14 @@ export default function FooterApp() {
                   _hover={{ textDecor: "none" }}
                 >
                   RIFAS
+                </Button>
+                <Button
+                  variant="link"
+                  colorScheme="green"
+                  size="lg"
+                  _hover={{ textDecor: "none" }}
+                >
+                  REEMBOLSO
                 </Button>
                 <Button
                   variant="link"

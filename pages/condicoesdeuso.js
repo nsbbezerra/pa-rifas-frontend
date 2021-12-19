@@ -38,7 +38,7 @@ export default function TermosdeUso() {
             </Link>
           </BreadcrumbItem>
         </Breadcrumb>
-        <Box borderWidth={"1px"} rounded="lg" p={20}>
+        <Box borderWidth={"1px"} rounded="lg" p={[3, 10, 20, 20, 20]}>
           <Flex justify={"center"} align={"center"} direction={"column"}>
             <Heading fontSize={["3xl", "4xl", "4xl", "4xl", "4xl"]}>
               Condições de Uso
@@ -173,6 +173,11 @@ export default function TermosdeUso() {
               por parte do sorteado a entrega e o recebimento do prêmio, esta
               confirmação se dará por fotos e vídeos, dependendo do que a equipe
               da PA Rifas requerer.
+            </Text>
+            <Text textAlign="justify" mb={2}>
+              O organizador terá um prazo extra de 15 (Quinze) dias após o
+              vencimento do prazo para o sorteio para efetuar o mesmo, caso não
+              haja o cumprimento deste item a rifa será bloqueada.
             </Text>
 
             <Heading

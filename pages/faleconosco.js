@@ -42,7 +42,10 @@ export default function FaleConosco({ config }) {
           </BreadcrumbItem>
         </Breadcrumb>
         <Flex justify={"center"} align={"center"} direction={"column"}>
-          <Heading fontSize={["3xl", "4xl", "4xl", "4xl", "4xl"]}>
+          <Heading
+            fontSize={["3xl", "4xl", "4xl", "4xl", "4xl"]}
+            textAlign={"center"}
+          >
             Entre em contato conosco pelo Whatsapp
           </Heading>
           <Box
@@ -79,7 +82,10 @@ export default function FaleConosco({ config }) {
         </Flex>
 
         <Flex justify={"center"} align={"center"} direction={"column"} mt={20}>
-          <Heading fontSize={["3xl", "4xl", "4xl", "4xl", "4xl"]}>
+          <Heading
+            fontSize={["3xl", "4xl", "4xl", "4xl", "4xl"]}
+            textAlign={"center"}
+          >
             Ou nos envie uma Mensagem
           </Heading>
           <Box
