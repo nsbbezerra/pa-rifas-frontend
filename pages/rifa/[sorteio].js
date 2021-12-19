@@ -49,8 +49,8 @@ import {
 import Image from "next/image";
 import { FaCheck, FaTrash, FaWhatsapp } from "react-icons/fa";
 import {
+  AiOutlineCopy,
   AiOutlineFacebook,
-  AiOutlineInstagram,
   AiOutlineTrophy,
   AiOutlineUser,
   AiOutlineWhatsApp,
@@ -75,10 +75,19 @@ import {
 } from "@chakra-ui/slider";
 import Lottie from "../../components/lottie";
 import emptyAnimation from "../../assets/empty.json";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 export default function Sorteio({ raffles, trophys, numbersRaffle }) {
   const { colorMode } = useColorMode();
-  const { query, isFallback, push } = useRouter();
+  const { query, isFallback, push, route } = useRouter();
+  const [siteUrl, setSiteUrl] = useState("");
+
+  useEffect(() => {
+    const host = window.location.href;
+    setSiteUrl(host);
+  }, []);
+
+  console.log(route);
 
   if (isFallback) {
     return (
@@ -130,7 +139,6 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
   useEffect(() => {
     if (data !== undefined) {
       setNums(data.numbers);
-      console.log(data.numbers);
     } else {
       setNums([]);
     }
@@ -536,23 +544,44 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
                   <Text fontSize="sm">COMPARTILHAR</Text>
                 </Center>
                 <Center p={3}>
-                  <IconButton
-                    icon={<AiOutlineFacebook />}
-                    colorScheme="green"
-                    variant="outline"
-                  />
-                  <IconButton
-                    icon={<AiOutlineWhatsApp />}
-                    colorScheme="green"
-                    ml={3}
-                    mr={3}
-                    variant="outline"
-                  />
-                  <IconButton
-                    icon={<AiOutlineInstagram />}
-                    colorScheme="green"
-                    variant="outline"
-                  />
+                  <ChakraLink
+                    href={`https://www.facebook.com/sharer/sharer.php?u=${siteUrl}`}
+                    target={"_blank"}
+                  >
+                    <IconButton
+                      icon={<AiOutlineFacebook />}
+                      colorScheme="green"
+                      variant="outline"
+                    />
+                  </ChakraLink>
+                  <ChakraLink
+                    href={`https://api.whatsapp.com/send?text=${siteUrl}`}
+                    target={"_blank"}
+                  >
+                    <IconButton
+                      icon={<AiOutlineWhatsApp />}
+                      colorScheme="green"
+                      ml={3}
+                      mr={3}
+                      variant="outline"
+                    />
+                  </ChakraLink>
+                  <CopyToClipboard
+                    text={siteUrl}
+                    onCopy={() =>
+                      showToast(
+                        "Url copiada para a área de transferência",
+                        "info",
+                        "Informação"
+                      )
+                    }
+                  >
+                    <IconButton
+                      icon={<AiOutlineCopy />}
+                      colorScheme="green"
+                      variant="outline"
+                    />
+                  </CopyToClipboard>
                 </Center>
               </Box>
             </Grid>
