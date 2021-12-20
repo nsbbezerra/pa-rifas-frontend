@@ -16,8 +16,9 @@ import {
 } from "react-icons/ai";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { memo } from "react";
 
-export default function FooterApp() {
+function FooterApp() {
   const { colorMode } = useColorMode();
   const { push } = useRouter();
   return (
@@ -231,3 +232,4 @@ export default function FooterApp() {
     </Box>
   );
 }
+export default memo(FooterApp);

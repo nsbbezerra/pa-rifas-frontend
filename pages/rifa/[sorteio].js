@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, memo } from "react";
 import HeaderApp from "../../components/header";
 import {
   Box,
@@ -77,17 +77,15 @@ import Lottie from "../../components/lottie";
 import emptyAnimation from "../../assets/empty.json";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
-export default function Sorteio({ raffles, trophys, numbersRaffle }) {
+function Sorteio({ raffles, trophys, numbersRaffle }) {
   const { colorMode } = useColorMode();
-  const { query, isFallback, push, route } = useRouter();
+  const { query, isFallback, push } = useRouter();
   const [siteUrl, setSiteUrl] = useState("");
 
   useEffect(() => {
     const host = window.location.href;
     setSiteUrl(host);
   }, []);
-
-  console.log(route);
 
   if (isFallback) {
     return (
@@ -173,6 +171,8 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
   const [nameCoupon, setNameCoupon] = useState("");
   const [isDiscounted, setIsDiscounted] = useState(false);
 
+  const [numbersToShort, setNumbersToShort] = useState([]);
+
   function showToast(message, status, title) {
     toast({
       title: title,
@@ -182,7 +182,7 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
     });
   }
 
-  const generate = useMemo(() => {
+  useEffect(() => {
     let number = [];
     if (JSON.stringify(raffle) !== "{}") {
       for (let index = 0; index < parseInt(raffle.qtd_numbers); index++) {
@@ -195,8 +195,8 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
         number.push(info);
       }
     }
-    return number;
-  }, [raffle]);
+    setNumbersToShort(number);
+  }, []);
 
   useEffect(() => {
     if (mynumbers.length > 0) {
@@ -206,11 +206,14 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
   }, [mynumbers]);
 
   async function handleNumbers(num) {
-    const find = await mynumbers.find((obj) => obj === num);
-    if (find) {
-      showToast("Este número já foi selecionado", "warning", "Atenção");
-    } else {
-      setMynumbers([...mynumbers, num]);
+    const findPayed = await nums.find((obj) => obj.number === parseFloat(num));
+    if (!findPayed) {
+      const find = await mynumbers.find((obj) => obj === num);
+      if (find) {
+        showToast("Este número já foi selecionado", "warning", "Atenção");
+      } else {
+        setMynumbers([...mynumbers, num]);
+      }
     }
   }
 
@@ -285,6 +288,33 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
           return "green.400";
         }
       }
+    }
+  }
+
+  function setBgAndColor(num) {
+    let find = nums.find((obj) => obj.number === parseFloat(num));
+    if (find) {
+      if (JSON.stringify(client) !== "{}") {
+        if (find.id_client === client.id) {
+          return "red.600";
+        } else {
+          if (find.status === "reserved") {
+            return "orange.400";
+          }
+          if (find.status === "paid_out") {
+            return "green.400";
+          }
+        }
+      } else {
+        if (find.status === "reserved") {
+          return "orange.400";
+        }
+        if (find.status === "paid_out") {
+          return "green.400";
+        }
+      }
+    } else {
+      return "black";
     }
   }
 
@@ -715,70 +745,36 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
                       h="400px"
                       overflow="auto"
                     >
-                      {generate.map((num) => (
-                        <Button
+                      {numbersToShort.map((num) => (
+                        <Flex
                           w="75px"
-                          colorScheme="blackAlpha"
-                          isDisabled={
+                          rounded={"md"}
+                          userSelect={"none"}
+                          h="35px"
+                          justify={"center"}
+                          align={"center"}
+                          cursor={
                             nums.find((obj) => obj.number === parseInt(num.num))
-                              ? true
-                              : false
+                              ? "not-allowed"
+                              : "pointer"
                           }
                           bg={
                             mynumbers.find((obj) => obj === num.num)
                               ? "blue.500"
-                              : "black"
+                              : setBgAndColor(num.num)
                           }
-                          _focus={{
-                            outline: "none",
-                            bg: mynumbers.find((obj) => obj === num.num)
-                              ? "blue.500"
-                              : "gray.800",
-                          }}
                           _active={{
                             bg: mynumbers.find((obj) => obj === num.num)
                               ? "blue.500"
                               : "gray.800",
                           }}
-                          _hover={{
-                            bg: mynumbers.find((obj) => obj === num.num)
-                              ? "blue.500"
-                              : "gray.800",
-                          }}
+                          _
                           key={num.num}
                           onClick={() => handleNumbers(num.num)}
                           color="gray.100"
-                          _disabled={{
-                            bg: handleBG(
-                              nums.find(
-                                (obj) => obj.number === parseInt(num.num)
-                              )
-                            ),
-                            _hover: {
-                              bg: handleBG(
-                                nums.find(
-                                  (obj) => obj.number === parseInt(num.num)
-                                )
-                              ),
-                            },
-                            _active: {
-                              bg: handleBG(
-                                nums.find(
-                                  (obj) => obj.number === parseInt(num.num)
-                                )
-                              ),
-                            },
-                            _focus: {
-                              bg: handleBG(
-                                nums.find(
-                                  (obj) => obj.number === parseInt(num.num)
-                                )
-                              ),
-                            },
-                          }}
                         >
                           {num.num}
-                        </Button>
+                        </Flex>
                       ))}
                     </Grid>
 
@@ -1160,6 +1156,8 @@ export default function Sorteio({ raffles, trophys, numbersRaffle }) {
     </>
   );
 }
+
+export default memo(Sorteio);
 
 export const getStaticPaths = async () => {
   const response = await fetch(`${configGloba.url}/findRaffle`);
