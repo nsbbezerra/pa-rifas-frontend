@@ -416,6 +416,10 @@ function HeaderApp() {
         <meta name="googletboot" content="index,nofollow" />
         <meta httpEquiv="content-language" content="pt-br" />
         <meta content="Global" name="distribution" />
+        <meta
+          name="google-site-verification"
+          content="KsPVvA0XQe_YhROQ78xfkfzOME0H50RJFMe6NPFXF6o"
+        />
       </Head>
       <Box
         h="55px"

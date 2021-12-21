@@ -253,7 +253,6 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
       setIsDiscounted(false);
       setNameCoupon("");
       showToast(response.data.message, "success", "Sucesso");
-      console.log(response.data.order);
       setOrder(response.data.order);
       setModalPayment(true);
     } catch (error) {
@@ -741,15 +740,21 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
                     mt={5}
                   >
                     <Grid
-                      templateColumns="repeat(auto-fit, minmax(78px, 78px))"
+                      templateColumns={[
+                        "repeat(5, 1fr)",
+                        "repeat(10, 1fr)",
+                        "repeat(10, 1fr)",
+                        "repeat(12, 1fr)",
+                        "repeat(12, 1fr)",
+                      ]}
                       gap="5px"
                       justifyContent="center"
                       h="400px"
                       overflow="auto"
+                      pr={1}
                     >
                       {numbersToShort.map((num) => (
                         <Flex
-                          w="75px"
                           rounded={"md"}
                           userSelect={"none"}
                           h="35px"
