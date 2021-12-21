@@ -76,6 +76,7 @@ import {
 } from "@chakra-ui/slider";
 import Lottie from "../../components/lottie";
 import emptyAnimation from "../../assets/empty.json";
+import errorAnimation from "../../assets/error.json";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 function Sorteio({ raffles, trophys, numbersRaffle }) {
@@ -368,561 +369,601 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
   return (
     <>
       <HeaderApp />
-      <Container maxW="6xl" mt={20}>
-        {JSON.stringify(raffle) === "{}" ? (
-          <Center>
-            <Heading fontSize="2xl">Nenhuma informação para mostrar</Heading>
-          </Center>
-        ) : (
-          <>
-            <Breadcrumb mb={10} fontSize={["xx-small", "md", "md", "md", "md"]}>
-              <BreadcrumbItem>
-                <Link href="/" passHref>
-                  <a>
-                    <BreadcrumbLink>Início</BreadcrumbLink>
-                  </a>
-                </Link>
-              </BreadcrumbItem>
-
-              <BreadcrumbItem>
-                <Link passHref href="/sorteios">
-                  <a>
-                    <BreadcrumbLink>Sorteios</BreadcrumbLink>
-                  </a>
-                </Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <Link passHref href={`/rifa/${raffle.identify}`}>
-                  <a>
-                    <BreadcrumbLink>
-                      {capitalizeAllFirstLetter(raffle.name)}
-                    </BreadcrumbLink>
-                  </a>
-                </Link>
-              </BreadcrumbItem>
-            </Breadcrumb>
-
-            <Grid
-              templateColumns={[
-                "1fr",
-                "1fr 1fr",
-                "1fr 1fr",
-                "1fr 1fr",
-                "1fr 1fr",
-              ]}
-              mt={10}
-              gap={20}
-              justifyItems="center"
+      {raffle.status !== "open" ? (
+        <Container maxW={"4xl"}>
+          <Flex
+            justify={"center"}
+            align={"center"}
+            direction={"column"}
+            mt={10}
+          >
+            <Lottie animation={errorAnimation} width={"40%"} />
+            <Text
+              textAlign={"center"}
+              mt={5}
+              fontSize={"lg"}
+              fontWeight={"bold"}
             >
-              <Box
-                w="100%"
-                overflow="hidden"
-                rounded="lg"
-                borderWidth="1px"
-                h="min-content"
+              Esta rifa não está disponível ou foi bloqueada pela equipe do PA
+              RIFAS
+            </Text>
+            <Button
+              leftIcon={<AiOutlineWhatsApp />}
+              colorScheme={"whatsapp"}
+              mt={5}
+              onClick={() => push("/faleconosco")}
+            >
+              Fale Conosco
+            </Button>
+          </Flex>
+        </Container>
+      ) : (
+        <Container maxW="6xl" mt={20}>
+          {JSON.stringify(raffle) === "{}" ? (
+            <Center>
+              <Heading fontSize="2xl">Nenhuma informação para mostrar</Heading>
+            </Center>
+          ) : (
+            <>
+              <Breadcrumb
+                mb={10}
+                fontSize={["xx-small", "md", "md", "md", "md"]}
               >
-                <Image
-                  src={`${configGloba.url}/img/${raffle.thumbnail}`}
-                  width={240}
-                  height={240}
-                  layout="responsive"
-                  objectFit="cover"
-                  alt="PA Rifas, rifas online"
-                />
-              </Box>
-              <Box
-                w="100%"
-                rounded="xl"
-                h="min-content"
-                rounded="xl"
-                shadow="lg"
-                borderWidth="1px"
+                <BreadcrumbItem>
+                  <Link href="/" passHref>
+                    <a>
+                      <BreadcrumbLink>Início</BreadcrumbLink>
+                    </a>
+                  </Link>
+                </BreadcrumbItem>
+
+                <BreadcrumbItem>
+                  <Link passHref href="/sorteios">
+                    <a>
+                      <BreadcrumbLink>Sorteios</BreadcrumbLink>
+                    </a>
+                  </Link>
+                </BreadcrumbItem>
+                <BreadcrumbItem>
+                  <Link passHref href={`/rifa/${raffle.identify}`}>
+                    <a>
+                      <BreadcrumbLink>
+                        {capitalizeAllFirstLetter(raffle.name)}
+                      </BreadcrumbLink>
+                    </a>
+                  </Link>
+                </BreadcrumbItem>
+              </Breadcrumb>
+
+              <Grid
+                templateColumns={[
+                  "1fr",
+                  "1fr 1fr",
+                  "1fr 1fr",
+                  "1fr 1fr",
+                  "1fr 1fr",
+                ]}
+                mt={10}
+                gap={20}
+                justifyItems="center"
               >
-                <Box p={5}>
-                  <Heading
-                    fontSize="2xl"
-                    color={colorMode === "light" ? "green.500" : "green.200"}
-                  >
-                    {raffle.name}
-                  </Heading>
-                  <Text fontSize="md" mt={3}>
-                    {raffle.description}
-                  </Text>
-                  <HStack mt={3}>
-                    <Stat>
-                      <StatLabel>Valor</StatLabel>
-                      <StatNumber>
-                        R${" "}
-                        {parseFloat(raffle.raffle_value).toLocaleString(
-                          "pt-br",
-                          {
-                            minimumFractionDigits: 2,
-                          }
-                        )}
-                      </StatNumber>
-                    </Stat>
-
-                    <Stat>
-                      <StatLabel>Sorteio</StatLabel>
-                      <StatNumber>
-                        {format(new Date(raffle.draw_date), "dd/MM/yyyy", {
-                          locale: pt_br,
-                        })}
-                      </StatNumber>
-                    </Stat>
-                  </HStack>
-                </Box>
-                {calcPercent(raffle) < parseFloat(raffle.goal) ? (
-                  <Slider
-                    aria-label="slider-ex-4"
-                    defaultValue={calcPercent()}
-                    size="lg"
-                    mt="-12px"
-                    isReadOnly
-                  >
-                    <SliderTrack
-                      bg={useColorModeValue("red.100", "red.100")}
-                      h="10px"
-                      rounded="none"
-                    >
-                      <SliderFilledTrack
-                        bg={useColorModeValue("red.500", "red.300")}
-                      />
-                    </SliderTrack>
-                    <SliderThumb
-                      boxSize={10}
-                      borderWidth="1px"
-                      borderColor="red.200"
-                    >
-                      <Flex
-                        justify="center"
-                        align="center"
-                        fontSize="sm"
-                        fontWeight="bold"
-                        color="red.500"
-                      >
-                        {calcPercent()}%
-                      </Flex>
-                    </SliderThumb>
-                  </Slider>
-                ) : (
-                  <Slider
-                    aria-label="slider-ex-4"
-                    defaultValue={calcPercent()}
-                    size="lg"
-                    mt="-12px"
-                    isReadOnly
-                  >
-                    <SliderTrack
-                      bg={useColorModeValue("green.100", "green.100")}
-                      h="10px"
-                      rounded="none"
-                    >
-                      <SliderFilledTrack
-                        bg={useColorModeValue("green.500", "green.300")}
-                      />
-                    </SliderTrack>
-                    <SliderThumb
-                      boxSize={10}
-                      borderWidth="1px"
-                      borderColor="green.200"
-                    >
-                      <Flex
-                        justify="center"
-                        align="center"
-                        fontSize="sm"
-                        fontWeight="bold"
-                        color="green.500"
-                      >
-                        {calcPercent()}%
-                      </Flex>
-                    </SliderThumb>
-                  </Slider>
-                )}
-                <Box p={5} mt="-12px">
-                  <Flex>
-                    <Flex
-                      rounded="full"
-                      w="50px"
-                      h="50px"
-                      bg={
-                        colorMode === "light"
-                          ? "blackAlpha.100"
-                          : "whiteAlpha.200"
-                      }
-                      justify="center"
-                      align="center"
-                    >
-                      <Icon as={AiOutlineUser} fontSize="3xl" />
-                    </Flex>
-                    <Box ml={3}>
-                      <Text fontSize="sm" fontWeight="bold">
-                        {raffle.name_client}
-                      </Text>
-                      <Text
-                        color={
-                          colorMode === "light" ? "green.500" : "green.200"
-                        }
-                        fontSize="sm"
-                      >
-                        {raffle.client_city} - {raffle.client_state}
-                      </Text>
-                    </Box>
-                  </Flex>
-                </Box>
-                <Divider />
-                <Center mt={3}>
-                  <Text fontSize="sm">COMPARTILHAR</Text>
-                </Center>
-                <Center p={3}>
-                  <ChakraLink
-                    href={`https://www.facebook.com/sharer/sharer.php?u=${siteUrl}`}
-                    target={"_blank"}
-                  >
-                    <IconButton
-                      icon={<AiOutlineFacebook />}
-                      colorScheme="green"
-                      variant="outline"
-                    />
-                  </ChakraLink>
-                  <ChakraLink
-                    href={`https://api.whatsapp.com/send?text=${siteUrl}`}
-                    target={"_blank"}
-                  >
-                    <IconButton
-                      icon={<AiOutlineWhatsApp />}
-                      colorScheme="green"
-                      ml={3}
-                      mr={3}
-                      variant="outline"
-                    />
-                  </ChakraLink>
-                  <CopyToClipboard
-                    text={siteUrl}
-                    onCopy={() =>
-                      showToast(
-                        "Url copiada para a área de transferência",
-                        "info",
-                        "Informação"
-                      )
-                    }
-                  >
-                    <IconButton
-                      icon={<AiOutlineCopy />}
-                      colorScheme="green"
-                      variant="outline"
-                    />
-                  </CopyToClipboard>
-                </Center>
-              </Box>
-            </Grid>
-          </>
-        )}
-
-        <Tabs mt={10} colorScheme={"green"} variant={"enclosed-colored"}>
-          <TabList>
-            <Tab roundedTop={"md"}>Números</Tab>
-            <Tab roundedTop={"md"}>Prêmios</Tab>
-          </TabList>
-
-          <TabPanels>
-            <TabPanel p={0}>
-              {new Date() >= new Date(raffle.draw_date) ? (
-                <Flex
-                  justify={"center"}
-                  align={"center"}
-                  direction={"column"}
-                  mt={10}
+                <Box
+                  w="100%"
+                  overflow="hidden"
+                  rounded="lg"
+                  borderWidth="1px"
+                  h="min-content"
                 >
-                  <Lottie animation={emptyAnimation} width={"30%"} />
-                  <Text textAlign={"center"} mt={5}>
-                    Nenhum número para sortear, rifa fora do período de
-                    validade.
-                  </Text>
-                </Flex>
-              ) : (
-                <>
-                  <Grid
-                    templateColumns={[
-                      "repeat(2, 140px)",
-                      "repeat(3, 180px)",
-                      "repeat(4, 180px)",
-                      "repeat(4, 180px)",
-                      "repeat(4, 180px)",
-                    ]}
-                    gap="15px"
+                  <Image
+                    src={`${configGloba.url}/img/${raffle.thumbnail}`}
+                    width={240}
+                    height={240}
+                    layout="responsive"
+                    objectFit="cover"
+                    alt="PA Rifas, rifas online"
+                  />
+                </Box>
+                <Box
+                  w="100%"
+                  rounded="xl"
+                  h="min-content"
+                  rounded="xl"
+                  shadow="lg"
+                  borderWidth="1px"
+                >
+                  <Box p={5}>
+                    <Heading
+                      fontSize="2xl"
+                      color={colorMode === "light" ? "green.500" : "green.200"}
+                    >
+                      {raffle.name}
+                    </Heading>
+                    <Text fontSize="md" mt={3}>
+                      {raffle.description}
+                    </Text>
+                    <HStack mt={3}>
+                      <Stat>
+                        <StatLabel>Valor</StatLabel>
+                        <StatNumber>
+                          R${" "}
+                          {parseFloat(raffle.raffle_value).toLocaleString(
+                            "pt-br",
+                            {
+                              minimumFractionDigits: 2,
+                            }
+                          )}
+                        </StatNumber>
+                      </Stat>
+
+                      <Stat>
+                        <StatLabel>Sorteio</StatLabel>
+                        <StatNumber>
+                          {format(new Date(raffle.draw_date), "dd/MM/yyyy", {
+                            locale: pt_br,
+                          })}
+                        </StatNumber>
+                      </Stat>
+                    </HStack>
+                  </Box>
+                  {calcPercent(raffle) < parseFloat(raffle.goal) ? (
+                    <Slider
+                      aria-label="slider-ex-4"
+                      defaultValue={calcPercent()}
+                      size="lg"
+                      mt="-12px"
+                      isReadOnly
+                    >
+                      <SliderTrack
+                        bg={useColorModeValue("red.100", "red.100")}
+                        h="10px"
+                        rounded="none"
+                      >
+                        <SliderFilledTrack
+                          bg={useColorModeValue("red.500", "red.300")}
+                        />
+                      </SliderTrack>
+                      <SliderThumb
+                        boxSize={10}
+                        borderWidth="1px"
+                        borderColor="red.200"
+                      >
+                        <Flex
+                          justify="center"
+                          align="center"
+                          fontSize="sm"
+                          fontWeight="bold"
+                          color="red.500"
+                        >
+                          {calcPercent()}%
+                        </Flex>
+                      </SliderThumb>
+                    </Slider>
+                  ) : (
+                    <Slider
+                      aria-label="slider-ex-4"
+                      defaultValue={calcPercent()}
+                      size="lg"
+                      mt="-12px"
+                      isReadOnly
+                    >
+                      <SliderTrack
+                        bg={useColorModeValue("green.100", "green.100")}
+                        h="10px"
+                        rounded="none"
+                      >
+                        <SliderFilledTrack
+                          bg={useColorModeValue("green.500", "green.300")}
+                        />
+                      </SliderTrack>
+                      <SliderThumb
+                        boxSize={10}
+                        borderWidth="1px"
+                        borderColor="green.200"
+                      >
+                        <Flex
+                          justify="center"
+                          align="center"
+                          fontSize="sm"
+                          fontWeight="bold"
+                          color="green.500"
+                        >
+                          {calcPercent()}%
+                        </Flex>
+                      </SliderThumb>
+                    </Slider>
+                  )}
+                  <Box p={5} mt="-12px">
+                    <Flex>
+                      <Flex
+                        rounded="full"
+                        w="50px"
+                        h="50px"
+                        bg={
+                          colorMode === "light"
+                            ? "blackAlpha.100"
+                            : "whiteAlpha.200"
+                        }
+                        justify="center"
+                        align="center"
+                      >
+                        <Icon as={AiOutlineUser} fontSize="3xl" />
+                      </Flex>
+                      <Box ml={3}>
+                        <Text fontSize="sm" fontWeight="bold">
+                          {raffle.name_client}
+                        </Text>
+                        <Text
+                          color={
+                            colorMode === "light" ? "green.500" : "green.200"
+                          }
+                          fontSize="sm"
+                        >
+                          {raffle.client_city} - {raffle.client_state}
+                        </Text>
+                      </Box>
+                    </Flex>
+                  </Box>
+                  <Divider />
+                  <Center mt={3}>
+                    <Text fontSize="sm">COMPARTILHAR</Text>
+                  </Center>
+                  <Center p={3}>
+                    <ChakraLink
+                      href={`https://www.facebook.com/sharer/sharer.php?u=${siteUrl}`}
+                      target={"_blank"}
+                    >
+                      <IconButton
+                        icon={<AiOutlineFacebook />}
+                        colorScheme="green"
+                        variant="outline"
+                      />
+                    </ChakraLink>
+                    <ChakraLink
+                      href={`https://api.whatsapp.com/send?text=${siteUrl}`}
+                      target={"_blank"}
+                    >
+                      <IconButton
+                        icon={<AiOutlineWhatsApp />}
+                        colorScheme="green"
+                        ml={3}
+                        mr={3}
+                        variant="outline"
+                      />
+                    </ChakraLink>
+                    <CopyToClipboard
+                      text={siteUrl}
+                      onCopy={() =>
+                        showToast(
+                          "Url copiada para a área de transferência",
+                          "info",
+                          "Informação"
+                        )
+                      }
+                    >
+                      <IconButton
+                        icon={<AiOutlineCopy />}
+                        colorScheme="green"
+                        variant="outline"
+                      />
+                    </CopyToClipboard>
+                  </Center>
+                </Box>
+              </Grid>
+            </>
+          )}
+
+          <Tabs mt={10} colorScheme={"green"} variant={"enclosed-colored"}>
+            <TabList>
+              <Tab roundedTop={"md"}>Números</Tab>
+              <Tab roundedTop={"md"}>Prêmios</Tab>
+            </TabList>
+
+            <TabPanels>
+              <TabPanel p={0}>
+                {new Date() >= new Date(raffle.draw_date) ? (
+                  <Flex
+                    justify={"center"}
+                    align={"center"}
+                    direction={"column"}
                     mt={10}
                   >
-                    <Box
-                      rounded="3xl"
-                      pt={1}
-                      pb={1}
-                      pr={3}
-                      pl={3}
-                      bg="black"
-                      color="white"
-                      textAlign="center"
-                      fontSize={["xs", "md", "md", "md", "md"]}
-                    >
-                      Livres (
-                      {nums.length > 0 && JSON.stringify(raffle) !== "{}"
-                        ? raffle.qtd_numbers -
-                          nums.filter((obj) => obj.status === "reserved")
-                            .length -
-                          nums.filter((obj) => obj.status === "paid_out").length
-                        : raffle.qtd_numbers}
-                      )
-                    </Box>
-                    <Box
-                      rounded="3xl"
-                      pt={1}
-                      pb={1}
-                      pr={3}
-                      pl={3}
-                      bg="orange.400"
-                      color="white"
-                      textAlign="center"
-                      fontSize={["xs", "md", "md", "md", "md"]}
-                    >
-                      Reservado (
-                      {nums.length > 0
-                        ? nums.filter((obj) => obj.status === "reserved").length
-                        : 0}
-                      )
-                    </Box>
-                    <Box
-                      rounded="3xl"
-                      pt={1}
-                      pb={1}
-                      pr={3}
-                      pl={3}
-                      bg="green.400"
-                      color="white"
-                      textAlign="center"
-                      fontSize={["xs", "md", "md", "md", "md"]}
-                    >
-                      Pago (
-                      {nums.length > 0
-                        ? nums.filter((obj) => obj.status === "paid_out").length
-                        : 0}
-                      )
-                    </Box>
-                    <Box
-                      rounded="3xl"
-                      pt={1}
-                      pb={1}
-                      pr={3}
-                      pl={3}
-                      bg="red.600"
-                      color="white"
-                      textAlign="center"
-                      fontSize={["xs", "md", "md", "md", "md"]}
-                    >
-                      Meus Números (
-                      {JSON.stringify(client) !== "{}"
-                        ? nums.filter((obj) => obj.id_client === client.id)
-                            .length
-                        : 0}
-                      )
-                    </Box>
-                  </Grid>
-
-                  <Box
-                    rounded="xl"
-                    p={4}
-                    shadow="lg"
-                    bg={
-                      colorMode === "light"
-                        ? "rgba(0,0,0,0.02)"
-                        : "whiteAlpha.300"
-                    }
-                    borderWidth="1px"
-                    mt={5}
-                  >
+                    <Lottie animation={emptyAnimation} width={"30%"} />
+                    <Text textAlign={"center"} mt={5}>
+                      Nenhum número para sortear, rifa fora do período de
+                      validade.
+                    </Text>
+                  </Flex>
+                ) : (
+                  <>
                     <Grid
                       templateColumns={[
-                        "repeat(5, 1fr)",
-                        "repeat(10, 1fr)",
-                        "repeat(10, 1fr)",
-                        "repeat(12, 1fr)",
-                        "repeat(12, 1fr)",
+                        "repeat(2, 140px)",
+                        "repeat(3, 180px)",
+                        "repeat(4, 180px)",
+                        "repeat(4, 180px)",
+                        "repeat(4, 180px)",
                       ]}
-                      gap="5px"
-                      justifyContent="center"
-                      h="400px"
-                      overflow="auto"
-                      pr={1}
+                      gap="15px"
+                      mt={10}
                     >
-                      {numbersToShort.map((num) => (
-                        <Flex
-                          rounded={"md"}
-                          userSelect={"none"}
-                          h="35px"
-                          justify={"center"}
-                          align={"center"}
-                          cursor={
-                            nums.find((obj) => obj.number === parseInt(num.num))
-                              ? "not-allowed"
-                              : "pointer"
-                          }
-                          bg={
-                            mynumbers.find((obj) => obj === num.num)
-                              ? "blue.500"
-                              : setBgAndColor(num.num)
-                          }
-                          _active={{
-                            bg: mynumbers.find((obj) => obj === num.num)
-                              ? "blue.500"
-                              : "gray.800",
-                          }}
-                          _
-                          key={num.num}
-                          onClick={() => handleNumbers(num.num)}
-                          color="gray.100"
-                        >
-                          {num.num}
-                        </Flex>
-                      ))}
+                      <Box
+                        rounded="3xl"
+                        pt={1}
+                        pb={1}
+                        pr={3}
+                        pl={3}
+                        bg="black"
+                        color="white"
+                        textAlign="center"
+                        fontSize={["xs", "md", "md", "md", "md"]}
+                      >
+                        Livres (
+                        {nums.length > 0 && JSON.stringify(raffle) !== "{}"
+                          ? raffle.qtd_numbers -
+                            nums.filter((obj) => obj.status === "reserved")
+                              .length -
+                            nums.filter((obj) => obj.status === "paid_out")
+                              .length
+                          : raffle.qtd_numbers}
+                        )
+                      </Box>
+                      <Box
+                        rounded="3xl"
+                        pt={1}
+                        pb={1}
+                        pr={3}
+                        pl={3}
+                        bg="orange.400"
+                        color="white"
+                        textAlign="center"
+                        fontSize={["xs", "md", "md", "md", "md"]}
+                      >
+                        Reservado (
+                        {nums.length > 0
+                          ? nums.filter((obj) => obj.status === "reserved")
+                              .length
+                          : 0}
+                        )
+                      </Box>
+                      <Box
+                        rounded="3xl"
+                        pt={1}
+                        pb={1}
+                        pr={3}
+                        pl={3}
+                        bg="green.400"
+                        color="white"
+                        textAlign="center"
+                        fontSize={["xs", "md", "md", "md", "md"]}
+                      >
+                        Pago (
+                        {nums.length > 0
+                          ? nums.filter((obj) => obj.status === "paid_out")
+                              .length
+                          : 0}
+                        )
+                      </Box>
+                      <Box
+                        rounded="3xl"
+                        pt={1}
+                        pb={1}
+                        pr={3}
+                        pl={3}
+                        bg="red.600"
+                        color="white"
+                        textAlign="center"
+                        fontSize={["xs", "md", "md", "md", "md"]}
+                      >
+                        Meus Números (
+                        {JSON.stringify(client) !== "{}"
+                          ? nums.filter((obj) => obj.id_client === client.id)
+                              .length
+                          : 0}
+                        )
+                      </Box>
                     </Grid>
 
-                    <Button
-                      leftIcon={<FaTrash />}
-                      colorScheme="red"
-                      onClick={() => clearNumbers()}
+                    <Box
+                      rounded="xl"
+                      p={4}
+                      shadow="lg"
+                      bg={
+                        colorMode === "light"
+                          ? "rgba(0,0,0,0.02)"
+                          : "whiteAlpha.300"
+                      }
+                      borderWidth="1px"
                       mt={5}
                     >
-                      Limpar Números
-                    </Button>
-                  </Box>
+                      <Grid
+                        templateColumns={[
+                          "repeat(5, 1fr)",
+                          "repeat(10, 1fr)",
+                          "repeat(10, 1fr)",
+                          "repeat(12, 1fr)",
+                          "repeat(12, 1fr)",
+                        ]}
+                        gap="5px"
+                        justifyContent="center"
+                        h="400px"
+                        overflow="auto"
+                        pr={1}
+                      >
+                        {numbersToShort.map((num) => (
+                          <Flex
+                            rounded={"md"}
+                            userSelect={"none"}
+                            h="35px"
+                            justify={"center"}
+                            align={"center"}
+                            cursor={
+                              nums.find(
+                                (obj) => obj.number === parseInt(num.num)
+                              )
+                                ? "not-allowed"
+                                : "pointer"
+                            }
+                            bg={
+                              mynumbers.find((obj) => obj === num.num)
+                                ? "blue.500"
+                                : setBgAndColor(num.num)
+                            }
+                            _active={{
+                              bg: mynumbers.find((obj) => obj === num.num)
+                                ? "blue.500"
+                                : "gray.800",
+                            }}
+                            _
+                            key={num.num}
+                            onClick={() => handleNumbers(num.num)}
+                            color="gray.100"
+                          >
+                            {num.num}
+                          </Flex>
+                        ))}
+                      </Grid>
 
-                  <Grid
-                    rounded="xl"
-                    shadow="lg"
-                    borderWidth="1px"
-                    p={5}
-                    h="min-content"
-                    templateColumns={[
-                      "1fr",
-                      "1fr 1fr 1fr",
-                      "1fr 1fr 1fr",
-                      "1fr 1fr 1fr",
-                      "1fr 1fr 1fr",
-                    ]}
-                    gap={5}
-                    mt={10}
-                    alignItems="center"
-                    justifyItems={[
-                      "center",
-                      "initial",
-                      "initial",
-                      "initial",
-                      "initial",
-                    ]}
-                  >
-                    <Stat>
-                      <StatLabel>Total a Pagar</StatLabel>
-                      <StatNumber>
-                        {isDiscounted === true ? (
-                          <HStack>
-                            <Text
-                              textDecor={"line-through"}
-                              color="gray.600"
-                              fontWeight={"light"}
-                            >
-                              {parseFloat(amountCompare).toLocaleString(
-                                "pt-br",
-                                {
-                                  style: "currency",
-                                  currency: "BRL",
-                                }
-                              )}
-                            </Text>
-                            <Text>
-                              {parseFloat(amount).toLocaleString("pt-br", {
-                                style: "currency",
-                                currency: "BRL",
-                              })}
-                            </Text>
-                          </HStack>
-                        ) : (
-                          parseFloat(amount).toLocaleString("pt-br", {
-                            style: "currency",
-                            currency: "BRL",
-                          })
-                        )}
-                      </StatNumber>
-                    </Stat>
-
-                    <HStack>
-                      <Input
-                        value={nameCoupon}
-                        onChange={(e) =>
-                          setNameCoupon(e.target.value.toUpperCase())
-                        }
-                        placeholder="Insira o Cupom"
-                        focusBorderColor="green.500"
-                      />
-                      <IconButton
-                        icon={<FaCheck />}
-                        variant="outline"
-                        colorScheme={"green"}
-                        isLoading={loadingCoupon}
-                        onClick={() => findCoupon()}
-                      />
-                    </HStack>
+                      <Button
+                        leftIcon={<FaTrash />}
+                        colorScheme="red"
+                        onClick={() => clearNumbers()}
+                        mt={5}
+                      >
+                        Limpar Números
+                      </Button>
+                    </Box>
 
                     <Grid
-                      templateColumns={"1fr"}
-                      gap={[2, 5, 5, 5, 5]}
-                      w="100%"
-                    >
-                      <Button
-                        leftIcon={<FaCheck />}
-                        colorScheme="green"
-                        size="lg"
-                        onClick={() => setModalSent(true)}
-                        isFullWidth
-                      >
-                        Finalizar Compra
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </>
-              )}
-            </TabPanel>
-
-            <TabPanel p={0}>
-              <Stack mt={10} spacing={5}>
-                {trophy.map((tro) => (
-                  <Grid
-                    templateColumns={"60px 1fr"}
-                    gap={5}
-                    rounded={"xl"}
-                    overflow={"hidden"}
-                    borderWidth={"1px"}
-                    justifyItems={"center"}
-                    alignItems={"center"}
-                    key={tro.id}
-                  >
-                    <Flex
-                      justify={"center"}
-                      align={"center"}
+                      rounded="xl"
+                      shadow="lg"
+                      borderWidth="1px"
                       p={5}
-                      bg={useColorModeValue("green.500", "green.200")}
-                      color={useColorModeValue("gray.100", "gray.800")}
-                      h="60px"
-                      w="60px"
+                      h="min-content"
+                      templateColumns={[
+                        "1fr",
+                        "1fr 1fr 1fr",
+                        "1fr 1fr 1fr",
+                        "1fr 1fr 1fr",
+                        "1fr 1fr 1fr",
+                      ]}
+                      gap={5}
+                      mt={10}
+                      alignItems="center"
+                      justifyItems={[
+                        "center",
+                        "initial",
+                        "initial",
+                        "initial",
+                        "initial",
+                      ]}
                     >
-                      <Icon as={AiOutlineTrophy} fontSize={"3xl"} />
-                    </Flex>
-                    <Text p={2}>{tro.description}</Text>
-                  </Grid>
-                ))}
-              </Stack>
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-      </Container>
+                      <Stat>
+                        <StatLabel>Total a Pagar</StatLabel>
+                        <StatNumber>
+                          {isDiscounted === true ? (
+                            <HStack>
+                              <Text
+                                textDecor={"line-through"}
+                                color="gray.600"
+                                fontWeight={"light"}
+                              >
+                                {parseFloat(amountCompare).toLocaleString(
+                                  "pt-br",
+                                  {
+                                    style: "currency",
+                                    currency: "BRL",
+                                  }
+                                )}
+                              </Text>
+                              <Text>
+                                {parseFloat(amount).toLocaleString("pt-br", {
+                                  style: "currency",
+                                  currency: "BRL",
+                                })}
+                              </Text>
+                            </HStack>
+                          ) : (
+                            parseFloat(amount).toLocaleString("pt-br", {
+                              style: "currency",
+                              currency: "BRL",
+                            })
+                          )}
+                        </StatNumber>
+                      </Stat>
+
+                      <HStack>
+                        <Input
+                          value={nameCoupon}
+                          onChange={(e) =>
+                            setNameCoupon(e.target.value.toUpperCase())
+                          }
+                          placeholder="Insira o Cupom"
+                          focusBorderColor="green.500"
+                        />
+                        <IconButton
+                          icon={<FaCheck />}
+                          variant="outline"
+                          colorScheme={"green"}
+                          isLoading={loadingCoupon}
+                          onClick={() => findCoupon()}
+                        />
+                      </HStack>
+
+                      <Grid
+                        templateColumns={"1fr"}
+                        gap={[2, 5, 5, 5, 5]}
+                        w="100%"
+                      >
+                        <Button
+                          leftIcon={<FaCheck />}
+                          colorScheme="green"
+                          size="lg"
+                          onClick={() => setModalSent(true)}
+                          isFullWidth
+                        >
+                          Finalizar Compra
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </>
+                )}
+              </TabPanel>
+
+              <TabPanel p={0}>
+                <Stack mt={10} spacing={5}>
+                  {trophy.length !== 0
+                    ? trophy.map((tro) => (
+                        <Grid
+                          templateColumns={"60px 1fr"}
+                          gap={5}
+                          rounded={"xl"}
+                          overflow={"hidden"}
+                          borderWidth={"1px"}
+                          justifyItems={"center"}
+                          alignItems={"center"}
+                          key={tro.id}
+                        >
+                          <Flex
+                            justify={"center"}
+                            align={"center"}
+                            p={5}
+                            bg={useColorModeValue("green.500", "green.200")}
+                            color={useColorModeValue("gray.100", "gray.800")}
+                            h="60px"
+                            w="60px"
+                          >
+                            <Icon as={AiOutlineTrophy} fontSize={"3xl"} />
+                          </Flex>
+                          <Text p={2}>{tro.description}</Text>
+                        </Grid>
+                      ))
+                    : ""}
+                </Stack>
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        </Container>
+      )}
 
       <FooterApp />
 
