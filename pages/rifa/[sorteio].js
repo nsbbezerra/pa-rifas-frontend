@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, memo } from "react";
+import { useEffect, useState, memo } from "react";
 import HeaderApp from "../../components/header";
 import {
   Box,
@@ -54,6 +54,7 @@ import {
   AiOutlineTrophy,
   AiOutlineUser,
   AiOutlineWhatsApp,
+  AiOutlineDollar,
 } from "react-icons/ai";
 import MaskedInput from "react-text-mask";
 import Link from "next/link";
@@ -158,6 +159,7 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
   const [amountCompare, setAmountCompare] = useState(0);
 
   const [modalSend, setModalSent] = useState(false);
+  const [modalPayment, setModalPayment] = useState(false);
 
   const [raffle] = useState(raffles);
   const [trophy] = useState(trophys);
@@ -172,6 +174,7 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
   const [isDiscounted, setIsDiscounted] = useState(false);
 
   const [numbersToShort, setNumbersToShort] = useState([]);
+  const [order, setOrder] = useState({});
 
   function showToast(message, status, title) {
     toast({
@@ -244,14 +247,15 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
         orderValue: amount,
       });
       setAmount(0);
-      setMynumbers([]);
       setConcordo(false);
       setModalSent(false);
       setLoading(false);
       setIsDiscounted(false);
       setNameCoupon("");
       showToast(response.data.message, "success", "Sucesso");
-      push(response.data.url);
+      console.log(response.data.order);
+      setOrder(response.data.order);
+      setModalPayment(true);
     } catch (error) {
       setLoading(false);
       if (error.message === "Network Error") {
@@ -267,27 +271,25 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
     }
   }
 
-  function handleBG(id) {
-    if (id !== undefined) {
-      if (JSON.stringify(client) !== "{}") {
-        if (id.id_client === client.id) {
-          return "red.600";
-        } else {
-          if (id.status === "reserved") {
-            return "orange.400";
-          }
-          if (id.status === "paid_out") {
-            return "green.400";
-          }
-        }
-      } else {
-        if (id.status === "reserved") {
-          return "orange.400";
-        }
-        if (id.status === "paid_out") {
-          return "green.400";
-        }
+  async function payById() {
+    setLoading(true);
+
+    try {
+      const response = await api.post(`/rafflePaymentById/${order.id}`);
+      push(response.data.url);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      if (error.message === "Network Error") {
+        alert(
+          "Sem conexão com o servidor, verifique sua conexão com a internet."
+        );
+        return false;
       }
+      let mess = !error.response.data
+        ? "Erro no pagamento"
+        : error.response.data.message;
+      showToast(mess, "error", "Erro");
     }
   }
 
@@ -1149,6 +1151,90 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
               isLoading={loading}
             >
               Concluir
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={modalPayment}
+        onClose={() => setModalPayment(false)}
+        size={"xs"}
+        closeOnEsc={false}
+        closeOnOverlayClick={false}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Pagamento</ModalHeader>
+          <ModalBody>
+            <Box
+              w="100%"
+              overflow="hidden"
+              rounded="lg"
+              borderWidth="1px"
+              h="min-content"
+            >
+              <Image
+                src={`${configGloba.url}/img/${raffle.thumbnail}`}
+                width={240}
+                height={240}
+                layout="responsive"
+                objectFit="cover"
+                alt="PA Rifas, rifas online"
+              />
+            </Box>
+
+            <Text mt={3} fontSize={"sm"}>
+              <strong>CÓDIGO:</strong> {order.identify}
+            </Text>
+            <Text mt={1} fontSize={"sm"}>
+              <strong>CLIENTE:</strong> {client.name}
+            </Text>
+            <Text mt={1} fontSize={"sm"}>
+              <strong>TELEFONE:</strong> {client.phone}
+            </Text>
+
+            <Text mt={3} fontSize={"sm"}>
+              Números Reservados:
+            </Text>
+
+            <Grid templateColumns={"1fr 1fr 1fr"} gap={3}>
+              {mynumbers.map((num) => (
+                <Flex
+                  bg="orange.500"
+                  color={"gray.100"}
+                  justify={"center"}
+                  align={"center"}
+                  rounded="md"
+                  h="30px"
+                  fontSize={"sm"}
+                  key={num}
+                >
+                  {num}
+                </Flex>
+              ))}
+            </Grid>
+
+            <Stat mt={5} mb={-3}>
+              <StatLabel>Total a Pagar</StatLabel>
+              <StatNumber>{`R$ ${parseFloat(order.value).toLocaleString(
+                "pt-br",
+                {
+                  minimumFractionDigits: 2,
+                }
+              )}`}</StatNumber>
+            </Stat>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button
+              isFullWidth
+              colorScheme={"green"}
+              leftIcon={<AiOutlineDollar />}
+              isLoading={loading}
+              onClick={() => payById()}
+            >
+              Pagar Agora
             </Button>
           </ModalFooter>
         </ModalContent>
