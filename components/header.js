@@ -299,13 +299,6 @@ function HeaderApp() {
             </Button>
           </a>
         </Link>
-        <Link href="/novarifa" passHref>
-          <a>
-            <Button colorScheme="green" variant="ghost" size="sm">
-              CRIAR RIFA
-            </Button>
-          </a>
-        </Link>
         <Link href="/condicoesdeuso" passHref>
           <a>
             <Button colorScheme="green" variant="ghost" size="sm">
@@ -1073,18 +1066,6 @@ function HeaderApp() {
                     variant="outline"
                   >
                     FALE CONOSCO
-                  </Button>
-                </a>
-              </Link>
-              <Link href="/novarifa" passHref>
-                <a>
-                  <Button
-                    colorScheme="green"
-                    isFullWidth
-                    _focus={{ outline: "none" }}
-                    variant="outline"
-                  >
-                    CRIAR RIFA
                   </Button>
                 </a>
               </Link>
