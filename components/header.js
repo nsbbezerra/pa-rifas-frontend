@@ -43,7 +43,6 @@ import {
   DrawerContent,
   DrawerCloseButton,
   useColorModeValue,
-  Icon,
   Avatar,
 } from "@chakra-ui/react";
 import {

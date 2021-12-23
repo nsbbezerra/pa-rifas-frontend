@@ -1030,7 +1030,7 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
                       isFullWidth
                       mt={5}
                       colorScheme="orange"
-                      onClick={() => setOpenRegister(true)}
+                      onClick={() => push(`/cadastro/?rifa=${query.sorteio}`)}
                     >
                       CADASTRE-SE
                     </Button>
