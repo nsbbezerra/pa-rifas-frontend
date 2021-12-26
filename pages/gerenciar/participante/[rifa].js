@@ -553,6 +553,29 @@ export default function GerenciarPartitipante({
                         ""
                       )}
 
+                      {ord.status === "paid_out" &&
+                      ord.pay_mode === "ticket" ? (
+                        <Flex
+                          justify="space-between"
+                          align="center"
+                          pr={3}
+                          pl={3}
+                          pb={2}
+                          color={useColorModeValue("gray.100", "gray.800")}
+                        >
+                          <Text>Forma:</Text>
+                          <Button
+                            variant={"link"}
+                            colorScheme={"whiteAlpha"}
+                            color={useColorModeValue("gray.100", "gray.800")}
+                          >
+                            Transferência
+                          </Button>
+                        </Flex>
+                      ) : (
+                        ""
+                      )}
+
                       {ord.status !== "paid_out" && (
                         <Box pl={2} pr={2} pb={2}>
                           <Popover placement="top">
