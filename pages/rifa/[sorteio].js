@@ -64,7 +64,6 @@ import { format } from "date-fns";
 import pt_br from "date-fns/locale/pt-BR";
 import { useClient } from "../../context/Clients";
 import { useLoginModal } from "../../context/ModalLogin";
-import { useRegisterModal } from "../../context/ModalRegister";
 import api from "../../configs/axios";
 import useFetch from "../../hooks/useFetch";
 import FooterApp from "../../components/footer";
@@ -132,7 +131,6 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
 
   const toast = useToast();
   const { client, setClient } = useClient();
-  const { setOpenRegister } = useRegisterModal();
   const { setOpenLogin } = useLoginModal();
   const { data } = useFetch(`/numbers/${query.sorteio}`);
 
@@ -325,7 +323,7 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
     let numberSale = numbersRaffle.length;
     let firstCalc = 100 * numberSale;
     let finalCalc = firstCalc / totalNumbers;
-    return finalCalc;
+    return parseInt(finalCalc);
   }
 
   function calcDiscountCupom(value) {

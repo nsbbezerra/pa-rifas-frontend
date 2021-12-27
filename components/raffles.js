@@ -39,7 +39,7 @@ export default function ShowRaffles({ raffle, destination, numbers }) {
       let numberSale = result.count;
       let firstCalc = 100 * numberSale;
       let finalCalc = firstCalc / totalNumbers;
-      return finalCalc;
+      return parseInt(finalCalc);
     }
   }
 
