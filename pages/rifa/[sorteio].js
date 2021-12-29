@@ -274,18 +274,18 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
           return "red.600";
         } else {
           if (find.status === "reserved") {
-            return "orange.400";
+            return "orange.500";
           }
           if (find.status === "paid_out") {
-            return "green.400";
+            return "green.500";
           }
         }
       } else {
         if (find.status === "reserved") {
-          return "orange.400";
+          return "orange.500";
         }
         if (find.status === "paid_out") {
-          return "green.400";
+          return "green.500";
         }
       }
     } else {
@@ -676,25 +676,23 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
             <>
               <Grid
                 templateColumns={[
-                  "repeat(2, 140px)",
-                  "repeat(3, 180px)",
-                  "repeat(4, 180px)",
-                  "repeat(4, 180px)",
-                  "repeat(4, 180px)",
+                  "repeat(2, 1fr)",
+                  "repeat(2, 1fr)",
+                  "repeat(4, 1fr)",
+                  "repeat(4, 1fr)",
+                  "repeat(4, 1fr)",
                 ]}
-                gap="15px"
+                gap={0}
                 mt={10}
+                rounded="md"
+                overflow={"hidden"}
               >
                 <Box
-                  rounded="3xl"
-                  pt={1}
-                  pb={1}
-                  pr={3}
-                  pl={3}
+                  p={3}
                   bg="black"
                   color="white"
                   textAlign="center"
-                  fontSize={["xs", "md", "md", "md", "md"]}
+                  fontWeight={"bold"}
                 >
                   Livres (
                   {nums.length > 0 && JSON.stringify(raffle) !== "{}"
@@ -705,15 +703,11 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
                   )
                 </Box>
                 <Box
-                  rounded="3xl"
-                  pt={1}
-                  pb={1}
-                  pr={3}
-                  pl={3}
-                  bg="orange.400"
+                  p={3}
+                  bg="orange.500"
                   color="white"
                   textAlign="center"
-                  fontSize={["xs", "md", "md", "md", "md"]}
+                  fontWeight={"bold"}
                 >
                   Reservado (
                   {nums.length > 0
@@ -722,15 +716,11 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
                   )
                 </Box>
                 <Box
-                  rounded="3xl"
-                  pt={1}
-                  pb={1}
-                  pr={3}
-                  pl={3}
-                  bg="green.400"
+                  p={3}
+                  bg="green.500"
                   color="white"
                   textAlign="center"
-                  fontSize={["xs", "md", "md", "md", "md"]}
+                  fontWeight={"bold"}
                 >
                   Pago (
                   {nums.length > 0
@@ -739,15 +729,11 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
                   )
                 </Box>
                 <Box
-                  rounded="3xl"
-                  pt={1}
-                  pb={1}
-                  pr={3}
-                  pl={3}
+                  p={3}
                   bg="red.600"
                   color="white"
                   textAlign="center"
-                  fontSize={["xs", "md", "md", "md", "md"]}
+                  fontWeight={"bold"}
                 >
                   Meus Números (
                   {JSON.stringify(client) !== "{}"
@@ -776,6 +762,9 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
                     "repeat(12, 1fr)",
                   ]}
                   gap="5px"
+                  h="480px"
+                  pr={1}
+                  overflow={"auto"}
                   justifyContent="center"
                 >
                   {numbersToShort.map((num) => (
@@ -812,21 +801,12 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
               </Box>
 
               <Grid
-                position={"fixed"}
-                bottom={-5}
-                right={[2, 40, 40, 40, 40]}
-                left={[2, 40, 40, 40, 40]}
                 rounded="xl"
-                shadow="dark-lg"
-                borderWidth="3px"
-                borderColor={useColorModeValue("green.500", "green.200")}
-                pt={[3, 3, 3, 3, 3]}
-                pl={[3, 3, 3, 3, 3]}
-                pr={[3, 3, 3, 3, 3]}
-                pb={[5, 5, 5, 7, 7]}
+                shadow="lg"
+                borderWidth={"1px"}
+                p={3}
                 gap={[2, 2, 2, 3, 3]}
                 h="min-content"
-                bg={useColorModeValue("white", "gray.800")}
                 templateColumns={[
                   "1fr 1fr",
                   "1fr 1fr",
@@ -842,7 +822,7 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
                   "initial",
                   "initial",
                 ]}
-                zIndex={100}
+                mt={5}
               >
                 <Stat w="100px">
                   <StatLabel>Total a Pagar</StatLabel>
