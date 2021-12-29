@@ -1,6 +1,5 @@
 import {
   Box,
-  Divider,
   Flex,
   Grid,
   Heading,
@@ -16,12 +15,6 @@ import Icon from "@chakra-ui/icon";
 import { FaShoppingCart, FaUserAlt } from "react-icons/fa";
 import configs from "../configs";
 import { useColorMode, useColorModeValue } from "@chakra-ui/color-mode";
-import {
-  Slider,
-  SliderFilledTrack,
-  SliderThumb,
-  SliderTrack,
-} from "@chakra-ui/slider";
 import { Tag } from "@chakra-ui/tag";
 import Lottie from "./lottie";
 import EmptyAnimation from "../assets/empty.json";
@@ -29,19 +22,9 @@ import { useRouter } from "next/router";
 import { GiArcheryTarget } from "react-icons/gi";
 import { Tooltip } from "@chakra-ui/tooltip";
 
-export default function ShowRaffles({ raffle, destination, numbers }) {
+export default function ShowRaffles({ raffle, destination }) {
   const { colorMode } = useColorMode();
   const { push } = useRouter();
-  function calcPercent(raff) {
-    const result = numbers.find((obj) => obj.raffle_id === raff.id);
-    if (result) {
-      let totalNumbers = raff.qtd_numbers;
-      let numberSale = result.count;
-      let firstCalc = 100 * numberSale;
-      let finalCalc = firstCalc / totalNumbers;
-      return parseInt(finalCalc);
-    }
-  }
 
   return (
     <>
@@ -124,75 +107,8 @@ export default function ShowRaffles({ raffle, destination, numbers }) {
                   alt="PA Rifas, rifas online"
                 />
               </Box>
-              {calcPercent(raf) < parseFloat(raf.goal) ? (
-                <Slider
-                  aria-label="slider-ex-4"
-                  defaultValue={calcPercent(raf)}
-                  size="lg"
-                  mt="-15px"
-                  isReadOnly
-                >
-                  <SliderTrack
-                    bg={useColorModeValue("red.100", "red.100")}
-                    h="10px"
-                    rounded="none"
-                  >
-                    <SliderFilledTrack
-                      bg={useColorModeValue("red.500", "red.300")}
-                    />
-                  </SliderTrack>
-                  <SliderThumb
-                    boxSize={9}
-                    borderWidth="1px"
-                    borderColor="red.100"
-                  >
-                    <Flex
-                      justify="center"
-                      align="center"
-                      fontSize="xs"
-                      fontWeight="bold"
-                      color="red.500"
-                    >
-                      {calcPercent(raf)}%
-                    </Flex>
-                  </SliderThumb>
-                </Slider>
-              ) : (
-                <Slider
-                  aria-label="slider-ex-4"
-                  defaultValue={calcPercent(raf)}
-                  size="lg"
-                  mt="-15px"
-                  isReadOnly
-                >
-                  <SliderTrack
-                    bg={useColorModeValue("green.100", "green.100")}
-                    h="10px"
-                    rounded="none"
-                  >
-                    <SliderFilledTrack
-                      bg={useColorModeValue("green.500", "green.300")}
-                    />
-                  </SliderTrack>
-                  <SliderThumb
-                    boxSize={9}
-                    borderWidth="1px"
-                    borderColor="green.100"
-                  >
-                    <Flex
-                      justify="center"
-                      align="center"
-                      fontSize="xs"
-                      fontWeight="bold"
-                      color="green.500"
-                    >
-                      {calcPercent(raf)}%
-                    </Flex>
-                  </SliderThumb>
-                </Slider>
-              )}
 
-              <Box p={3} mt="-12px">
+              <Box p={3}>
                 <Tag
                   pos="absolute"
                   right={2}
@@ -235,35 +151,18 @@ export default function ShowRaffles({ raffle, destination, numbers }) {
                   </Tooltip>
                 </Flex>
 
-                <Flex
-                  align="center"
-                  mt={1}
-                  justify="space-between"
-                  fontSize="xl"
+                <Button
+                  leftIcon={<FaShoppingCart />}
+                  colorScheme="green"
+                  onClick={() => push(`/${destination}/${raf.identify}`)}
+                  isFullWidth
                   mt={3}
-                  mb={3}
                 >
-                  <Button
-                    leftIcon={<FaShoppingCart />}
-                    colorScheme="green"
-                    onClick={() => push(`/${destination}/${raf.identify}`)}
-                  >
-                    Participar
-                  </Button>
-                  <HStack>
-                    <Text fontWeight="300">R$</Text>
-                    <Text fontWeight="800">
-                      {parseFloat(raf.raffle_value).toLocaleString("pt-br", {
-                        minimumFractionDigits: 2,
-                      })}
-                    </Text>
-                  </HStack>
-                </Flex>
-                <Divider mt={3} mb={3} />
-                <Flex align="center" fontSize="xs" justify="center">
-                  <Icon as={FaUserAlt} mr={2} />
-                  <Text noOfLines={1}>{raf.name_client}</Text>
-                </Flex>
+                  Participar com R${" "}
+                  {parseFloat(raf.raffle_value).toLocaleString("pt-br", {
+                    minimumFractionDigits: 2,
+                  })}
+                </Button>
               </Box>
             </LinkBox>
           ))}

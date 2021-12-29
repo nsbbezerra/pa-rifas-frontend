@@ -38,7 +38,7 @@ export default function MeusDados({ information }) {
     return (
       <>
         <HeaderApp />
-        <Container maxW="7xl" mt={10}>
+        <Container maxW="3xl" mt={10}>
           <Grid templateColumns={"1fr"} gap="30px">
             <Box>
               <Skeleton w="100%" h="40px" mb={3} />
@@ -218,7 +218,7 @@ export default function MeusDados({ information }) {
   return (
     <>
       <HeaderApp />
-      <Container maxW="5xl" mt={10}>
+      <Container maxW="3xl" mt={10}>
         <Breadcrumb fontSize={["xx-small", "md", "md", "md", "md"]} mb={10}>
           <BreadcrumbItem>
             <Link href="/" passHref>

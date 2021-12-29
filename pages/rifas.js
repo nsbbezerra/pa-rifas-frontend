@@ -33,12 +33,11 @@ import configsGlobal from "../configs/index";
 
 import ShowRaffles from "../components/raffles";
 
-export default function Sorteios({ raffles, numbers }) {
+export default function Sorteios({ raffles }) {
   const [raffle, setRaffle] = useState(raffles);
   const [search, setSearch] = useState("all");
   const [text, setText] = useState("");
   const [modal, setModal] = useState(false);
-  const [number] = useState(numbers);
 
   async function finderBySource() {
     if (search === "all") {
@@ -75,45 +74,6 @@ export default function Sorteios({ raffles, numbers }) {
       setText("");
     }
   }
-
-  const SearchCustom = () => (
-    <>
-      <FormControl>
-        <FormLabel>Selecione uma opção:</FormLabel>
-        <Select
-          placeholder="Selecione uma opção"
-          focusBorderColor="green.500"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        >
-          <option value="all">Todas as Rifas</option>
-          <option value="user">Nome do Usuário</option>
-          <option value="title">Título da Rifa</option>
-          <option value="number">Número da Rifa</option>
-        </Select>
-      </FormControl>
-
-      <FormControl mt={5}>
-        <FormLabel>Digite para Buscar</FormLabel>
-        <Input
-          focusBorderColor="green.500"
-          placeholder="Digite para Buscar"
-          value={text}
-          onChange={(e) => setText(e.target.value.toUpperCase())}
-          isDisabled={search === "all" ? true : false}
-        />
-      </FormControl>
-      <Button
-        mt={8}
-        isFullWidth
-        leftIcon={<FaSearch />}
-        colorScheme="green"
-        onClick={() => finderBySource()}
-      >
-        Buscar
-      </Button>
-    </>
-  );
 
   return (
     <>
@@ -207,17 +167,7 @@ export default function Sorteios({ raffles, numbers }) {
           </Box>
 
           <Box w="100%">
-            {raffle.length === 0 ? (
-              <Center>
-                <Heading fontSize="2xl">Nenhum sorteio para mostrar</Heading>
-              </Center>
-            ) : (
-              <ShowRaffles
-                raffle={raffle}
-                destination="rifa"
-                numbers={numbers}
-              />
-            )}
+            <ShowRaffles raffle={raffle} destination="rifa" />
 
             <Center mt={10} d="none">
               <Flex
@@ -300,11 +250,9 @@ export const getStaticProps = async () => {
   const response = await fetch(`${configsGlobal.url}/showRaffles`);
   const data = await response.json();
   let raffles = !data.raffles ? null : data.raffles;
-  let numbers = !data.numbers ? null : data.numbers;
   return {
     props: {
       raffles,
-      numbers,
     },
     revalidate: 5,
   };
