@@ -31,6 +31,7 @@ import {
   List,
   ListItem,
   ListIcon,
+  Tag,
 } from "@chakra-ui/react";
 import {
   Breadcrumb,
@@ -455,6 +456,7 @@ function Sorteio({ raffles, trophys, numbersRaffle }) {
                       color={colorMode === "light" ? "green.500" : "green.200"}
                     >
                       {raffle.name}
+                      <Tag colorScheme={"red"}>PRORROGADO</Tag>
                     </Heading>
                     <Text fontSize="md" mt={3}>
                       {raffle.description}

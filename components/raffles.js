@@ -111,6 +111,17 @@ export default function ShowRaffles({ raffle, destination }) {
               <Box p={3}>
                 <Tag
                   pos="absolute"
+                  right={"60px"}
+                  top={2}
+                  shadow="md"
+                  bg={useColorModeValue("red.500", "red.200")}
+                  color={useColorModeValue("gray.100", "gray.700")}
+                  fontWeight="semibold"
+                >
+                  PRORROGADO
+                </Tag>
+                <Tag
+                  pos="absolute"
                   right={2}
                   top={2}
                   shadow="md"
