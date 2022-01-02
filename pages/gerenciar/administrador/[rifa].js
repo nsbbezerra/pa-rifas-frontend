@@ -250,50 +250,6 @@ export default function AdminRaffles({
     }
   }
 
-  function soma(field) {
-    if (field === "tax") {
-      let soma = orders.reduce(function (total, numero) {
-        return total + parseFloat(numero.tax);
-      }, 0);
-      return `R$ ${soma.toLocaleString("pt-br", {
-        minimumFractionDigits: 2,
-      })}`;
-    }
-    if (field === "total") {
-      let soma = orders.reduce(function (total, numero) {
-        return total + parseFloat(numero.discounted_value);
-      }, 0);
-      return `R$ ${soma.toLocaleString("pt-br", {
-        minimumFractionDigits: 2,
-      })}`;
-    }
-  }
-
-  function calcPay() {
-    let soma = orders.reduce(function (total, numero) {
-      return total + parseFloat(numero.discounted_value);
-    }, 0);
-    let tax = parseFloat(raffle.tax_value);
-    let total = ((tax / 100) * soma).toFixed(2);
-    let totalParsed = parseFloat(total);
-    return `R$ ${totalParsed.toLocaleString("pt-br", {
-      minimumFractionDigits: 2,
-    })}`;
-  }
-
-  function calcRest() {
-    let soma = orders.reduce(function (total, numero) {
-      return total + parseFloat(numero.discounted_value);
-    }, 0);
-    let tax = parseFloat(raffle.tax_value);
-    let total = ((tax / 100) * soma).toFixed(2);
-    let totalParsed = parseFloat(total);
-    let rest = soma - totalParsed;
-    return `R$ ${rest.toLocaleString("pt-br", {
-      minimumFractionDigits: 2,
-    })}`;
-  }
-
   async function FindWinner(id) {
     setLoading(true);
     setModalWinner(true);
@@ -391,6 +347,60 @@ export default function AdminRaffles({
         : error.response.data.message;
       showToast(mess, "error", "Sorteio não Realizado");
     }
+  }
+
+  function calcTaxesPayment() {
+    const pix = orders.filter((obj) => obj.pay_mode === "pix");
+    const card = orders.filter((obj) => obj.pay_mode === "card");
+    const debit = orders.filter((obj) => obj.pay_mode === "debit");
+    const transfer = orders.filter((obj) => obj.pay_mode === "ticket");
+    let somaPix = pix.reduce(function (total, numero) {
+      return total + parseFloat(numero.value);
+    }, 0);
+    let somaCard = card.reduce(function (total, numero) {
+      return total + parseFloat(numero.value);
+    }, 0);
+    let somaDebit = debit.reduce(function (total, numero) {
+      return total + parseFloat(numero.value);
+    }, 0);
+    let somaTransfer = transfer.reduce(function (total, numero) {
+      return total + parseFloat(numero.value);
+    }, 0);
+
+    let newpix = parseFloat(somaPix * (configs.pixTax / 100).toFixed(2));
+    let newcard = parseFloat(somaCard * (configs.cardTax / 100).toFixed(2));
+    let newdebit = parseFloat(somaDebit * (configs.debitTax / 100).toFixed(2));
+    let newtransfer = parseFloat(
+      somaTransfer * (configs.cardTax / 100).toFixed(2)
+    );
+
+    let totalSum = newpix + newcard + newdebit + newtransfer;
+
+    return {
+      totalSum,
+      newpix,
+      newcard,
+      newdebit,
+      newtransfer,
+    };
+  }
+
+  function calcArrecadado() {
+    let somaPix = orders.reduce(function (total, numero) {
+      return total + parseFloat(numero.value);
+    }, 0);
+
+    return parseFloat(somaPix.toFixed(2));
+  }
+
+  function calcComission() {
+    const arrcadado = parseFloat(
+      calcArrecadado() - calcTaxesPayment().totalSum
+    );
+    const comission =
+      parseFloat(arrcadado.toFixed(2)) * (parseFloat(raffle.tax_value) / 100);
+
+    return comission;
   }
 
   return (
@@ -530,7 +540,12 @@ export default function AdminRaffles({
               >
                 <Stat color={useColorModeValue("gray.100", "gray.800")}>
                   <StatLabel>Taxa dos Pagamentos</StatLabel>
-                  <StatNumber>{soma("tax")}</StatNumber>
+                  <StatNumber>
+                    {calcTaxesPayment().totalSum.toLocaleString("pt-br", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </StatNumber>
                   <StatHelpText>* Taxa Cartões e PIX</StatHelpText>
                 </Stat>
               </Box>
@@ -544,9 +559,21 @@ export default function AdminRaffles({
               >
                 <Stat color={useColorModeValue("gray.100", "gray.800")}>
                   <StatLabel>Valor Arrecadado</StatLabel>
-                  <StatNumber>{soma("total")}</StatNumber>
+                  <StatNumber>
+                    {parseFloat(
+                      calcArrecadado() - calcTaxesPayment().totalSum
+                    ).toLocaleString("pt-br", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </StatNumber>
                   <StatHelpText>
-                    * Descontado {soma("tax")} de taxas de Pagamentos
+                    * Descontado{" "}
+                    {calcTaxesPayment().totalSum.toLocaleString("pt-br", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}{" "}
+                    de taxas de Pagamentos
                   </StatHelpText>
                 </Stat>
               </Box>
@@ -561,10 +588,24 @@ export default function AdminRaffles({
                 <Stat color={useColorModeValue("gray.100", "gray.800")}>
                   <StatLabel>Valor Bloqueado</StatLabel>
                   <StatNumber>
-                    {raffle.status !== "drawn" ? calcRest() : "R$ 0,00"}
+                    {raffle.status !== "drawn"
+                      ? parseFloat(
+                          calcArrecadado() -
+                            calcTaxesPayment().totalSum -
+                            calcComission()
+                        ).toLocaleString("pt-br", {
+                          style: "currency",
+                          currency: "BRL",
+                        })
+                      : "R$ 0,00"}
                   </StatNumber>
                   <StatHelpText>
-                    * Descontado {calcPay()} da PA Rifas
+                    * Descontado{" "}
+                    {calcComission().toLocaleString("pt-br", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}{" "}
+                    da PA Rifas
                   </StatHelpText>
                 </Stat>
               </Box>
@@ -579,10 +620,24 @@ export default function AdminRaffles({
                 <Stat color={useColorModeValue("gray.100", "gray.800")}>
                   <StatLabel>Valor Liberado</StatLabel>
                   <StatNumber>
-                    {raffle.status === "drawn" ? calcRest() : "R$ 0,00"}
+                    {raffle.status === "drawn"
+                      ? parseFloat(
+                          calcArrecadado() -
+                            calcTaxesPayment().totalSum -
+                            calcComission()
+                        ).toLocaleString("pt-br", {
+                          style: "currency",
+                          currency: "BRL",
+                        })
+                      : "R$ 0,00"}
                   </StatNumber>
                   <StatHelpText>
-                    * Descontado {calcPay()} da PA Rifas
+                    * Descontado{" "}
+                    {calcComission().toLocaleString("pt-br", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}{" "}
+                    da PA Rifas
                   </StatHelpText>
                 </Stat>
               </Box>
@@ -610,7 +665,12 @@ export default function AdminRaffles({
               >
                 <Stat>
                   <StatLabel>Valor da Comissão</StatLabel>
-                  <StatNumber>{calcPay()}</StatNumber>
+                  <StatNumber>
+                    {calcComission().toLocaleString("pt-br", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </StatNumber>
                   <StatHelpText>* Comissão da Plataforma</StatHelpText>
                 </Stat>
               </Box>
@@ -635,61 +695,59 @@ export default function AdminRaffles({
               mt={1}
             />
 
-            <Stack mt={5} spacing={5}>
-              {trofeus.map((tro) => (
-                <Grid
-                  templateColumns={"60px 1fr 150px"}
-                  gap={5}
-                  rounded={"xl"}
-                  overflow={"hidden"}
-                  borderWidth={"1px"}
-                  justifyItems={"center"}
-                  alignItems={"center"}
-                  key={tro.id}
-                >
-                  <Flex
-                    justify={"center"}
-                    align={"center"}
-                    p={5}
-                    bg={useColorModeValue("green.500", "green.200")}
-                    color={useColorModeValue("gray.100", "gray.800")}
-                    h="60px"
-                    w="60px"
-                  >
-                    <Icon as={AiOutlineTrophy} fontSize={"3xl"} />
-                  </Flex>
-                  <Text p={2}>{tro.description}</Text>
-
-                  {raffle.status === "open" && tro.status === "waiting" ? (
-                    <Button
-                      leftIcon={<GiCardRandom />}
-                      colorScheme={"orange"}
-                      isFullWidth
-                      mr={5}
-                      onClick={() => handleDrawn(tro.id)}
-                      isDisabled={
-                        new Date(raffle.draw_date) <= new Date() ? false : true
-                      }
-                    >
-                      Sortear
-                    </Button>
-                  ) : (
-                    ""
-                  )}
-                  {tro.status === "drawn" && (
-                    <Button
-                      leftIcon={<AiOutlineZoomIn />}
-                      colorScheme={"green"}
-                      isFullWidth
-                      mr={5}
-                      onClick={() => FindWinner(tro.id)}
-                    >
-                      Ver Ganhador
-                    </Button>
-                  )}
-                </Grid>
-              ))}
-            </Stack>
+            <Table size="sm" mt={5}>
+              <Thead>
+                <Tr>
+                  <Th w="7%" textAlign={"center"}></Th>
+                  <Th>PRÊMIO</Th>
+                  <Th w="17%">Opções</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {trofeus.map((tro) => (
+                  <Tr key={tro.id}>
+                    <Td w="7%" textAlign={"center"}>
+                      <Icon as={AiOutlineTrophy} fontSize={"2xl"} />
+                    </Td>
+                    <Td>{tro.description}</Td>
+                    <Td w="17%">
+                      <>
+                        {raffle.status === "open" &&
+                        tro.status === "waiting" ? (
+                          <Button
+                            leftIcon={<GiCardRandom />}
+                            colorScheme={"orange"}
+                            isFullWidth
+                            mr={5}
+                            onClick={() => handleDrawn(tro.id)}
+                            isDisabled={
+                              new Date(raffle.draw_date) <= new Date()
+                                ? false
+                                : true
+                            }
+                          >
+                            Sortear
+                          </Button>
+                        ) : (
+                          ""
+                        )}
+                        {tro.status === "drawn" && (
+                          <Button
+                            leftIcon={<AiOutlineZoomIn />}
+                            colorScheme={"green"}
+                            isFullWidth
+                            mr={5}
+                            onClick={() => FindWinner(tro.id)}
+                          >
+                            Ver Ganhador
+                          </Button>
+                        )}
+                      </>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
             <Text
               color={useColorModeValue("red.400", "red.200")}
               fontSize={"xs"}
